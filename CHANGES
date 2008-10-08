@@ -1,3 +1,8 @@
+Release 0.38 - 8 March, 2008
+----------------------------
+* fixed problem when creating an empty Entry.
+  Thanks to Frank Wiegand.
+
 Release 0.37 - 21 Setember, 2006
 --------------------------------
 * added support for 'conference' key (alias for inproceedings)

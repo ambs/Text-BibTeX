@@ -196,9 +196,9 @@ sub new
             bless $self, $structure->entry_class;
          }            
       }
-      elsif (@source == 2 && ! ref $source[0] && fileno ($source[1]))
+      elsif (@source == 2 && defined $source[0] && ! ref $source[0] && fileno ($source[1]))
           { $status = $self->parse ($source[0], $source[1]) }
-      elsif (@source == 1 && ! ref $source[0])
+      elsif (@source == 1 && defined $source[0] && ! ref $source[0])
           { $status = $self->parse_s ($source[0]) }
       else
           { croak "new: source argument must be either a Text::BibTeX::File " .
