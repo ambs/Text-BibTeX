@@ -1,0 +1,78 @@
+LEAKS
+-----
+* do undefined macros lead to 1-byte memory leaks (from strdup ("") at
+  post_parse.c:373)?
+
+* memory leaks from/in simple_test ???
+
+
+PORTABILITY
+-----------
+* strcasecmp() may not be portable -- should provide an alternative
+
+
+
+BOUNDARY CONDITIONS
+-------------------
+* bt_split_name seg faults on a name with any leading spaces, or with
+  > 1 trailing space (including a string of just spaces)
+
+
+PARSING / POST-PROCESSING / STRING HANDLING
+-------------------------------------------
+* defining a macro to a number (eg. @string{year = 1995}) causes 
+  corruption of the AST and a seg fault.
+  FIXED 1998-03-14: second post-processing pass (from bt_add_macro_value())
+    caused the problem, because bt_postprocess_value()
+    wasn't strdup'ing number strings when (!replace)
+
+
+NAME-SPLITTING and FORMATTING
+-----------------------------
+
+* a token is lowercase for von-detection if *first letter at brace level 0* 
+  is lowercase -- currently I just check the first character!
+
+  - made more complicated by the fact that stuff in a "special char"
+    count as being at brace-level 0
+
+    ("{\foo x}" is a special char: braces themselves at level 0, first
+    char. inside braces is backslash -- this is treated as a single
+    char by bibtex for counting purposes, and the "x" can be case-mangled
+    (but not the "foo")
+
+* string_prefix() might give a result that would cause its caller to
+  lop off brace-unbalanced strings
+  fix:
+    - change current string_prefix to string_prefix_length, and make
+      it also return brace-depth on exit
+    - add string_prefix to return the actual prefix string (a newly-
+      allocated string with contents copied from the string whose prefix
+      we are extracting), along with the number of right braces necessary
+      to balance
+
+* "von der foo, jr, Joe" splits very strangely:
+   first tokens = (Joe)
+   von tokens = (van|der|foo|jr)
+   jr tokens = (jr)
+  fix (I think): 
+    - when scanning for sequence of lowercase tokens, stop at a comma
+    - add sanity check: internal_error if any token lists overlap
+
+* when formatting a name with abbreviated members and punctuation
+  after the abbreviated tokens (say, a period, specified with the
+  appropriate element of the post_token array in the name format
+  structure), the punctuation is *always* added.  Thus, "Harry S Truman"
+  and "U Than" would be abbreviated as "H. S. Truman" and "U. Than",
+  which I suspect is wrong.  (Have to check a manual of style,
+  though!)
+
+  BibTeX seems to have the same problem, so I won't worry *too* much
+  about it until I've checked what the proper behaviour (in English,
+  at least) is.
+
+* doesn't properly abbreviated hyphenated names -- probably need an
+  abbrev_tokens function to detect this, rather than just using a 
+  "one-character prefix".  This will also have to pay attention to
+  the "post-token" text -- the hyphenated parts should be treated like
+  tokens.

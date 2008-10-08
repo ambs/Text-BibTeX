@@ -1,0 +1,29 @@
+* generalize process_file() and put it in input.c (ie. part of the library)
+
+* error handling and reporting
+  x structure for error location (filename, line, offset, item_name, item_num)
+  - suppress printing and store errors for application to query later
+  - document this mechanism
+
+* stack overflows:
+  - really big entries can blow up either the attrib or AST stack
+    (if same size, attrib stack will blow up much sooner)
+  - with stacksize==400, 97 fields are enough to blow up the attrib stack
+  - can't do much about this without seriously attacking the generated
+    code (yuck), and I think I had enough of that in fixing the static
+    lexical buffer; look into ANTLR 2.x ...?
+
+* test suite:
+  - need a "catch-all" test program for putting in tests for known
+    (and suspected) bugs
+
+* external interface to post-process strings
+
+* "smart" (or maybe "smart minimal") post-processing option: in regular
+  entries, collapse whitespace if only one simple value (ie. where
+  collapsing can't hurt)
+
+* convert AST to a structure, with number of fields, list of field names, 
+  list of field values, and so on (probably also need a structure
+  for value and simple value -- entry will include list of values,
+  each of which is a 

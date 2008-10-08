@@ -1,0 +1,277 @@
+
+
+thoughts and observations:
+  - you can really only trust zz{beg,end}col in the lexer, because
+    more tokens might have already been sucked in when you're in the
+    parser.  (is this right? note that zzCONSUME doesn't happen until
+    after grammar actions are executed...)
+  - strings should probably be handled in the grammar to elegantly
+    handle nested braces; this might also make handling token
+    pasting easier
+  - the possible lexing modes are:
+    * between entries (ignore everything until we hit an @)
+    * start entry: ignore whitespace, look for [^"#%'(),={}]+ followed by 
+      ( or {; anything else is bogus
+    * key: [^"#%'(),={}]+ is the entry key; comma ends it (ignore whitespace)
+    * start field: ignore whitespace, look for [^"#%'(),={}]+, then =
+    * field value: string (# string)* where string is one of:
+        - bareword (macro name -- also [^"#%'(),={}]+),
+        - bare number [0-9]+
+        - quoted string
+      (this should be handled in the parser, not the lexer)
+      ...from here, "," takes us back to "start field" and "}" or ")"
+      (depending on how the entry was opened) takes us to "between entries"
+
+   [revised 1996-07-29]
+    * ok, we can combine the "start field" and "field value" lexing modes 
+      -- just means that "field name" and "macro name" are lexically the
+      same; call 'em "keyword".  Easy enough to tell apart in the grammar.
+
+
+==============================================================================
+
+error conditions to look for (and how I handle 'em) 
+  * syntax errors (missing commas, mismatched braces/parens, ...)
+    - most of these will be caught be PCCTS' code -- need to learn 
+      how to turn the messages into something a little friendlier
+    - also, I can probably be more permissive about " { } ( ), and
+      then catch errors explicitly, rather than having them default
+      to be syntax errors
+
+some specific errors and the current result:
+  1) missing comma between fields
+     -> syntax error ("missing ENTRY_CLOSE") immediately after 
+        where the comma should be
+  2) extra comma between fields 
+     -> syntax error ("missing KEYWORD") at the second comma
+  3) field without a value (ie. `field = ,')
+     -> syntax error ("missing { KEYWORD NUMBER STRING }") at the comma
+  4) unclosed quote (ie. `field = "foo,')
+     -> syntax error ("missing ENTRY_CLOSE") in the middle of the next line
+        (ie. just after the opening quote for the next string, which
+        is mistaken for the missing closing quote)
+  5) unopened quote (ie. `field = foo",')
+     -> foo is mistaken for macro name; syntax error ("missing ENTRY_CLOSE")
+        shortly after the closing quote
+  6) warnings from string split across lines -- check what line # is printed!
+
+==============================================================================
+
+Thoughts on macro expansion:
+
+* order matters -- ie. a macro must be defined before it is used (phew!)
+  (this counts even in macros used by other macros -- ie. BibTeX expands
+  as early as possible, rather than waiting)
+* how to do it: 
+  - make a symbol table of macro defn's as they are encountered
+  - whenever a macro is used, look it up in the symbol table
+  - macro expansion should be optional, as should token pasting
+  - ie. given input text like this:
+
+       field = macro # "  a  string " # 33
+
+    (where macro is defined as "text"), then we should be able to
+    get any of the following outputs:
+
+       field = macro # {a string} # 33   [no expand, no paste, keep quotes]
+       field = {text} # {a string} # 33  [expand, no paste, keep quotes]
+       field = {text a string 33}        [expand, paste, keep quotes]
+       field = text a string 33          [expand, paste, lose quotes]
+
+    (no expand) & (paste) is nonsensical -- error
+    (no expand) & (lose quotes) is a bad idea -- warn
+    (no paste) & (lose quotes) is a bad idea -- warn
+
+    In general, (lose quotes) unless (expand & paste) is a bad idea -- warn.
+
+    Note -- quoting on output is always done with {}, because " inside " 
+    doesn't work too well.  However, you can have anything inside {}.
+
+==============================================================================
+Pathological examples (from ACAPS' main.bib):
+
+[1]   Note = "Accepted for publication in {\em " # procth # "DFVLR " #
+             copp # " for Science and Engineering},
+             Bonn, Germany, June 25--26, 1987",
+
+both BibTool and current version [as of 96/08/11] of my parser complain
+(rightly, I think!) of unbalanced braces in this, but don't get
+syntactically confused.  BibTeX actually generates incorrect output:
+
+\newblock Accepted for publication in {\em " # procth # "DFVLR " # copp # " for
+  Science and Engineering}, Bonn, Germany, June 25--26, 1987.
+
+If I take out the "{\em" .. "}" wrapper, then everything works fine.  Phew!
+
+Come to think of it, the BibTeX's bogus output is perfectly consistent with 
+its allowing unescaped double quotes in double-quoted strings, as long as 
+the inner quotes are in a brace-protected block.  Phew!  All the more reason
+to complain at such a devious construct.
+
+[2]  Author = "{\protect Sch\"{o}nauer}, Willi",
+
+This one also related to BibTeX's acceptance of " in "-strings, but can
+be avoided without fully emulating BibTeX.  (Phew!)  The problem was
+that "~[\n\t\{\}\"]+" -- the main fallthrough regexp in LEX_STRING mode
+-- was slurping up to (and including) the backslash, and the " (which is
+really just an accent) was being misinterpreted as a string-closer.
+Solution was to change the fallthrough regexp to "[\n\t\{\}\"\\]+", and
+add a regexp to slurp one-character TeX command sequences, ie. "\\~[]"
+-- a backslash followed by any single character.  (We can't make it so
+specific as to handle just "\\\", because all backslashes are explicitly
+rejected from the main body of text.  Thus, we must be forgiving of any
+backslash, and include it -- and the character following it -- in the
+lex buffer somehow.)
+
+The problem had nothing to do with the \protect or multiple brace levels.
+
+==============================================================================
+
+Here's my first grammar -- only one entry per file, and no macro 
+definitions. 
+
+entry        : "@" entry_type ( "{" | "(" ) entry_key "," fields ("}" | ")")
+
+entry_type   : straight from the lexer (but context-dependent!)
+entry_key    : straight from the lexer (but context-dependent!)
+
+fields       : field ("," field)*
+field        : field_name "=" field_data
+field_data   : field_datum ("#" field_datum)*
+field_datum  : macro_name | number | quoted_string
+macro_name   : from lexer   ([^"#%'(),={}]+)
+number       : from lexer   ([0-9]+)
+quoted_string: from lexer   (hairy - needs a lex class or two)
+
+==============================================================================
+
+Now, handling multiple entries is a snap.  To handle macro definitions 
+takes a little more thought, though.  Two possibilities:
+  * the top level is a list of "items", each of which is either an "entry"
+    or a "macro definition".  Advantages: can leave "entry" the same.
+    Disadvantages: possible ambiguity (where do we go on "@"?); either
+    have to introduce still more lexer states, stretch the existing
+    ones a little, or rethink the lexer down to just three states
+    (between items, in an item, or in a string)
+  * make macro definitions entries with no key.  Advantages: top level
+    is a simple list of entries, so no ambiguities on "@"; lexer stays
+    the same.  Disadvantages: have to make the key optional for an entry.
+
+Also, I have to modify the grammar so that the last field can be followed
+by a comma.  This is a bit of syntactic looseness that both BibTeX and 
+BibTool allow, so I should too.
+
+file         : ( entry )*
+entry        : "@" entry_type ( "{" | "(" ) contents ("}" | ")")
+
+contents     : entry_key fields         (a regular entry)
+             | field                    (a macro definition)
+
+entry_type   : straight from the lexer (but context-dependent!)
+entry_key    : straight from the lexer (but context-dependent!)
+
+fields       : ( "," field )*           (uh-oh! first "," is COMMA, but
+                                         should be FIELD_SEP -- slight
+                                         problem with lexer organization)
+
+(We change `field' and `field_datum' to use the `keyword' token instead
+of separate `field_name' and `macro_name' tokens because the whole field
+is now lexed in the same mode -- LEX_FIELD.  Thus, we can't lexically 
+distinguish between field names and macro names.)
+
+field        : keyword "=" field_data
+field_data   : field_datum ("#" field_datum)*
+field_datum  : keyword | number | quoted_string
+      
+
+Here's the sneaky bit: you might think that rule `contents' is ambiguous,
+because both `entry_key' and `field' start with the standard BibTeX
+keyword, [^"#%'(),={}]+.  However, because keys and fields are scanned
+in different lexical classes, they are different tokens -- so the question
+is, how do we get the lexeme to be a "field name" (which is really just the
+name of the macro) when we're in an @string, and an "entry key" the rest of
+the time?
+
+Well, how about this: the lexer knows when it's reading the entry type
+(which could be "string" in addition to one of the real entry types).  So,
+we could have it check for "string", and in that case go straight to
+the LEX_FIELD class instead of LEX_KEY.  Then, when we see a keyword, it
+will be classified as a "field name", and put the grammar on the right
+path.  Neat eh?
+
+Problems with this: rule `fields' is now ambiguous on "," -- need to set
+k=2 to overcome the ambiguity (so we can see whether a "}" or keyword
+is next).
+
+Also, the organization of the lexer means that the "," following a key
+is officially called COMMA, but the "," between fields is a FIELD_SEP.
+Fixing this means going straight to LEX_FIELD after seeing the key name
+(rather than after the COMMA), but it looks like this would require
+merging the LEX_FIELD and LEX_VALUE classes.  I don't think this would be
+such a bad thing, but reflection is required....
+
+==============================================================================
+
+From *A Guide to LaTeX2e*:
+
+  - a key is [^,]+ (both BibTeX and BibTool are stricter, though!)
+  - field text: either quoted, braced, or digit-string (they don't
+    mention BibTeX macros)
+  - whole entry can be enclosed in either braces or parens
+  - entry type and field name are case insensitive
+  - doesn't mention allowed characters for type and field name
+  - macros (aka abbreviations): [^"#%'(),={}]+  (I've omitted \'s
+    for clarity!); case insensitive
+
+
+from *The LaTeX Companion*
+  - keys are case sensitive
+
+
+from observing BibTeX in action:
+  - within quoted strings, whitespace (tab/newline/space) sequences are
+    collapsed to a single space -- this occurs even inside {}-protected 
+    bits 
+  - spaces immediately after an opening quote, or before a closing quote,
+    are removed (not just collapsed to a single space!) -- here, {} as 
+    quotes are different from {} as protectors of substrings!
+  - characters not allowed in field names appear to be the standard
+    10 magic characters; looks like anything else (including @, _) is OK
+    (but note that BibTool barfs on @ in field names)
+  - entry types, keys, and field names can have digits in them, but can't
+    start with a digit.  They can, however, start with any other character
+    (as long as it's not one of the magic 10!).
+  - you can't have double quotes within double-quoted strings (even if
+    escaped by backslashes), but you *can* have them in a brace-quoted
+    string *inside* double-quoted strings!  That is,
+        "A "Quoted" String"
+    and
+        "A \"Quoted\" String"
+    are both bogus, but
+        "A {"Quoted"} String" 
+    is just fine.  (BibTool doesn't like the latter example, though.)
+  - in macro-definitions, whitespace *is* significant -- at least next
+    to the quotes, it's not deleted before the macro is expanded.  Probably,
+    this means that whitespace isn't collapsed until after macros are
+    expanded and tokens concatenated.
+  - come to think of it, I'm pretty sure that whitespace isn't collapsed
+    until after macro expansion and token concatenation, because
+      journal = {The } # { Journal}
+    is interpreted like
+      journal = {The Journal}
+  - the last field in an entry can be followed by a comma (but only one!)
+  - fields can't be empty (i.e. no ",," in list of fields), but the key
+    can -- just generates "\bibitem{}"
+
+
+
+Notes on BibTool:
+  - doesn't like the double-quotes-in-braces-in-double quotes trick
+    (probably just as well!)
+  - only collapses whitespace next to quote marks -- doesn't delete it
+  - tends to be a little pickier about what characters are accepted in
+    keywords -- in particular, barfs if '@' is found in a field name
+    (again, probably just as well)
+  - seems to treat field separator the same as BibTeX: must be
+    "field = value" separated by single commas, with a possible stray
+    comma after the last field.  Warns if key is empty.
