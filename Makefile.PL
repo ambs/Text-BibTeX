@@ -9,6 +9,10 @@ use 5.008001;
 my $EXE = "";
 $EXE = ".exe" if $^O eq "MSWin32";
 
+my $LIBEXT = ".so";
+$LIBEXT = ".bundle" if $^O =~ /darwin/i;
+$LIBEXT = ".dll"    if $^O =~ /mswin32/i;
+
 my @support_files = ('btxs_support$(OBJ_EXT)');
 
 my %conf =
@@ -17,7 +21,7 @@ my %conf =
    'VERSION_FROM'   => 'BibTeX.pm',
    'XSPROTOARG'     => '-prototypes',
    'INC'	     => '-Ibtparse/src',
-   'MYEXTLIB'       => 'btparse/src/.libs/libbtparse$(LIB_EXT)',
+   'MYEXTLIB'       => "btparse/src/libbtparse$LIBEXT",
    'PREREQ_PM' => {
                    'File::Copy'         => '0',
                    'Config::AutoConf'   => '0.09',
