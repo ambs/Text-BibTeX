@@ -14,17 +14,17 @@
 
 package Text::BibTeX;
 
-require 5.004;                          # needed for Text::BibTeX::Entry
+use 5.008001;                          # needed for Text::BibTeX::Entry
 
 use strict;
 use UNIVERSAL qw(isa can);              # for 'check_class' subroutine
 use Carp;
-use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $AUTOLOAD $VERSION);
+use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $AUTOLOAD);
 
 require Exporter;
 require DynaLoader;
 
-$VERSION=0.38;
+our $VERSION='0.38';
 
 @ISA = qw(Exporter DynaLoader);
 %EXPORT_TAGS = (nodetypes => [qw(BTAST_STRING BTAST_MACRO BTAST_NUMBER)],

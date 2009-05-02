@@ -19,12 +19,13 @@ my %conf =
    'INC'	     => '-Ibtparse/src',
    'MYEXTLIB'       => 'btparse/src/.libs/libbtparse$(LIB_EXT)',
    'PREREQ_PM' => {
+                   'File::Copy'         => '0',
                    'Config::AutoConf'   => '0.09',
                    'ExtUtils::CBuilder' => '0.23',
                   },
    'OBJECT'         => 'BibTeX$(OBJ_EXT) ' . join (' ', @support_files),
    'dynamic_lib'    => { INST_DYNAMIC_DEP => join (' ', @support_files) },
-   'dist'           => { COMPRESS => "gzip", SUFFIX => "gz" }
+   'dist'           => { COMPRESS => "gzip", SUFFIX => "gz" },
    'clean'          => { FILES => "_dummy_" },
   );
 
@@ -33,8 +34,18 @@ WriteMakefile ( %conf );
 #..........
 package MY;
 
+sub top_targets {
+    my $inherited = shift->SUPER::top_targets(@_);
+    $inherited =~ s!^(config\s*::.*)$!$1 btparse!m;
+    $inherited;
+}
+
+
 sub postamble {
     return <<"MAKE";
+
+btparse: _dummy_
+\t\$(NOECHO) \$(NOOP)
 
 _dummy_:
 \t\$(PERL) scripts/build.pl
