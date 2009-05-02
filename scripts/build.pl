@@ -2,7 +2,7 @@
 
 use warnings;
 use strict;
-
+use Config;
 use File::Copy;
 use Config::AutoConf;
 use ExtUtils::CBuilder;
@@ -11,7 +11,7 @@ my $VERSION = get_version();
 my $EXE = "";
 $EXE = ".exe" if $^O eq "MSWin32";
 my $LIBEXT = ".so";
-$LIBEXT = ".bundle" if $^O =~ /darwin/i;
+$LIBEXT = ".dylib" if $^O =~ /darwin/i;
 $LIBEXT = ".dll"   if $^O =~ /mswin32/i;
 
 # Show some information to the user about what are we doing.
@@ -45,7 +45,10 @@ for my $pod (@pods) {
 
 ## Build libbtparse
 print "\nCompiling libbtparse...\n";
+
+
 my $CC = ExtUtils::CBuilder->new(quiet => 0);
+$CC->{config}{lddlflags} =~ s/-bundle/-dynamiclib/;
 
 my @sources = qw:init.c input.c bibtex.c err.c scan.c error.c
                  lex_auxiliary.c parse_auxiliary.c bibtex_ast.c sym.c
@@ -61,7 +64,7 @@ $CC->link(module_name => 'btparse',
           objects => \@objects,
           lib_file => "btparse/src/libbtparse$LIBEXT");
 
-## Build dumpnames
+## Build dumpnames (noinst)
 print "\nCompiling dumpnames application...\n";
 @sources = qw!dumpnames.c!;
 @objects =  map {
@@ -69,7 +72,30 @@ print "\nCompiling dumpnames application...\n";
                  source => "btparse/progs/$_" )
 } @sources;
 $CC->link_executable(exe_file => "btparse/progs/dumpnames$EXE",
-                     objects => ["btparse/src/libbtparse$LIBEXT",@objects]);
+                     extra_linker_flags => "-Lbtparse/src -lbtparse ",
+                     objects => \@objects);
+
+## Build biblex (noinst)
+print "\nCompiling biblex application...\n";
+@sources = qw!biblex.c!;
+@objects =  map {
+    $CC->compile(include_dirs => ['btparse/src','btparse/pccts'],
+                 source => "btparse/progs/$_" )
+} @sources;
+$CC->link_executable(exe_file => "btparse/progs/biblex$EXE",
+                     extra_linker_flags => "-Lbtparse/src -lbtparse ",
+                     objects => \@objects);
+
+## Build bibparse
+print "\nCompiling bibparse application...\n";
+@sources = qw!bibparse.c args.c getopt.c getopt1.c!;
+@objects =  map {
+    $CC->compile(include_dirs => ['btparse/src','btparse/pccts'],
+                 source => "btparse/progs/$_" )
+} @sources;
+$CC->link_executable(exe_file => "btparse/progs/bibparse$EXE",
+                     extra_linker_flags => "-Lbtparse/src -lbtparse ",
+                     objects => \@objects);
 
 sub get_version {
     my $version = undef;

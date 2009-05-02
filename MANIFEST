@@ -100,10 +100,10 @@ btparse/src/util.h
 
 ## Extra C programs
 btparse/progs/args.c
-btparse/progs/args.h
+btparse/progs/args.h           ## NOINST
 btparse/progs/biblex.c
 btparse/progs/bibparse.c
 btparse/progs/dumpnames.c
 btparse/progs/getopt.c
-btparse/progs/getopt.h
+btparse/progs/getopt.h         ## NOINST
 btparse/progs/getopt1.c
