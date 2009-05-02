@@ -86,6 +86,8 @@ bt_postprocess_string (char * s, ushort options)
 
    while (*j != (char) 0)
    {
+
+       if (*j == '\r') j++; /* don't want Ctrl-Ms in strings in the output */
       /*
        * If we're in a string of spaces (ie. current and previous char.
        * are both space), and we're supposed to be collapsing whitespace,
