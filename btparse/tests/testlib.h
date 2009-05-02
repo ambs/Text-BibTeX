@@ -12,7 +12,7 @@
 #include "btparse.h"
 
 #ifndef DATA_DIR
-# define DATA_DIR "data"
+# define DATA_DIR "btparse/tests/data"
 #endif
 
 

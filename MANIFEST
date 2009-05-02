@@ -107,3 +107,26 @@ btparse/progs/dumpnames.c
 btparse/progs/getopt.c
 btparse/progs/getopt.h         ## NOINST
 btparse/progs/getopt1.c
+
+## Test code.
+btparse/tests/case_test.c
+btparse/tests/macro_test.c
+btparse/tests/name_test.c
+btparse/tests/namebug.c
+btparse/tests/postprocess_test.c
+btparse/tests/purify_test.c
+btparse/tests/read_test.c
+btparse/tests/simple_test.c
+btparse/tests/testlib.c
+btparse/tests/tex_test.c
+btparse/tests/data/TESTS
+btparse/tests/data/commas.bib
+btparse/tests/data/comment.bib
+btparse/tests/data/empty.bib
+btparse/tests/data/foreign.bib
+btparse/tests/data/macro.bib
+btparse/tests/data/names
+btparse/tests/data/preamble.bib
+btparse/tests/data/purify.strings
+btparse/tests/data/regular.bib
+btparse/tests/data/simple.bib

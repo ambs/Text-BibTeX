@@ -10,7 +10,7 @@ my $EXE = "";
 $EXE = ".exe" if $^O eq "MSWin32";
 
 my $LIBEXT = ".so";
-$LIBEXT = ".bundle" if $^O =~ /darwin/i;
+$LIBEXT = ".dylib"  if $^O =~ /darwin/i;
 $LIBEXT = ".dll"    if $^O =~ /mswin32/i;
 
 my @support_files = ('btxs_support$(OBJ_EXT)');

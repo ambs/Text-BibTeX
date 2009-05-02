@@ -1,3 +1,8 @@
+2009-05-02  Alberto Simões  <ambs@cpan.org>
+
+	Big reorganization. btparse is now shipped with Text::BibTeX.
+	Check root ChangeLog file for recent changes.
+
 2003-10-25  Greg Ward  <gward@python.net>
 
 	released version 0.34
