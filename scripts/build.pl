@@ -91,6 +91,10 @@ for my $prog (keys %programs) {
 copy("btparse/progs/bibparse", "blib/bin");
 copy("btparse/src/libbtparse$LIBEXT", "blib/lib");
 
+open DUMMY, ">_dummy_" or die "Can't create timestamp file";
+print DUMMY localtime;
+close DUMMY;
+print "\n -- back to normal Perl build system\n\n";
 
 sub get_version {
     my $version = undef;
