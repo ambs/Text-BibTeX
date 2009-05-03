@@ -4,35 +4,32 @@ use vars qw($DEBUG);
 use IO::Handle;
 use Test::More tests => 51;
 BEGIN {
-  use_ok("Text::BibTeX");
-  require "t/common.pl";
+    use_ok("Text::BibTeX");
+    require "t/common.pl";
 }
 
 $DEBUG = 0;
 
 #setup_stderr;
 
-sub test_name
-{
-   my ($name, $parts) = @_;
-   my $ok = 1;
-   my @partnames = qw(first von last jr);
-   my $i;
+sub test_name {
+    my ($name, $parts) = @_;
+    my $ok = 1;
+    my @partnames = qw(first von last jr);
+    my $i;
 
-   for $i (0 .. $#partnames)
-   {
-      if (defined $parts->[$i])
-      {
-         $ok &= ($name->part ($partnames[$i]))
-            && slist_equal ($parts->[$i], [$name->part ($partnames[$i])]);
-      }
-      else
-      {
-         $ok &= ! $name->part ($partnames[$i]);
-      }
-   }
-
-   ok (keys %$name <= 4 && $ok);
+    for $i (0 .. $#partnames)  {
+        if (defined $parts->[$i])
+          {
+              $ok &= ($name->part ($partnames[$i]))
+                && slist_equal ($parts->[$i], [$name->part ($partnames[$i])]);
+          }
+        else
+          {
+              $ok &= ! $name->part ($partnames[$i]);
+          }
+    }
+    ok (keys %$name <= 4 && $ok);
 }
 
 
@@ -75,7 +72,7 @@ foreach $i (0 .. $#namelist)
    ok (keys %parts <= 4);
 
    my @name = map { join ('+', ref $_ ? @$_ : ()) }
-                  @parts{'first','von','last','jr'};
+     @parts{'first','von','last','jr'};
    is (join ('|', @name), $names{$orig_namelist[$i]});
 }
 

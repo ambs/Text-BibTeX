@@ -489,10 +489,8 @@ find_lc_tokens (bt_stringlist * tokens,
                 int *           last_lc)
 {
    int    i;                            /* iterate over token list this time */
-   int    in_lc_sequence;               /* in contig. sequence of lc tokens? */
 
    *first_lc = *last_lc = -1;           /* haven't found either yet */
-   in_lc_sequence = 0;
 
    i = 0;
    while (i < tokens->num_items)
@@ -504,9 +502,10 @@ find_lc_tokens (bt_stringlist * tokens,
 
          i++;
          char * token = tokens->items[i];
-         while (i < tokens->num_items && token != NULL && islower (token[0]))
+         while (i < tokens->num_items && token != NULL && islower (token[0])) {
             i++;
-
+            token = tokens->items[i];
+         }
          *last_lc = i-1;
       }
       else
