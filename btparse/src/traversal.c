@@ -154,7 +154,7 @@ AST *bt_next_value (AST *top, AST *prev, bt_nodetype *nodetype, char **text)
 
 char *bt_get_text (AST *node)
 {
-   ushort pp_options = BTO_FULL;        /* options for full processing: */
+   btshort pp_options = BTO_FULL;        /* options for full processing: */
                                         /* expand macros, paste strings, */
                                         /* collapse whitespace */
    bt_nodetype nt;

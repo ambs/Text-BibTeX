@@ -51,7 +51,7 @@ typedef struct
 {
    char *      desc;
    char *      filename;
-   ushort      options;
+   btshort      options;
    tester      test_func;
    test_data * data;
 } test;
@@ -67,8 +67,8 @@ boolean goodtest_comment (AST *entry, test_data *data);
 boolean goodtest_preamble (AST *entry, test_data *data);
 
 /* and prototypes to keep "gcc -Wall" from whining */
-boolean test_multiple (FILE *, char *, ushort, ushort, int, test *);
-boolean test_wholefile (char *, ushort, ushort, int, test *);
+boolean test_multiple (FILE *, char *, btshort, btshort, int, test *);
+boolean test_wholefile (char *, btshort, btshort, int, test *);
 
 
 /* a priori knowledge about the entry in "regular.bib" (used for both tests) */
@@ -456,8 +456,8 @@ boolean goodtest_preamble (AST * entry, test_data * data)
 
 boolean test_multiple (FILE * file,
                        char * filename,
-                       ushort string_opts,
-                       ushort other_opts,
+                       btshort string_opts,
+                       btshort other_opts,
                        int    num_entries,
                        test * tests)
 {
@@ -497,8 +497,8 @@ boolean test_multiple (FILE * file,
 
 
 boolean test_wholefile (char * filename,
-                        ushort string_opts,
-                        ushort other_opts,
+                        btshort string_opts,
+                        btshort other_opts,
                         int    num_entries,
                         test * tests)
 {
@@ -544,7 +544,7 @@ int main (void)
    char    filename[256];
    FILE *  infile;
    AST *   entry;
-   ushort  options = 0;                 /* use default non-string options */
+   btshort  options = 0;                 /* use default non-string options */
    boolean ok;
    int     num_failures = 0;
 

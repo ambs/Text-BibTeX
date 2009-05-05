@@ -4,8 +4,8 @@ bt_misc - miscellaneous BibTeX-like string-processing utilities
 
 =head1 SYNOPSIS
 
-   void bt_purify_string (char * string, ushort options);
-   void bt_change_case (char transform, char * string, ushort options);
+   void bt_purify_string (char * string, btshort options);
+   void bt_change_case (char transform, char * string, btshort options);
 
 =head1 DESCRIPTION
 
@@ -13,7 +13,7 @@ bt_misc - miscellaneous BibTeX-like string-processing utilities
 
 =item bt_purify_string()
 
-   void bt_purify_string (char * string, ushort options);
+   void bt_purify_string (char * string, btshort options);
 
 "Purifies" a C<string> in the BibTeX way (usually used for generating
 sort keys).  C<string> is modified in-place.  C<options> is currently
@@ -70,7 +70,7 @@ address this deficiency.
 
 =item bt_change_case()
 
-   void bt_change_case (char transform, char * string, ushort options);
+   void bt_change_case (char transform, char * string, btshort options);
 
 Converts a string to lowercase, uppercase, or "non-book title
 capitalization", with special attention paid to BibTeX special

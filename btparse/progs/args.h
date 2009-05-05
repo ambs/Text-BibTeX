@@ -21,8 +21,8 @@
 
 typedef struct
 {
-   ushort    string_opts;
-   ushort    other_opts;
+   btshort   string_opts;
+   btshort   other_opts;
    boolean   check_only;
    boolean   quote_strings;
    boolean   dump_ast;

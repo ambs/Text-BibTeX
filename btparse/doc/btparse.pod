@@ -12,18 +12,18 @@ btparse - C library for parsing and processing BibTeX data files
    void bt_cleanup (void);
 
    /* Input / interface to parser */
-   void   bt_set_stringopts (bt_metatype_t metatype, ushort options);
+   void   bt_set_stringopts (bt_metatype_t metatype, btshort options);
    AST * bt_parse_entry_s (char *    entry_text,
                            char *    filename,
                            int       line,
-                           ushort    options,
+                           btshort    options,
                            boolean * status);
    AST * bt_parse_entry   (FILE *    infile,
                            char *    filename,
-                           ushort    options,
+                           btshort    options,
                            boolean * status);
    AST * bt_parse_file    (char *    filename, 
-                           ushort    options, 
+                           btshort    options, 
                            boolean * overall_status);
 
    /* AST traversal/query */
@@ -76,8 +76,8 @@ btparse - C library for parsing and processing BibTeX data files
    char *        bt_flatten_tex_tree (bt_tex_tree *top);
 
    /* Miscellaneous string utilities */
-   void bt_purify_string (char * string, ushort options);
-   void bt_change_case (char transform, char * string, ushort options);
+   void bt_purify_string (char * string, btshort options);
+   void bt_change_case (char transform, char * string, btshort options);
 
 =head1 DESCRIPTION
 

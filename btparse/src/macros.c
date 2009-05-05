@@ -155,7 +155,7 @@ delete_macro_entry (Sym * sym)
 @CREATED    : Jan 1997, GPW
 -------------------------------------------------------------------------- */
 void
-bt_add_macro_value (AST *assignment, ushort options)
+bt_add_macro_value (AST *assignment, btshort options)
 {
    AST *   value;
    char *  macro;

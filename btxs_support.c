@@ -314,7 +314,7 @@ ast_to_hash (SV *    entry_ref,
    char *  key;
    bt_metatype 
            metatype;
-   ushort  options;                     /* post-processing options */
+   btshort options;                     /* post-processing options */
    HV *    entry;                       /* the main hash -- build and return */
 
    DBG_ACTION (1, printf ("ast_to_hash: entry\n"));

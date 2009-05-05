@@ -28,7 +28,7 @@
 
 
 char *   InputFilename;
-ushort   StringOptions[NUM_METATYPES] = 
+btshort   StringOptions[NUM_METATYPES] = 
 {
    0,                                   /* BTE_UNKNOWN */
    BTO_FULL,                            /* BTE_REGULAR */
@@ -70,7 +70,7 @@ void bt_set_filename (char *filename)
 @CREATED    : 1997/08/24, GPW
 @MODIFIED   : 
 -------------------------------------------------------------------------- */
-void bt_set_stringopts (bt_metatype metatype, ushort options)
+void bt_set_stringopts (bt_metatype metatype, btshort options)
 {
    if (metatype < BTE_REGULAR || metatype > BTE_MACRODEF)
       usage_error ("bt_set_stringopts: illegal metatype");
@@ -174,7 +174,7 @@ finish_parse (int **err_counts)
 static boolean
 parse_status (int *saved_counts)
 {
-   ushort        ignore_emask;
+   btshort        ignore_emask;
 
    /* 
     * This bit-twiddling fetches the error status (which has a bit
@@ -215,7 +215,7 @@ parse_status (int *saved_counts)
 AST * bt_parse_entry_s (char *    entry_text,
                         char *    filename,
                         int       line,
-                        ushort    options,
+                        btshort    options,
                         boolean * status)
 {
    AST *        entry_ast = NULL;
@@ -280,7 +280,7 @@ AST * bt_parse_entry_s (char *    entry_text,
 -------------------------------------------------------------------------- */
 AST * bt_parse_entry (FILE *    infile,
                       char *    filename,
-                      ushort    options,
+                      btshort    options,
                       boolean * status)
 {
    AST *         entry_ast = NULL;
@@ -425,7 +425,7 @@ AST * bt_parse_entry (FILE *    infile,
               memory-intensive) approach.
 -------------------------------------------------------------------------- */
 AST * bt_parse_file (char *    filename, 
-                     ushort    options, 
+                     btshort   options, 
                      boolean * status)
 {
    FILE *  infile;

@@ -5,7 +5,7 @@ bt_macros - accessing and manipulating the btparse macro table
 =head1 SYNOPSIS
 
    void bt_add_macro_value (AST *  assignment,
-                            ushort options);
+                            btshort options);
    void bt_add_macro_text (char * macro,
                            char * text,
                            char * filename,
@@ -71,7 +71,7 @@ whenever the post-processing code sees it in any future entries.
 =item bt_add_macro_value ()
 
    void bt_add_macro_value (AST *  assignment,
-                            ushort options);
+                            btshort options);
 
 This function is mainly for internal use by the library, but it's
 available to you if you ever find yourself with a little bit of AST

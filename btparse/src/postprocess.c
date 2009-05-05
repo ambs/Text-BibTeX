@@ -52,7 +52,7 @@
 @COMMENTS   : this only collapses whitespace now -- rename it???
 -------------------------------------------------------------------------- */
 void 
-bt_postprocess_string (char * s, ushort options)
+bt_postprocess_string (char * s, btshort options)
 {
    boolean collapse_whitespace;
    char *i, *j;
@@ -173,11 +173,11 @@ bt_postprocess_string (char * s, ushort options)
                                rather than the parent of that list
 -------------------------------------------------------------------------- */
 char *
-bt_postprocess_value (AST * value, ushort options, boolean replace)
+bt_postprocess_value (AST * value, btshort options, boolean replace)
 {
    AST *   simple_value;                /* current simple value */
    boolean pasting;
-   ushort  string_opts;                 /* what to do to individual strings */
+   btshort  string_opts;                 /* what to do to individual strings */
    int     tot_len;                     /* total length of pasted string */
    char *  new_string;                  /* in case of string pasting */
    char *  tmp_string;
@@ -430,7 +430,7 @@ bt_postprocess_value (AST * value, ushort options, boolean replace)
 @MODIFIED   : 
 -------------------------------------------------------------------------- */
 char *
-bt_postprocess_field (AST * field, ushort options, boolean replace)
+bt_postprocess_field (AST * field, btshort options, boolean replace)
 {
    if (field == NULL) return NULL;
    if (field->nodetype != BTAST_FIELD)
@@ -456,7 +456,7 @@ bt_postprocess_field (AST * field, ushort options, boolean replace)
 @MODIFIED   : 
 -------------------------------------------------------------------------- */
 void
-bt_postprocess_entry (AST * top, ushort options)
+bt_postprocess_entry (AST * top, btshort options)
 {
    AST   *cur;
    

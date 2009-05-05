@@ -326,10 +326,10 @@ int *bt_get_error_counts (int *counts)
 @CREATED    : 
 @MODIFIED   : 
 -------------------------------------------------------------------------- */
-ushort bt_error_status (int *saved_counts)
+btshort bt_error_status (int *saved_counts)
 {
    int     i;
-   ushort  status;
+   btshort  status;
 
    status = 0;
 

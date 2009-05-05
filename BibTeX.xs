@@ -116,7 +116,7 @@ bt_purify_string (instr, options=0)
        if (instr == NULL)               /* undef in, undef out */
           XSRETURN_EMPTY;
        RETVAL = newSVpv (instr, 0);
-       bt_purify_string (SvPVX (RETVAL), (ushort) options);
+       bt_purify_string (SvPVX (RETVAL), (btshort) options);
        SvCUR_set (RETVAL, strlen (SvPVX (RETVAL))); /* reset SV's length */
 
     OUTPUT:
@@ -138,7 +138,7 @@ bt_purify_string (instr, options=0)
 
 ##     CODE:
 ##        if (str != NULL) 
-##           bt_purify_string (str, (ushort) options);
+##           bt_purify_string (str, (btshort) options);
 ##           sv_setpv (ST(0), str);
 
 
@@ -155,7 +155,7 @@ bt_change_case (transform, string, options=0)
        if (string == NULL)
           XSRETURN_EMPTY;
        RETVAL = newSVpv (string, 0);
-       bt_change_case (transform, SvPVX (RETVAL), (ushort) options);
+       bt_change_case (transform, SvPVX (RETVAL), (btshort) options);
 
     OUTPUT:
        RETVAL
@@ -178,7 +178,7 @@ _parse (entry_ref, filename, file, preserve=FALSE)
     boolean preserve;
 
     PREINIT:
-        ushort  options = 0;
+        btshort  options = 0;
         boolean status;
         AST *   top;
 
@@ -204,7 +204,7 @@ _parse_s (entry_ref, text, preserve=FALSE)
     boolean preserve;
 
     PREINIT:
-        ushort  options = 0;
+        btshort  options = 0;
         boolean status;
         AST *   top;
 

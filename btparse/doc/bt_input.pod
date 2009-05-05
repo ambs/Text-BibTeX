@@ -4,18 +4,18 @@ bt_input - input/parsing functions in B<btparse> library
 
 =head1 SYNOPSIS
 
-   void  bt_set_stringopts (bt_metatype_t metatype, ushort options);
+   void  bt_set_stringopts (bt_metatype_t metatype, btshort options);
    AST * bt_parse_entry_s (char *    entry_text,
                            char *    filename,
                            int       line,
-                           ushort    options,
+                           btshort    options,
                            boolean * status);
    AST * bt_parse_entry   (FILE *    infile,
                            char *    filename,
-                           ushort    options,
+                           btshort    options,
                            boolean * status);
    AST * bt_parse_file    (char *    filename, 
-                           ushort    options, 
+                           btshort    options, 
                            boolean * overall_status);
 
 
@@ -28,7 +28,7 @@ converting it from raw text to abstract-syntax trees (ASTs).
 
 =item bt_set_stringopts ()
 
-   void bt_set_stringopts (bt_metatype_t metatype, ushort options);
+   void bt_set_stringopts (bt_metatype_t metatype, btshort options);
 
 Set the string-processing options for a particular entry metatype.  This
 affects the entry post-processing done by C<bt_parse_entry_s()>,
@@ -53,7 +53,7 @@ will reflect this change.
 
    AST * bt_parse_entry (FILE *    infile,
                          char *    filename,
-                         ushort    options,
+                         btshort    options,
                          boolean * status);
 
 Scans and parses the next BibTeX entry in C<infile>.  You should supply
@@ -106,7 +106,7 @@ At the end of this loop, C<feof (file)> will be true.
    AST * bt_parse_entry_s (char *    entry_text,
                            char *    filename,
                            int       line,
-                           ushort    options,
+                           btshort    options,
                            boolean * status)
 
 Scans and parses a single complete BibTeX entry contained in a string,
@@ -127,7 +127,7 @@ call allows it to clean up some structures allocated on the first call.
 Thus, C<bt_parse_entry_s()> is usually used like this:
 
    char *  entry_text;
-   ushort  options = 0;
+   btshort  options = 0;
    boolean ok;
    AST *   entry_ast;
 
@@ -148,7 +148,7 @@ entry to parse, or C<NULL> if there's no more text available.
 =item bt_parse_file ()
 
    AST * bt_parse_file (char *    filename, 
-                        ushort    options, 
+                        btshort    options, 
                         boolean * status)
 
 Scans and parses an entire BibTeX file.  If C<filename> is C<NULL> or

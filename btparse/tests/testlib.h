@@ -40,7 +40,7 @@ if (! (cond))                                                   \
 
 
 FILE *open_file (char *basename, char *dirname, char *filename);
-void set_all_stringopts (ushort options);
+void set_all_stringopts (btshort options);
 
 
 #endif /* TESTLIB_H */

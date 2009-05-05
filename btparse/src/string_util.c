@@ -308,7 +308,7 @@ purify_special_char (char *str, int * src, int * dst)
 @MODIFIED   : 
 -------------------------------------------------------------------------- */
 void
-bt_purify_string (char * string, ushort options)
+bt_purify_string (char * string, btshort options)
 {
    int    src,                          /* both indeces into string */
           dst;
@@ -569,7 +569,7 @@ convert_special_char (char transform,
 void
 bt_change_case (char   transform,
                 char * string,
-                ushort options)
+                btshort options)
 {
    int    len;
    int    depth;

@@ -2,10 +2,6 @@
 /* ------------------------------------------------------------------------
 @NAME       : btparse.h
 @DESCRIPTION: Declarations and types for users of the btparse library.
-
-              (Actually, btparse.h is generated from btparse.h.in by
-              the `configure' script, in order to automatically determine
-              the appropriate values of HAVE_USHORT and HAVE_BOOLEAN.)
 @GLOBALS    : 
 @CALLS      : 
 @CREATED    : 1997/01/19, Greg Ward
@@ -22,43 +18,14 @@
 #ifndef BTPARSE_H
 #define BTPARSE_H
 
-#include <sys/types.h>                  /* probably supplies 'ushort' */
+#include "bt_config.h"
+#include <sys/types.h>
 #include <stdio.h>
 
-/*
- * Here we attempt to define HAVE_USHORT if a typdef for `ushort' appears
- * in <sys/types.h>.  The detective work is actually done by the
- * `configure' script, so if compilation fails because of duplicate
- * definitions of `ushort', that's a bug in `configure' -- please tell me
- * about it!
- */
 
-#define HAVE_USHORT_XSUB 0
-
-#if defined(H_PERL) && HAVE_USHORT_XSUB
-# ifndef HAVE_USHORT
-#  define HAVE_USHORT 1
-# endif
-#endif
-
-#ifndef HAVE_USHORT
-# define HAVE_USHORT 1
-#endif
-
-#if ! HAVE_USHORT                       /* needed for various bitmaps */
-typedef unsigned short ushort;
-#endif
-
-
-/* Likewise for boolean. */
-
-#ifndef HAVE_BOOLEAN
-# define HAVE_BOOLEAN 0
-#endif
-
-#if ! HAVE_BOOLEAN
+typedef unsigned short btshort;
 typedef int boolean;
-#endif
+
 
 #ifndef TRUE
 # define TRUE 1
@@ -277,34 +244,34 @@ void  bt_free_ast (AST *ast);
 void  bt_cleanup (void);
 
 /* input.c */
-void    bt_set_stringopts (bt_metatype metatype, ushort options);
+void    bt_set_stringopts (bt_metatype metatype, btshort options);
 AST * bt_parse_entry_s (char *    entry_text,
                         char *    filename,
                         int       line,
-                        ushort    options,
+                        btshort    options,
                         boolean * status);
 AST * bt_parse_entry   (FILE *    infile,
                         char *    filename,
-                        ushort    options,
+                        btshort    options,
                         boolean * status);
 AST * bt_parse_file    (char *    filename, 
-                        ushort    options, 
+                        btshort    options, 
                         boolean * overall_status);
 
 /* post_parse.c */
-void bt_postprocess_string (char * s, ushort options);
-char * bt_postprocess_value (AST * value, ushort options, boolean replace);
-char * bt_postprocess_field (AST * field, ushort options, boolean replace);
-void bt_postprocess_entry (AST * entry, ushort options);
+void bt_postprocess_string (char * s, btshort options);
+char * bt_postprocess_value (AST * value, btshort options, boolean replace);
+char * bt_postprocess_field (AST * field, btshort options, boolean replace);
+void bt_postprocess_entry (AST * entry, btshort options);
 
 /* error.c */
 void   bt_reset_error_counts (void);
 int    bt_get_error_count (bt_errclass errclass);
 int *  bt_get_error_counts (int *counts);
-ushort bt_error_status (int *saved_counts);
+btshort bt_error_status (int *saved_counts);
 
 /* macros.c */
-void bt_add_macro_value (AST *assignment, ushort options);
+void bt_add_macro_value (AST *assignment, btshort options);
 void bt_add_macro_text (char * macro, char * text, char * filename, int line);
 void bt_delete_macro (char * macro);
 void bt_delete_all_macros (void);
@@ -348,8 +315,8 @@ void          bt_dump_tex_tree (bt_tex_tree *node, int depth, FILE *stream);
 char *        bt_flatten_tex_tree (bt_tex_tree *top);
 
 /* string_util.c */
-void bt_purify_string (char * string, ushort options);
-void bt_change_case (char transform, char * string, ushort options);
+void bt_purify_string (char * string, btshort options);
+void bt_change_case (char transform, char * string, btshort options);
 
 /* format_name.c */
 bt_name_format * bt_create_name_format (char * parts, boolean abbrev_first);

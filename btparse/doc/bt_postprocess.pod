@@ -5,18 +5,18 @@ bt_postprocess - post-processing of BibTeX strings, values, and entries
 =head1 SYNOPSIS
 
    void bt_postprocess_string (char * s,
-                               ushort options)
+                               btshort options)
 
    char * bt_postprocess_value (AST *   value,
-                                ushort  options, 
+                                btshort  options, 
                                 boolean replace);
 
    char * bt_postprocess_field (AST *   field, 
-                                ushort  options, 
+                                btshort  options, 
                                 boolean replace);
 
    void bt_postprocess_entry (AST *  entry,
-                              ushort options);
+                              btshort options);
 
 =head1 DESCRIPTION
 
@@ -116,7 +116,7 @@ documented in L<btparse/"String processing option macros">.
 =item bt_postprocess_string ()
 
    void bt_postprocess_string (char * s,
-                               ushort options)
+                               btshort options)
 
 Post-processes an individual string, C<s>, which is modified in place.
 The only post-processing option that makes sense on individual strings
@@ -137,7 +137,7 @@ should not contain non-space whitespace characters.)
 =item bt_postprocess_value ()
 
    char * bt_postprocess_value (AST *   value,
-                                ushort  options, 
+                                btshort  options, 
                                 boolean replace);
 
 Post-processes a single field value, which is the head of a list of
@@ -228,7 +228,7 @@ venture.)
 =item bt_postprocess_field ()
 
    char * bt_postprocess_field (AST *   field, 
-                                ushort  options, 
+                                btshort  options, 
                                 boolean replace);
 
 This is little more than a front-end to C<bt_postprocess_value()>; the
@@ -242,7 +242,7 @@ Returns the string returned by C<bt_postprocess_value()>.
 =item bt_postprocess_entry ()
 
    void bt_postprocess_entry (AST *  entry,
-                              ushort options);
+                              btshort options);
 
 Post-processes all values in an entry.  If C<entry> points to the AST
 for a "regular" or "macro definition" entry, then the values are just
