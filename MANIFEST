@@ -83,7 +83,6 @@ btparse/src/traversal.c
 btparse/src/util.c
 btparse/src/attrib.h
 btparse/src/bibtex_ast.h
-btparse/src/bt_config.h
 btparse/src/bt_debug.h
 btparse/src/btparse.h
 btparse/src/error.h
@@ -131,3 +130,4 @@ btparse/tests/data/preamble.bib
 btparse/tests/data/purify.strings
 btparse/tests/data/regular.bib
 btparse/tests/data/simple.bib
+btparse/src/bt_config.h.in

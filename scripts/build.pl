@@ -34,6 +34,15 @@ if (!$make) {
     print " [found]\n"
 }
 
+interpolate("btparse/src/bt_config.h.in",
+            "btparse/src/bt_config.h",
+            PACKAGE => "\"libbtparse\"",
+            FPACKAGE => "\"libbtparse $VERSION\"",
+            VERSION => "\"$VERSION\"",
+           );
+
+
+
 ## Build PODs
 print "\nBuilding manpages...\n";
 my @pods = <btparse/doc/*.pod>;
@@ -91,6 +100,7 @@ for my $prog (keys %programs) {
 copy("btparse/progs/bibparse", "blib/bin");
 copy("btparse/src/libbtparse$LIBEXT", "blib/lib");
 
+
 open DUMMY, ">_dummy_" or die "Can't create timestamp file";
 print DUMMY localtime;
 close DUMMY;
@@ -121,4 +131,18 @@ sub my_link_program {
     $CC->link_executable(exe_file => $program,
                          extra_linker_flags => "-Lbtparse/src -lbtparse ",
                          objects => \@objects);
+}
+
+sub interpolate {
+	my ($from, $to, %config) = @_;
+	
+	print "Generating $to...\n";
+	open FROM, $from or die "Cannot open file [$from] for reading.\n";
+	open TO, ">", $to or die "Cannot open file [$to] for writing.\n";
+	while (<FROM>) {
+		s/\[%\s*(\S+)\s*%\]/$config{$1}/ge;		
+		print TO;
+	}
+	close TO;
+	close FROM;
 }
