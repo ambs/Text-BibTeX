@@ -5,6 +5,7 @@ use strict;
 use Config;
 use File::Copy;
 use Config::AutoConf;
+use Config::AutoConf::Linker;
 use ExtUtils::CBuilder;
 
 my $VERSION = get_version();
@@ -71,9 +72,14 @@ my @objects = map {
                  source => "btparse/src/$_" )
 } @sources;
 
-$CC->link(module_name => 'btparse',
-          objects => \@objects,
-          lib_file => "btparse/src/libbtparse$LIBEXT");
+my ($LD,$CCL) = Config::AutoConf::Linker::detect_library_link_commands($CC);
+
+die "Can't get a suitable way to compile a C library\n" if (!$LD || !$CCL);
+
+$LD->($CC,
+      module_name => 'btparse',
+      objects => \@objects,
+      lib_file => "btparse/src/libbtparse$LIBEXT");
 
 my %programs =
   (
@@ -95,7 +101,7 @@ my %programs =
   );
 
 for my $prog (keys %programs) {
-    my_link_program($CC, "$prog$EXE", @{$programs{$prog}});
+    my_link_program($CC, $CCL, "$prog$EXE", @{$programs{$prog}});
 }
 copy("btparse/progs/bibparse", "blib/bin");
 copy("btparse/src/libbtparse$LIBEXT", "blib/lib");
@@ -121,16 +127,18 @@ sub get_version {
 
 
 sub my_link_program {
-    my ($CC,$program,@sources) = @_;
+    my ($CC,$CCL, $program, @sources) = @_;
 
     print "\nCompiling ${program}...\n";
     my @objects = map {
         $CC->compile(include_dirs => ['btparse/src','btparse/pccts'],
                      source => $_ )
     } @sources;
-    $CC->link_executable(exe_file => $program,
-                         extra_linker_flags => "-Lbtparse/src -lbtparse ",
-                         objects => \@objects);
+
+    $CCL->($CC,
+           exe_file => $program,
+           extra_linker_flags => "-Lbtparse/src -lbtparse ",
+           objects => \@objects);
 }
 
 sub interpolate {
