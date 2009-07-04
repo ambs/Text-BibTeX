@@ -25,7 +25,7 @@ my %conf =
 #   'LIBS'           => '-lbtparse',
    'PREREQ_PM' => {
                    'File::Copy'         => '0',
-                   'Config::AutoConf'   => '0.09',
+                   'Config::AutoConf'   => '0.13',
                    'ExtUtils::CBuilder' => '0.23',
                   },
    'OBJECT'         => 'BibTeX$(OBJ_EXT) ' . join (' ', @support_files),
