@@ -299,8 +299,8 @@ int main (int argc, char *argv[])
    }
    else
    {
-      fprintf (stderr, Usage);
-      fprintf (stderr, Help);
+      fprintf (stderr, "%s", Usage);
+      fprintf (stderr, "%s", Help);
       fprintf (stderr, "Not enough arguments\n");
       exit (1);
    }
