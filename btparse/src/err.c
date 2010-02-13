@@ -25,10 +25,10 @@
 
 extern char * InputFilename;            /* for zzcr_ast call in pccts/ast.c */
 #define zzSET_SIZE 4
-#include "antlr.h"
-#include "ast.h"
+#include "../pccts/antlr.h"
+#include "../pccts/ast.h"
 #include "tokens.h"
-#include "dlgdef.h"
+#include "../pccts/dlgdef.h"
 #include "err.h"
 
 ANTLRChar *zztokens[27]={

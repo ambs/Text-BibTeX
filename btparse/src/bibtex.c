@@ -22,17 +22,17 @@
 extern char * InputFilename;            /* for zzcr_ast call in pccts/ast.c */
 #define GENAST
 
-#include "ast.h"
+#include "../pccts/ast.h"
 
 #define zzSET_SIZE 4
-#include "antlr.h"
+#include "../pccts/antlr.h"
 #include "tokens.h"
-#include "dlgdef.h"
+#include "../pccts/dlgdef.h"
 #include "mode.h"
 #ifndef PURIFY
 #define PURIFY(r,s)
 #endif
-#include "ast.c"
+#include "../pccts/ast.c"
 zzASTgvars
 
 ANTLR_INFO

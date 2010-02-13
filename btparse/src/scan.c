@@ -23,10 +23,10 @@
 #include "my_dmalloc.h"
 
 extern char * InputFilename;            /* for zzcr_ast call in pccts/ast.c */
-#include "antlr.h"
-#include "ast.h"
+#include "../pccts/antlr.h"
+#include "../pccts/ast.h"
 #include "tokens.h"
-#include "dlgdef.h"
+#include "../pccts/dlgdef.h"
 LOOKAHEAD
 void zzerraction()
 {
@@ -612,4 +612,4 @@ static unsigned char *b_class_no[] = {
 
 #define ZZSHIFT(c) (b_class_no[zzauto][1+c])
 #define MAX_MODE 3
-#include "dlgauto.h"
+#include "../pccts/dlgauto.h"
