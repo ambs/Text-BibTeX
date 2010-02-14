@@ -55,8 +55,8 @@ if ($^O =~ /mswin32/i) {
 } else {
     $libdir =~ s/\bbin\b/lib/;
 }
-$builder->add_build_element('btparselib');
-$builder->install_path( 'btparselib' => $libdir );
+$builder->add_build_element('usrlib');
+$builder->install_path( 'usrlib' => $libdir );
 
 $builder->create_build_script;
 
