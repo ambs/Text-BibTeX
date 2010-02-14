@@ -3,13 +3,17 @@ README
 CHANGES
 btool_faq.pod
 typemap
-btcheck
-btsort
-btformat
+inc/MyBuilder.pm
+
+scripts/btcheck
+scripts/btsort
+scripts/btformat
+
+xscode/BibTeX.xs
+xscode/btxs_support.c
+xscode/btxs_support.h
+
 lib/Text/BibTeX.pm
-BibTeX.xs
-btxs_support.h
-btxs_support.c
 lib/Text/BibTeX/File.pm
 lib/Text/BibTeX/Entry.pm
 lib/Text/BibTeX/Value.pm
@@ -19,6 +23,7 @@ lib/Text/BibTeX/NameFormat.pm
 lib/Text/BibTeX/Bib.pm
 lib/Text/BibTeX/BibFormat.pm
 lib/Text/BibTeX/BibSort.pm
+
 t/common.pl
 t/bib.t
 t/macro.t
@@ -32,11 +37,12 @@ t/parse_f.t
 t/parse_s.t
 t/purify.t
 t/split_names
-examples/append_entries
-META.yml                                 Module meta-data (added by MakeMaker)
-scripts/build.pl
 
-## Extra dist.
+examples/append_entries
+
+scripts/build.pl                         ## Do delete sooner or later...
+
+## files included from btparse/src
 btparse/pccts/antlr.h
 btparse/pccts/ast.c
 btparse/pccts/ast.h
@@ -130,4 +136,4 @@ btparse/tests/data/purify.strings
 btparse/tests/data/regular.bib
 btparse/tests/data/simple.bib
 btparse/src/bt_config.h.in
-inc/MyBuilder.pm
+

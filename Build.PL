@@ -19,9 +19,6 @@ my $builder = MyBuilder->new
    license        => 'perl',
    dist_author    => ['Alberto Simões <ambs@cpan.org>',
                       'Greg Ward <gward@python.net>'],
-#   c_source       => ['btparse/src', 'btparse/progs', 'btparse/tests'],
-#   c_source       => ["BiBteX.c", "btxs_support.c"],
-#   xs_files       => {'BibTeX.xs' => 'BibTeX.xs'},
    needs_compiler => 1,
    requires       => {
                       'File::Copy'         => '0',
@@ -50,10 +47,16 @@ my $builder = MyBuilder->new
   );
 
 $builder->notes('btparse_version' => $version);
-$builder->add_build_element('libbtparse');
-$builder->add_build_element('progs');
-#Later... $builder->add_build_element('ctests');
-$builder->add_build_element('mans');
+
+## HACK  HACK  HACK  HACK
+my $libdir = $builder->install_destination("bin");
+if ($^O =~ /mswin32/i) {
+    $libdir = $ENV{WINDIR} || 'c:\\WINDOWS\\'; ## HACK HACK HACK
+} else {
+    $libdir =~ s/\bbin\b/lib/;
+}
+$builder->add_build_element('btparselib');
+$builder->install_path( 'btparselib' => $libdir );
 
 $builder->create_build_script;
 
