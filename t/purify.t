@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use IO::Handle;
-use Test::More tests => 56;
+use Test::More tests => 110;
 
 use vars qw($DEBUG);
 
@@ -30,12 +30,16 @@ $in1 = 'f{\"o}o';
 $in2 = $in1;
 $out = 'clobber me';
 $out = purify_string ($in2);
-ok($in1 eq $in2 && $out eq 'foo');
-ok(length $in1 == 7 && length $in2 == 7 && length $out == 3);
+is($in1, $in2);
+is($out, 'foo');
+
+is(length $in1, 7);
+is(length $in2, 7);
+is(length $out, 3);
 
 # These two *don't* come from BibTeX -- just borderline cases
 # that should be checked
-ok(purify_string ('') eq '');
+is(purify_string (''), '');
 ok(! defined purify_string (undef));
 
 
@@ -131,6 +135,7 @@ while (@tests)
       if $DEBUG;
 
    $purified =~ s/ +$//;                # strip trailing spaces
-   ok($purified eq $exp_purified && $length == $exp_length);
+   is($purified, $exp_purified);
+   is($length, $exp_length);
 }
 
