@@ -1,7 +1,9 @@
+Release 0.40 - 
+----------------
+* fixed Build.PL with correct build_requirements;
 
 Release 0.40_2 - 15 February, 2010
 ----------------------------------
-
 * merged btparse library into Text::BibTeX code. I am sorry for all
   other languages that might be using this library. For them my
   suggestion is that they make Text::BibTeX as a dependency.
