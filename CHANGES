@@ -1,3 +1,18 @@
+
+Release 0.40_2 - 15 February, 2010
+----------------------------------
+
+* merged btparse library into Text::BibTeX code. I am sorry for all
+  other languages that might be using this library. For them my
+  suggestion is that they make Text::BibTeX as a dependency.
+* ported compilation and configuration tools from ExtUtils::MakeMaker
+  to Module::Build.
+* back on track, trying to make Text::BibTeX work and compile easily
+  on main platforms (sorry, for main platforms I assume Linux, Mac OS
+  X and Windows running Strawberry Perl).
+* Thanks to Philip Kime for continuous poke so I work on this!!
+  Created a THANKS file for this purpose.
+
 Release 0.38 - 8 March, 2008
 ----------------------------
 * fixed problem when creating an empty Entry.

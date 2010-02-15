@@ -141,3 +141,4 @@ btparse/tests/testlib.h
 btparse/src/bt_config.h.in
 
 META.yml
+THANKS
