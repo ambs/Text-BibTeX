@@ -12,7 +12,6 @@ BEGIN {
     require "t/common.pl";
 }
 
-setup_stderr;
 
 # ----------------------------------------------------------------------
 # entry creation and parsing from files
@@ -24,10 +23,10 @@ my $regular_file = 'btparse/tests/data/regular.bib';
 # first, from a regular ol' Perl filehandle, with 'new' and 'parse"
 # bundled into one call
 open (BIB, $regular_file) || die "couldn't open $regular_file: $!\n";
-ok($entry = new Text::BibTeX::Entry $regular_file, \*BIB);
-ok(slist_equal
-      ([warnings], 
-       [$regular_file . ', line 5, warning: undefined macro "junk"']));
+
+err_like sub { ok($entry = new Text::BibTeX::Entry $regular_file, \*BIB); },
+  qr!$regular_file, line 5, warning: undefined macro "junk"!;
+
 test_entry ($entry, 'book', 'abook',
             [qw(title editor publisher year)],
             ['A Book', 'John Q. Random', 'Foo Bar \& Sons', '1922']);
@@ -44,10 +43,9 @@ seek (BIB, 0, 0);
 # now the same, separating the 'new' and 'parse' calls -- also a test
 # to see if we can pass undef for filename and get no filename in the 
 # error message (and suffer no other consequences!)
-ok($entry->parse (undef, \*BIB));
-ok(slist_equal
-      ([warnings], 
-       ['line 5, warning: undefined macro "junk"']));
+err_like sub { ok($entry->parse (undef, \*BIB)); },
+  qr!line 5, warning: undefined macro "junk"!;
+
 test_entry ($entry, 'book', 'abook',
             [qw(title editor publisher year)],
             ['A Book', 'John Q. Random', 'Foo Bar \& Sons', '1922']);
@@ -67,8 +65,8 @@ test_entry ($entry, 'string', undef, ['junk'], [', III']);
 
 $fh = new IO::File $regular_file
    or die "couldn't open $regular_file: $!\n";
-ok($entry = new Text::BibTeX::Entry $regular_file, $fh);
-ok(! warnings);
+no_err sub { ok($entry = new Text::BibTeX::Entry $regular_file, $fh); };
+
 test_entry ($entry, 'book', 'abook',
             [qw(title editor publisher year)],
             ['A Book', 'John Q. Random, III', 'Foo Bar \& Sons', '1922']);
@@ -76,8 +74,8 @@ ok(! new Text::BibTeX::Entry $regular_file, $fh);
 $fh->seek (0, 0);
 
 # and again, with unbundled 'parse' call
-ok($entry->parse ($regular_file, $fh));
-ok(! warnings);
+no_err sub { ok($entry->parse ($regular_file, $fh)); };
+
 test_entry ($entry, 'book', 'abook',
             [qw(title editor publisher year)],
             ['A Book', 'John Q. Random, III', 'Foo Bar \& Sons', '1922']);

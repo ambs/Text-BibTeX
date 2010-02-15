@@ -14,7 +14,6 @@ BEGIN {
 
 $DEBUG = 0;
 
-setup_stderr;
 
 # ----------------------------------------------------------------------
 # entry creation and parsing from a Text::BibTeX::File object
@@ -23,10 +22,9 @@ my ($bibfile, $entry);
 my $multiple_file = 'btparse/tests/data/simple.bib';
 
 ok($bibfile = new Text::BibTeX::File $multiple_file);
-ok($entry = new Text::BibTeX::Entry $bibfile);
-ok(slist_equal
-      ([warnings], 
-       [$multiple_file . ', line 5, warning: undefined macro "junk"']));
+err_like sub { ok($entry = new Text::BibTeX::Entry $bibfile); },
+  qr!$multiple_file, line 5, warning: undefined macro "junk"!;
+
 test_entry ($entry, 'book', 'abook',
             [qw(title editor publisher year)],
             ['A Book', 'John Q. Random', 'Foo Bar \& Sons', '1922']);

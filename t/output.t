@@ -14,8 +14,6 @@ BEGIN {
 
 use Fcntl;
 
-setup_stderr;
-
 # ----------------------------------------------------------------------
 # entry output methods
 
@@ -33,11 +31,9 @@ TEXT
 
 my $quote_warning = 'found \" (at brace-depth zero )?in string';
 
-ok($entry = new Text::BibTeX::Entry $text);
-ok($entry->parse_ok);
-@warnings = warnings;
-ok(@warnings == 1 &&
-      $warnings[0] =~ /$quote_warning/);
+err_like sub {
+    ok($entry = new Text::BibTeX::Entry $text);
+    ok($entry->parse_ok); }, qr/$quote_warning/;
 
 $new_text = $entry->print_s;
 
@@ -47,12 +43,11 @@ ok($new_text =~ /^\@article\{homer97,$/m &&
       $new_text =~ /^\s*journal\s*=\s*[{"]Journal[^\}]*Studies[}"],$/m &&
       $new_text =~ /^\s*year\s*=\s*[{"]1997[}"],?$/m);
 
-$new_entry = new Text::BibTeX::Entry $new_text;
+err_like sub {
+    $new_entry = new Text::BibTeX::Entry $new_text;
+    ok($entry->parse_ok);
+}, qr/$quote_warning/;
 
-ok($entry->parse_ok);
-@warnings = warnings;
-ok(@warnings == 1 &&
-      $warnings[0] =~ /$quote_warning/);
 ok($entry->type eq $new_entry->type);
 ok($entry->key eq $new_entry->key);
 ok(slist_equal (scalar $entry->fieldlist, scalar $new_entry->fieldlist));

@@ -22,6 +22,7 @@ my $builder = MyBuilder->new
    needs_compiler => 1,
    requires       => {
                       'File::Copy'         => '0',
+                      'Capture::Tiny'      => '0.06',
                       'Config::AutoConf'   => '0.14',
                       'ExtUtils::CBuilder' => '0.27',
                      },

@@ -16,8 +16,6 @@ BEGIN {
 
 $DEBUG = 1;
 
-setup_stderr;
-
 # Basic test of the BibEntry classes (really, its base classes
 # BibFormat and BibSort)
 

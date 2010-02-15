@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use IO::Handle;
-use Test::More tests => 43;
+use Test::More tests => 44;
 
 use vars qw($DEBUG);
 
@@ -12,7 +12,6 @@ BEGIN {
     require "t/common.pl";
 }
 
-setup_stderr;
 
 # ----------------------------------------------------------------------
 # entry creation and parsing from a string
@@ -28,11 +27,10 @@ $text = <<'TEXT';
 TEXT
 
 ok($entry = new Text::BibTeX::Entry);
-ok($entry->parse_s ($text));
-@warnings = warnings;
-ok(@warnings == 2 && 
-      $warnings[0] eq 'line 3, warning: undefined macro "foo"' &&
-      $warnings[1] eq 'line 4, warning: undefined macro "foo"');
+
+err_like
+  sub { ok($entry->parse_s ($text)); },
+  qr/line 3, warning: undefined macro "foo".*line 4, warning: undefined macro "foo"/s;
 
 # First, low-level tests: make sure the data structure itself looks right
 ok($entry->{'status'});
@@ -51,11 +49,10 @@ test_entry ($entry, 'foo', 'mykey',
             ['hello there', 'fancy that!1991', '']);
 
 # Repeat with "bundled" form (new and parse_s in one go)
-ok($entry = new Text::BibTeX::Entry $text);
-@warnings = warnings;
-ok(@warnings == 2 && 
-      $warnings[0] eq 'line 3, warning: undefined macro "foo"' &&
-      $warnings[1] eq 'line 4, warning: undefined macro "foo"');
+
+err_like
+  sub { ok($entry = new Text::BibTeX::Entry $text); },
+  qr/line 3, warning: undefined macro "foo".*line 4, warning: undefined macro "foo"/s;
 
 # Repeat tests of entry contents
 test_entry ($entry, 'foo', 'mykey',
@@ -86,7 +83,8 @@ $text = <<'TEXT';
 @foo{key, title = "{System}- und {Signaltheorie}"}
 TEXT
 
-$entry = new Text::BibTeX::Entry $text;
-ok(! warnings && $entry->parse_ok);
+no_err sub { $entry = new Text::BibTeX::Entry $text; };
+
+ok($entry->parse_ok);
 test_entry ($entry, 'foo', 'key', 
             ['title'], ['{System}- und {Signaltheorie}']);

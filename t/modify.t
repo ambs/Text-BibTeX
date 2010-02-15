@@ -3,14 +3,12 @@ use strict;
 use warnings;
 
 use IO::Handle;
-use Test::More tests => 22;
+use Test::More tests => 29;
 
 BEGIN {
     use_ok('Text::BibTeX');
     require "t/common.pl";
 }
-
-setup_stderr;
 
 # ----------------------------------------------------------------------
 # entry modification methods
@@ -42,42 +40,48 @@ $names[0] = $names[0]->{'last'}[0] . ', ' . $names[0]->{'first'}[0];
 $names[1] = $names[1]->{'last'}[0] . ', ' . $names[1]->{'first'}[0];
 $entry->set ('author', join (' and ', @names));
 
-my $author = $entry->get ('author');
-ok($author eq 'Simpson, Homer and Flanders, Ned');
-ok(! warnings);
+my $author;
+no_err( sub {
+            $author = $entry->get ('author');
+            is($author, 'Simpson, Homer and Flanders, Ned');
+        });
 
-$entry->set (author => 'Foo Bar {and} Co.', 
-             title  => 'This is a new title');
-ok($entry->get ('author') eq 'Foo Bar {and} Co.');
-ok($entry->get ('title') eq 'This is a new title');
-ok(slist_equal ([$entry->get ('author', 'title')],
-                   ['Foo Bar {and} Co.', 'This is a new title']));
-ok(! warnings);
+no_err(
+       sub {
+           $entry->set (author => 'Foo Bar {and} Co.',
+                        title  => 'This is a new title');
+           ok($entry->get ('author') eq 'Foo Bar {and} Co.');
+           ok($entry->get ('title') eq 'This is a new title');
+           ok(slist_equal ([$entry->get ('author', 'title')],
+                           ['Foo Bar {and} Co.', 'This is a new title']));
+       }
+      );
 
 ok(slist_equal ([$entry->fieldlist], [qw(author title journal year)]));
 ok($entry->exists ('journal'));
 
 $entry->delete ('journal');
-@fieldlist = $entry->fieldlist;
-ok(! $entry->exists ('journal') &&
-      slist_equal (\@fieldlist, [qw(author title year)]));
-ok(! warnings);
+no_err sub {
+    @fieldlist = $entry->fieldlist;
+    ok(! $entry->exists ('journal'));
+    ok(slist_equal (\@fieldlist, [qw(author title year)]));
+};
 
-$entry->set_fieldlist ([qw(author title journal year)]);
-@warnings = warnings;
-ok(@warnings == 1 && 
-      $warnings[0] =~ /implicitly adding undefined field \"journal\"/i);
+err_like sub { $entry->set_fieldlist ([qw(author title journal year)]); },
+  qr/implicitly adding undefined field \"journal\"/i;
 
-@fieldlist = $entry->fieldlist;
-ok($entry->exists ('journal') &&
-      ! defined $entry->get ('journal') &&
-      slist_equal (\@fieldlist, [qw(author title journal year)]));
-ok(! warnings);
+no_err sub {
+    @fieldlist = $entry->fieldlist;
+    ok($entry->exists ('journal'));
+    ok(! defined $entry->get ('journal'));
+    ok(slist_equal (\@fieldlist, [qw(author title journal year)]));
+};
 
 $entry->delete ('journal', 'author', 'year');
-@fieldlist = $entry->fieldlist;
-ok(! $entry->exists ('journal') &&
-      ! $entry->exists ('author') &&
-      ! $entry->exists ('year') &&
-      @fieldlist == 1 && $fieldlist[0] eq 'title');
-ok(! warnings);
+no_err sub { @fieldlist = $entry->fieldlist; };
+ok(! $entry->exists ('journal'));
+ok(! $entry->exists ('author'));
+ok(! $entry->exists ('year'));
+is(scalar @fieldlist, 1);
+is($fieldlist[0] ,'title');
+

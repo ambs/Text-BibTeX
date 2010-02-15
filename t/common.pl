@@ -1,40 +1,16 @@
+use Capture::Tiny 'capture';
 use Carp;
 
-=pod
-my $err_file = 't/errors';
-
-END { unlink $err_file }
-
-
-sub setup_stderr {
-    open (SAVE_STDERR, ">&STDERR")
-      || die "couldn't save stderr: $!\n";
-    open (STDERR, ">$err_file")
-      || die "couldn't redirect stderr to $err_file: $!\n";
-    STDERR->autoflush(1);
-
-    $SIG{'__DIE__'} = sub {
-        open (STDERR, '>&=' . fileno (SAVE_STDERR));
-        die @_;
-    };
+sub no_err {
+    err_like( $_[0], qr/^$/);
 }
 
-sub warnings {
-    my @err;
-    open (ERR, $err_file) || die "couldn't open $err_file: $!\n";
-    chomp (@err = <ERR>);
-    close (ERR);
-    open (STDERR, ">$err_file")
-      || die "couldn't redirect stderr to $err_file: $!\n";
-    STDERR->autoflush (1);
-    if ($DEBUG) {
-        printf "caught %d messages on stderr:\n", scalar @err;
-        print join ("\n", @err) . "\n";
-    }
-    @err;
-}
+sub err_like {
+    my ($stdout, $stderr);
 
-=cut
+    ($stdout, $stderr) = capture \&{$_[0]};
+    like($stderr, $_[1]);
+}
 
 sub list_equal {
     my ($eq, $a, $b) = @_;
@@ -55,14 +31,6 @@ sub slist_equal {
                       (! defined $a && ! defined $b);
                 }, $a, $b);
 }
-
-# my $i = 1;
-# sub test {
-#     my ($result) = @_;
-
-#     ++$i;
-#     printf "%s %d\n", ($result ? "ok" : "not ok"), $i;
-# }
 
 sub test_entry {
     my ($entry, $type, $key, $fields, $values) = @_;
