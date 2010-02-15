@@ -1,13 +1,16 @@
+# -*- cperl -*-
 use strict;
-use vars qw($DEBUG);
-BEGIN { require "t/common.pl"; }
+use warnings;
 
-my $loaded;
-BEGIN { $| = 1; print "1..12\n"; }
-END {print "not ok 1\n" unless $loaded;}
-use Text::BibTeX;
-$loaded = 1;
-print "ok 1\n";
+use IO::Handle;
+use Test::More tests => 12;
+
+use vars qw($DEBUG);
+
+BEGIN {
+    use_ok('Text::BibTeX');
+    require "t/common.pl";
+}
 
 $DEBUG = 0;
 
@@ -46,5 +49,5 @@ while (@names)
       print join ("\n  ", @$actual_split) . "\n";
    }
 
-   test (slist_equal ($should_split, $actual_split));
+   ok(slist_equal ($should_split, $actual_split));
 }

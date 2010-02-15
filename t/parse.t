@@ -1,14 +1,16 @@
+# -*- cperl -*-
 use strict;
-use vars ('$DEBUG');
-use IO::Handle;
-BEGIN { require "t/common.pl"; }
+use warnings;
 
-my $loaded;
-BEGIN { $| = 1; print "1..26\n"; }
-END {print "not ok 1\n" unless $loaded;}
-use Text::BibTeX;
-$loaded = 1;
-print "ok 1\n";
+use IO::Handle;
+use Test::More tests => 32;
+
+use vars qw($DEBUG);
+
+BEGIN {
+    use_ok('Text::BibTeX');
+    require "t/common.pl";
+}
 
 $DEBUG = 0;
 
@@ -20,31 +22,31 @@ setup_stderr;
 my ($bibfile, $entry);
 my $multiple_file = 'btparse/tests/data/simple.bib';
 
-test ($bibfile = new Text::BibTeX::File $multiple_file);
-test ($entry = new Text::BibTeX::Entry $bibfile);
-test (slist_equal
+ok($bibfile = new Text::BibTeX::File $multiple_file);
+ok($entry = new Text::BibTeX::Entry $bibfile);
+ok(slist_equal
       ([warnings], 
        [$multiple_file . ', line 5, warning: undefined macro "junk"']));
 test_entry ($entry, 'book', 'abook',
             [qw(title editor publisher year)],
             ['A Book', 'John Q. Random', 'Foo Bar \& Sons', '1922']);
 
-test ($entry->read ($bibfile));
+ok($entry->read ($bibfile));
 test_entry ($entry, 'string', undef,
             ['macro', 'foo'],
             ['macro  text ', 'blah blah   ding dong ']);
 
 
-test ($entry->read ($bibfile));
-test ($entry->parse_ok &&
+ok($entry->read ($bibfile));
+ok($entry->parse_ok &&
       $entry->type eq 'comment' &&
       $entry->metatype == BTE_COMMENT &&
       $entry->value eq 'this is a comment entry, anything at all can go in it (as long as parentheses are balanced), even {braces}');
 
-test ($entry->read ($bibfile));
-test ($entry->parse_ok && 
+ok($entry->read ($bibfile));
+ok($entry->parse_ok && 
       $entry->type eq 'preamble' &&
       $entry->metatype == BTE_PREAMBLE &&
       $entry->value eq 'This is a preamble---the concatenation of several strings');
 
-test (! $entry->read ($bibfile));
+ok(! $entry->read ($bibfile));

@@ -1,17 +1,18 @@
+# -*- cperl -*-
 use strict;
+use warnings;
+
 use vars qw($DEBUG);
 use IO::Handle;
 use POSIX qw(tmpnam);
 
-BEGIN { require "t/common.pl"; }
+use Test::More tests => 42;
 
-my $loaded;
-BEGIN { $| = 1; print "1..21\n"; }
-END {print "not ok 1\n" unless $loaded;}
-use Text::BibTeX;
-use Text::BibTeX::Bib;
-$loaded = 1;
-print "ok 1\n";
+BEGIN {
+    use_ok('Text::BibTeX');
+    use_ok('Text::BibTeX::Bib');
+    require "t/common.pl";
+}
 
 $DEBUG = 1;
 
@@ -41,9 +42,9 @@ ENTRIES
 # Entry objects blessed into a structured entry class, so start
 # by creating the file to parse.
 my $fn = tmpnam . ".bib";
-open (F, ">$fn") || die "couldn't create $fn: $!\n";
+open F, '>', $fn || die "couldn't create $fn: $!\n";
 print F $entries;
-close (F);
+close F;
 
 # Open it as a Text::BibTeX::File object, set the structure class (which
 # controls the structured entry class of all entries parsed from that
@@ -67,82 +68,91 @@ unlink ($fn) || warn "couldn't delete temporary file $fn: $!\n";
 # Let's make sure these are respected.
 
 my @blocks = $entry1->format;
-test (@blocks == 4 &&                   # 4 blocks:
-      defined $blocks[0] &&             # author
-      defined $blocks[1] &&             # title
-      defined $blocks[2] &&             # journal
-      !defined $blocks[3]);             # note (there is no note!)
-test (ref $blocks[0] eq 'ARRAY' &&      # 1 sentence, 1 clauses (2 authors)
-      @{$blocks[0]} == 1);
-test ($blocks[0][0] eq "Homer~J. Simpson and Andr{\\'e} de~la Poobah");
-test (ref $blocks[1] eq 'ARRAY' &&      # 1 sentence, 1 clause for title
-      @{$blocks[1]} == 1 &&
-      $blocks[1][0] eq "Territorial imperatives in modern suburbia");
-test (ref $blocks[2] eq 'ARRAY' &&      # 1 sentence for journal
-      @{$blocks[2]} == 1);
-test (ref $blocks[2][0] eq 'ARRAY' &&   # 3 clauses in that 1 sentence
-      @{$blocks[2][0]} == 3);
-test ($blocks[2][0][0] eq 'Journal of Suburban Studies' &&
-      $blocks[2][0][1] eq '4:125--130' &&
-      $blocks[2][0][2] eq '1997');
+is(scalar @blocks, 4);                # 4 blocks:
+ok( defined $blocks[0] );             # author
+ok( defined $blocks[1] );             # title
+ok( defined $blocks[2] );             # journal
+ok(!defined $blocks[3] );             # note (there is no note!)
+
+is(ref $blocks[0], 'ARRAY');      # 1 sentence, 1 clauses (2 authors)
+is(scalar  @{$blocks[0]}, 1);
+
+is($blocks[0][0], "Homer~J. Simpson and Andr{\\'e} de~la Poobah");
+is(ref $blocks[1], 'ARRAY');      # 1 sentence, 1 clause for title
+is(scalar @{$blocks[1]}, 1);
+is($blocks[1][0], "Territorial imperatives in modern suburbia");
+
+is(ref $blocks[2], 'ARRAY');      # 1 sentence for journal
+is(scalar @{$blocks[2]}, 1);
+
+is(ref $blocks[2][0] , 'ARRAY');   # 3 clauses in that 1 sentence
+is(scalar @{$blocks[2][0]}, 3);
+
+is($blocks[2][0][0] , 'Journal of Suburban Studies');
+is($blocks[2][0][1] , '4:125--130');
+is($blocks[2][0][2] , '1997');
 
 # Tweak options, one at a time, testing the result of each tweak
 $structure->set_options (nameorder => 'last');
 @blocks = $entry1->format;
-test ($blocks[0][0] eq "Simpson, Homer~J. and de~la Poobah, Andr{\\'e}");
+is($blocks[0][0], "Simpson, Homer~J. and de~la Poobah, Andr{\\'e}");
 
 $structure->set_options (namestyle => 'abbrev',
                          nameorder => 'first');
 @blocks = $entry1->format;
-test ($blocks[0][0] eq "H.~J. Simpson and A. de~la Poobah");
+is($blocks[0][0] , "H.~J. Simpson and A. de~la Poobah");
 
 $structure->set_options (nameorder => 'last');
 @blocks = $entry1->format;
-test ($blocks[0][0] eq "Simpson, H.~J. and de~la Poobah, A.");
+is($blocks[0][0] , "Simpson, H.~J. and de~la Poobah, A.");
 
 $structure->set_options (namestyle => 'nopunct');
 @blocks = $entry1->format;
-test ($blocks[0][0] eq "Simpson, H~J and de~la Poobah, A");
+is($blocks[0][0] , "Simpson, H~J and de~la Poobah, A");
 
 $structure->set_options (namestyle => 'nospace');
 @blocks = $entry1->format;
-test ($blocks[0][0] eq "Simpson, HJ and de~la Poobah, A");
+is($blocks[0][0] , "Simpson, HJ and de~la Poobah, A");
 
 $structure->set_options (atitle_lower => 0);
 @blocks = $entry1->format;
-test ($blocks[1][0] eq "Territorial Imperatives in Modern Suburbia");
+is($blocks[1][0] , "Territorial Imperatives in Modern Suburbia");
 
 # Now some formatting tests on the second entry (a book).  Note that the
 # two entries share a structure object, so the last-set options apply
 # here!
 
 @blocks = $entry2->format;
-test (@blocks == 4 &&                   # again, 4 blocks:
-      defined $blocks[0] &&             # name (authors or editors)
-      defined $blocks[1] &&             # title (and volume no.)
-      defined $blocks[2] &&             # no/series/publisher/date
-      ! defined $blocks[3]);            # note (again none)
-test ($blocks[0][0] eq "Simpson, G");
-test ($blocks[1][0][0] eq "How to Found a Big Department Store" &&
-      ! $blocks[1][0][1]);              # no volume number
-test (! $blocks[2][0] &&                # no number/series
-      ! $blocks[2][1][0] &&             # no publisher
-      ! $blocks[2][1][1] &&             # no publisher address
-      ! $blocks[2][1][2] &&             # no edition
-      $blocks[2][1][3] eq '1998');      # but we do at least have a date!
+is(scalar @blocks, 4);               # again, 4 blocks:
+ok(defined $blocks[0]);              # name (authors or editors)
+ok(defined $blocks[1]);              # title (and volume no.)
+ok(defined $blocks[2]);              # no/series/publisher/date
+ok(! defined $blocks[3]);            # note (again none)
+
+is($blocks[0][0], "Simpson, G");
+
+is($blocks[1][0][0], "How to Found a Big Department Store");
+ok(! $blocks[1][0][1]);              # no volume number
+
+ok(! $blocks[2][0]);                 # no number/series
+ok(! $blocks[2][1][0]);              # no publisher
+ok(! $blocks[2][1][1]);              # no publisher address
+ok(! $blocks[2][1][2]);              # no edition
+
+is($blocks[2][1][3], '1998');        # but we do at least have a date!
 
 # fiddle a bit more with name-generation options just to make sure
 # everything's in working order
 $structure->set_options (namestyle => 'full',
                          nameorder => 'first');
 @blocks = $entry2->format;
-test ($blocks[0][0] eq "George Simpson");
+is($blocks[0][0], "George Simpson");
 
 # Now test sorting: by default, the book (G. Simpson 1998) should come
 # before the article (H. J. Simpson 1997) because the default sort
 # order is (name, year).
-test ($entry2->sort_key lt $entry1->sort_key);
+ok($entry2->sort_key lt $entry1->sort_key);
 
 # But if we change to sort by year, the article comes first
 $structure->set_options (sortby => 'year');
-test ($entry1->sort_key lt $entry2->sort_key);
+ok($entry1->sort_key lt $entry2->sort_key);

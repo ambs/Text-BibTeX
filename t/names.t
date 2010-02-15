@@ -1,8 +1,10 @@
 # -*- cperl -*-
 use strict;
+use warnings;
 use vars qw($DEBUG);
 use IO::Handle;
 use Test::More tests => 51;
+
 BEGIN {
     use_ok("Text::BibTeX");
     require "t/common.pl";
@@ -19,17 +21,15 @@ sub test_name {
     my $i;
 
     for $i (0 .. $#partnames)  {
-        if (defined $parts->[$i])
-          {
-              $ok &= ($name->part ($partnames[$i]))
-                && slist_equal ($parts->[$i], [$name->part ($partnames[$i])]);
-          }
-        else
-          {
-              $ok &= ! $name->part ($partnames[$i]);
-          }
+        if (defined $parts->[$i]) {
+            $ok &= ($name->part ($partnames[$i]))
+              && slist_equal ($parts->[$i], [$name->part ($partnames[$i])]);
+        }
+        else {
+            $ok &= ! $name->part ($partnames[$i]);
+        }
     }
-    ok (keys %$name <= 4 && $ok);
+    ok(keys %$name <= 4 && $ok);
 }
 
 

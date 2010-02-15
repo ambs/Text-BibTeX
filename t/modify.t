@@ -1,13 +1,14 @@
+# -*- cperl -*-
 use strict;
-use IO::Handle;
-BEGIN { require "t/common.pl"; }
+use warnings;
 
-my $loaded;
-BEGIN { $| = 1; print "1..22\n"; }
-END {print "not ok 1\n" unless $loaded;}
-use Text::BibTeX;
-$loaded = 1;
-print "ok 1\n";
+use IO::Handle;
+use Test::More tests => 22;
+
+BEGIN {
+    use_ok('Text::BibTeX');
+    require "t/common.pl";
+}
 
 setup_stderr;
 
@@ -25,16 +26,16 @@ $text = <<'TEXT';
 }
 TEXT
 
-test ($entry = new Text::BibTeX::Entry);
-test ($entry->parse_s ($text));
+ok($entry = new Text::BibTeX::Entry);
+ok($entry->parse_s ($text));
 
-test ($entry->type eq 'article');
+ok($entry->type eq 'article');
 $entry->set_type ('book');
-test ($entry->type eq 'book');
+ok($entry->type eq 'book');
 
-test ($entry->key eq 'homer97');
+ok($entry->key eq 'homer97');
 $entry->set_key ($entry->key . 'a');
-test ($entry->key eq 'homer97a');
+ok($entry->key eq 'homer97a');
 
 my @names = $entry->names ('author');
 $names[0] = $names[0]->{'last'}[0] . ', ' . $names[0]->{'first'}[0];
@@ -42,41 +43,41 @@ $names[1] = $names[1]->{'last'}[0] . ', ' . $names[1]->{'first'}[0];
 $entry->set ('author', join (' and ', @names));
 
 my $author = $entry->get ('author');
-test ($author eq 'Simpson, Homer and Flanders, Ned');
-test (! warnings);
+ok($author eq 'Simpson, Homer and Flanders, Ned');
+ok(! warnings);
 
 $entry->set (author => 'Foo Bar {and} Co.', 
              title  => 'This is a new title');
-test ($entry->get ('author') eq 'Foo Bar {and} Co.');
-test ($entry->get ('title') eq 'This is a new title');
-test (slist_equal ([$entry->get ('author', 'title')],
+ok($entry->get ('author') eq 'Foo Bar {and} Co.');
+ok($entry->get ('title') eq 'This is a new title');
+ok(slist_equal ([$entry->get ('author', 'title')],
                    ['Foo Bar {and} Co.', 'This is a new title']));
-test (! warnings);
+ok(! warnings);
 
-test (slist_equal ([$entry->fieldlist], [qw(author title journal year)]));
-test ($entry->exists ('journal'));
+ok(slist_equal ([$entry->fieldlist], [qw(author title journal year)]));
+ok($entry->exists ('journal'));
 
 $entry->delete ('journal');
 @fieldlist = $entry->fieldlist;
-test (! $entry->exists ('journal') &&
+ok(! $entry->exists ('journal') &&
       slist_equal (\@fieldlist, [qw(author title year)]));
-test (! warnings);
+ok(! warnings);
 
 $entry->set_fieldlist ([qw(author title journal year)]);
 @warnings = warnings;
-test (@warnings == 1 && 
+ok(@warnings == 1 && 
       $warnings[0] =~ /implicitly adding undefined field \"journal\"/i);
 
 @fieldlist = $entry->fieldlist;
-test ($entry->exists ('journal') &&
+ok($entry->exists ('journal') &&
       ! defined $entry->get ('journal') &&
       slist_equal (\@fieldlist, [qw(author title journal year)]));
-test (! warnings);
+ok(! warnings);
 
 $entry->delete ('journal', 'author', 'year');
 @fieldlist = $entry->fieldlist;
-test (! $entry->exists ('journal') &&
+ok(! $entry->exists ('journal') &&
       ! $entry->exists ('author') &&
       ! $entry->exists ('year') &&
       @fieldlist == 1 && $fieldlist[0] eq 'title');
-test (! warnings);
+ok(! warnings);

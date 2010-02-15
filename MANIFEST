@@ -4,6 +4,7 @@ CHANGES
 btool_faq.pod
 typemap
 inc/MyBuilder.pm
+Build.PL
 
 scripts/btcheck
 scripts/btsort
@@ -135,5 +136,8 @@ btparse/tests/data/preamble.bib
 btparse/tests/data/purify.strings
 btparse/tests/data/regular.bib
 btparse/tests/data/simple.bib
+btparse/tests/testlib.h
+
 btparse/src/bt_config.h.in
 
+META.yml
