@@ -47,8 +47,6 @@ t/zz.cleanup.t
 
 examples/append_entries
 
-scripts/build.pl                         ## Do delete sooner or later...
-
 ## files included from btparse/src
 btparse/pccts/antlr.h
 btparse/pccts/ast.c
