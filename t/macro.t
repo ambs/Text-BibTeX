@@ -2,23 +2,23 @@
 use strict;
 use warnings;
 
+use Capture::Tiny 'capture';
 use Test::More tests => 61;
 
 use vars ('$DEBUG');
-use IO::Handle;
 
 BEGIN {
     use_ok('Text::BibTeX', qw(:macrosubs));
     require "t/common.pl";
 }
-
 $DEBUG = 1;
 
-setup_stderr;
+# setup_stderr;
 
 # ----------------------------------------------------------------------
 # test macro parsing and expansion
 
+my ($out, $err);
 my ($macrodef, $regular, $entry, @warnings);
 
 $macrodef = <<'TEXT';
@@ -43,15 +43,20 @@ TEXT
 # defined aren't defined
 
 print "testing that none of our macros are defined yet\n" if $DEBUG;
+
 is(macro_length('foo') , 0 );
 is(macro_length('sons'), 0 );
-is(macro_length('bar'),  0 );
+is(macro_length('bar') , 0 );
 
-ok(! defined macro_text ('foo') );
-ok(! defined macro_text ('sons'));
-ok(! defined macro_text ('bar') );
+($out, $err) = capture { ok(! defined macro_text('foo') ); };
+ok(! defined macro_text('sons'));
+ok(! defined macro_text('bar') );
 
-@warnings = warnings;
+print "--$out--$err--\n";
+
+exit;
+
+@warnings = warnings();
 
 is(scalar(@warnings), 3);
 like($warnings[0] , qr/undefined macro "foo"/);
@@ -65,7 +70,7 @@ print "parsing macro-definition entry to define 3 macros\n" if $DEBUG;
 $entry = new Text::BibTeX::Entry;
 $entry->parse_s($macrodef);
 
-ok(!warnings);
+ok(!warnings());
 
 test_entry($entry, 'string', undef,
            [qw(foo sons bar)],
@@ -84,7 +89,7 @@ is(macro_text('foo') , '  The Foo   Journal');
 is(macro_text('sons'), ' \& Sons');
 is(macro_text('bar') , 'Bar    \& Sons');
 
-ok(! warnings);
+ok(! warnings());
 
 # Parse the regular entry -- there should be no warnings, because
 # we've just defined the 'foo' and 'bar' macros on which it depends
@@ -96,7 +101,7 @@ ok(! warnings);
 print "parsing the regular entry which uses those 2 of those macros\n"
    if $DEBUG;
 $entry->parse_s ($regular);
-ok(! warnings);
+ok(! warnings());
 test_entry ($entry, 'article', 'my_article',
             [qw(author journal publisher)],
             ['Us and Them', 'The Foo Journal', 'FuBar \& Sons']);
@@ -109,12 +114,12 @@ delete_macro ('bar');
 is(macro_length ('bar'), 0);
 ok(! defined macro_text ('bar'));
 
-@warnings = warnings;
+@warnings = warnings();
 is(scalar @warnings, 1);
 like($warnings[0], qr/undefined macro "bar"/);
 
 add_macro_text ('foo', 'The Journal of Fooology');
-@warnings = warnings;
+@warnings = warnings();
 is(scalar @warnings, 1);
 like($warnings[0], qr/overriding existing definition of macro "foo"/);
 
@@ -123,7 +128,7 @@ like($warnings[0], qr/overriding existing definition of macro "foo"/);
 # a different value
 
 $entry->parse_s ($regular);
-@warnings = warnings;
+@warnings = warnings();
 is(scalar @warnings, 1);
 like($warnings[0], qr/undefined macro "bar"/);
 test_entry ($entry, 'article', 'my_article',

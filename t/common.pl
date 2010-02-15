@@ -1,5 +1,6 @@
 use Carp;
 
+=pod
 my $err_file = 't/errors';
 
 END { unlink $err_file }
@@ -32,6 +33,8 @@ sub warnings {
     }
     @err;
 }
+
+=cut
 
 sub list_equal {
     my ($eq, $a, $b) = @_;
