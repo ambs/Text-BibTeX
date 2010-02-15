@@ -9,7 +9,11 @@ sub err_like {
     my ($stdout, $stderr);
 
     ($stdout, $stderr) = capture \&{$_[0]};
-    like($stderr, $_[1]);
+
+  SKIP: {
+        skip "STDERR not available under Win32", 1 if $^O =~ /mswin32/i;
+        like($stderr, $_[1]);
+    }
 }
 
 sub list_equal {
