@@ -258,4 +258,17 @@ sub ACTION_create_library {
                              flatten => 1 );
 }
 
+sub ACTION_test {
+    my $self = shift;
+
+    if ($^O =~ /darwin/i) {
+        $ENV{DYLD_LIBRARY_PATH} = catdir($self->blib,"usrlib").":$ENV{DYLD_LIBRARY_PATH}";
+    }
+    if ($^O =~ /linux/i) {
+        $ENV{LD_LIBRARY_PATH} = catdir($self->blib,"usrlib").":$ENV{LD_LIBRARY_PATH}";
+    }
+
+    $self->SUPER::ACTION_test
+}
+
 1;
