@@ -24,7 +24,7 @@ use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $AUTOLOAD);
 require Exporter;
 require DynaLoader;
 
-our $VERSION='0.40_3';
+our $VERSION='0.40';
 
 @ISA = qw(Exporter DynaLoader);
 %EXPORT_TAGS = (nodetypes => [qw(BTAST_STRING BTAST_MACRO BTAST_NUMBER)],
