@@ -1,3 +1,6 @@
+
+* tested under Solaris and FreeBSD.
+
 Release 0.40 - 7 March, 2010
 ----------------------------
 * this release is very similar to 0.40_3, but now indexable by cpan.
