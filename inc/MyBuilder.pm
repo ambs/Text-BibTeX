@@ -264,7 +264,7 @@ sub ACTION_test {
     if ($^O =~ /darwin/i) {
         $ENV{DYLD_LIBRARY_PATH} = catdir($self->blib,"usrlib").":$ENV{DYLD_LIBRARY_PATH}";
     }
-    if ($^O =~ /(solaris|linux)/i) {
+    if ($^O =~ /(freebsd|solaris|linux)/i) {
         $ENV{LD_LIBRARY_PATH} = catdir($self->blib,"usrlib").":$ENV{LD_LIBRARY_PATH}";
     }
 
