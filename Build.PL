@@ -48,8 +48,6 @@ my $builder = MyBuilder->new
                      ],
   );
 
-$builder->notes('btparse_version' => $version);
-
 ## HACK  HACK  HACK  HACK
 my $libdir = $builder->install_destination("bin");
 if ($^O =~ /mswin32/i) {
@@ -57,6 +55,8 @@ if ($^O =~ /mswin32/i) {
 } else {
     $libdir =~ s/\bbin\b/lib/;
 }
+$builder->notes('btparse_version' => $version);
+$builder->notes('lib_path' => $libdir);
 $builder->add_build_element('usrlib');
 $builder->install_path( 'usrlib' => $libdir );
 

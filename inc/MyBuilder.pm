@@ -244,9 +244,12 @@ sub ACTION_create_library {
     my ($LD,$CCL) = Config::AutoConf::Linker::detect_library_link_commands($cbuilder);
     die "Can't get a suitable way to compile a C library\n" if (!$LD || !$CCL);
 
+    my $libpath = $self->notes('lib_path');
+    $libpath = catfile($libpath, "libbtparse$LIBEXT");
     my $libfile = "btparse/src/libbtparse$LIBEXT";
     $LD->($cbuilder,
           module_name => 'btparse',
+          ($^O =~ /darwin/)?(extra_linker_flags => "-install_name $libpath"):(),
           objects => \@objects,
           lib_file => $libfile);
 

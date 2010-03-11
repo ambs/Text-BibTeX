@@ -141,7 +141,7 @@ int main (int argc, char **argv)
    
    if (argc != 2) 
    {
-      fprintf (stderr, Usage);
+      fprintf (stderr, "%s", Usage);
       fprintf (stderr, "Wrong number of arguments\n");
       exit (1);
    }
