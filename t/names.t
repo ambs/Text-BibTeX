@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use vars qw($DEBUG);
 use IO::Handle;
-use Test::More tests => 51;
+use Test::More tests => 56;
 
 BEGIN {
     use_ok("Text::BibTeX");
@@ -36,8 +36,8 @@ sub test_name {
 # ----------------------------------------------------------------------
 # processing of author names
 
-my (@names, %names, @orig_namelist, $namelist, @namelist);
-my ($text, $entry);
+my (@names, @pnames, %names, @orig_namelist, $namelist, @namelist);
+my ($text, $entry, $pentry);
 
 # first just a big ol' list of names, not attached to any entry
 %names =
@@ -88,6 +88,22 @@ $text = <<'TEXT';
   year = 1997
 }
 TEXT
+
+my $protected_test = <<'PROT';
+@article{prot1,
+  author = {{U.S. Department of Health and Human Services, National Institute of Mental Health, National Heart, Lung and Blood Institute}}
+}
+PROT
+
+ok ($pentry = new Text::BibTeX::Entry $protected_test);
+my $pauthor = $pentry->get ('author');
+is ($pauthor, '{U.S. Department of Health and Human Services, National Institute of Mental Health, National Heart, Lung and Blood Institute}');
+@pnames = $pentry->split ('author');
+ok (@pnames == 1 && $pnames[0] eq '{U.S. Department of Health and Human Services, National Institute of Mental Health, National Heart, Lung and Blood Institute}');
+@pnames = $pentry->names ('author');
+ok (@pnames == 1);
+test_name ($pnames[0], [undef, undef, ['{U.S. Department of Health and Human Services, National Institute of Mental Health, National Heart, Lung and Blood Institute}'], undef]);
+
 
 ok ($entry = new Text::BibTeX::Entry $text);
 my $author = $entry->get ('author');

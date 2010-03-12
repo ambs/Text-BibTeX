@@ -7,7 +7,6 @@ use strict;
 use Config;
 use Carp;
 
-use Config::AutoConf;
 use Config::AutoConf::Linker;
 
 use ExtUtils::ParseXS;
@@ -142,35 +141,43 @@ sub ACTION_create_binaries {
 
     print STDERR "\n** Creating binaries (dumpnames$EXEEXT, biblex$EXEEXT, bibparse$EXEEXT)\n";
 
-    # NO INST?
-    ## FIXME - uptodate
-    $CCL->($cbuilder,
-           exe_file => "btparse/progs/dumpnames$EXEEXT",
-           extra_linker_flags => '-Lbtparse/src -lbtparse ',
-           objects => [ "btparse/progs/dumpnames.o" ]);
+    my @toinstall;
+    my $exe_file = catfile("btparse","progs","dumpnames$EXEEXT");
+    push @toinstall, $exe_file;
+    my $object   = catfile("btparse","progs","dumpnames.o");
+    if (!$self->up_to_date($object, $exe_file)) {
+        $CCL->($cbuilder,
+               exe_file => $exe_file,
+               objects  => [ $object ],
+               extra_linker_flags => '-Lbtparse/src -lbtparse ');
+    }
 
-    # NO INST?
-    ## FIXME - uptodate
-    $CCL->($cbuilder,
-           exe_file => "btparse/progs/biblex$EXEEXT",
-           extra_linker_flags => '-Lbtparse/src -lbtparse ',
-           objects => [ "btparse/progs/biblex.o" ]);
+    $exe_file = catfile("btparse","progs","biblex$EXEEXT");
+    push @toinstall, $exe_file;
+    $object   = catfile("btparse","progs","biblex.o");
+    if (!$self->up_to_date($object, $exe_file)) {
+        $CCL->($cbuilder,
+               exe_file => $exe_file,
+               objects  => [ $object ],
+               extra_linker_flags => '-Lbtparse/src -lbtparse ');
+    }
 
-    ## FIXME - uptodate
-    $CCL->($cbuilder,
-           exe_file => "btparse/progs/bibparse$EXEEXT",
-           extra_linker_flags => '-Lbtparse/src -lbtparse ',
-           objects => [ map {"btparse/progs/$_.o"} (qw.bibparse args getopt getopt1.) ]);
+    $exe_file = catfile("btparse","progs","bibparse$EXEEXT");
+    push @toinstall, $exe_file;
+    $object   = [map {catfile("btparse","progs","$_.o")} (qw.bibparse args getopt getopt1.)];
+    if (!$self->up_to_date($object, $exe_file)) {
+        $CCL->($cbuilder,
+               exe_file => $exe_file,
+               extra_linker_flags => '-Lbtparse/src -lbtparse ',
+               objects => $object);
+    }
 
-    $self->copy_if_modified( from    => "btparse/progs/dumpnames$EXEEXT",
-                             to_dir  => "blib/bin",
-                             flatten => 1);
-    $self->copy_if_modified( from    => "btparse/progs/biblex$EXEEXT",
-                             to_dir  => "blib/bin",
-                             flatten => 1);
-    $self->copy_if_modified( from    => "btparse/progs/bibparse$EXEEXT",
-                             to_dir  => "blib/bin",
-                             flatten => 1);
+    for my $file (@toinstall) {
+        $self->copy_if_modified( from    => $file,
+                                 to_dir  => "blib/bin",
+                                 flatten => 1);
+    }
+
 }
 
 sub ACTION_create_tests {
@@ -184,47 +191,69 @@ sub ACTION_create_tests {
 
     print STDERR "\n** Creating test binaries\n";
 
-    ## FIXME - uptodate
-    $CCL->($cbuilder,
-           exe_file => "btparse/tests/simple_test$EXEEXT",
-           extra_linker_flags => '-Lbtparse/src -lbtparse ',
-           objects => [ map "btparse/tests/$_.o", (qw.simple_test testlib.) ]);
+    my $exe_file = catfile("btparse","tests","simple_test$EXEEXT");
+    my $objects  = [ map{catfile("btparse","tests","$_.o")} (qw.simple_test testlib.) ];
 
-    ## FIXME - uptodate
-    $CCL->($cbuilder,
-           exe_file => "btparse/tests/read_test$EXEEXT",
-           extra_linker_flags => '-Lbtparse/src -lbtparse ',
-           objects => [ map "btparse/tests/$_.o", (qw.read_test testlib.) ]);
+    if (!$self->up_to_date($objects, $exe_file)) {
+        $CCL->($cbuilder,
+               exe_file => $exe_file,
+               extra_linker_flags => '-Lbtparse/src -lbtparse ',
+               objects => $objects);
+    }
 
-    ## FIXME - uptodate
-    $CCL->($cbuilder,
-           exe_file => "btparse/tests/postprocess_test$EXEEXT",
-           extra_linker_flags => '-Lbtparse/src -lbtparse ',
-           objects => [ map "btparse/tests/$_.o", (qw.postprocess_test.) ]);
+    $exe_file = catfile("btparse","tests","read_test$EXEEXT");
+    $objects  = [ map{catfile("btparse","tests","$_.o")}(qw.read_test testlib.) ];
+    if (!$self->up_to_date($objects, $exe_file)) {
+        $CCL->($cbuilder,
+               exe_file => $exe_file,
+               extra_linker_flags => '-Lbtparse/src -lbtparse ',
+               objects => $objects);
+    }
 
-    ## FIXME - uptodate
-    $CCL->($cbuilder,
-           exe_file => "btparse/tests/tex_test$EXEEXT",
-           extra_linker_flags => '-Lbtparse/src -lbtparse ',
-           objects => [ map "btparse/tests/$_.o", (qw.tex_test.) ]);
+    $exe_file = catfile("btparse","tests","postprocess_test$EXEEXT");
+    $objects  = [ map{catfile("btparse","tests","$_.o")}(qw.postprocess_test.) ];
+    if (!$self->up_to_date($objects, $exe_file)) {
+        $CCL->($cbuilder,
+               exe_file => $exe_file,
+               extra_linker_flags => '-Lbtparse/src -lbtparse ',
+               objects => $objects);
+    }
 
-    ## FIXME - uptodate
-    $CCL->($cbuilder,
-           exe_file => "btparse/tests/macro_test$EXEEXT",
-           extra_linker_flags => '-Lbtparse/src -lbtparse ',
-           objects => [ map "btparse/tests/$_.o", (qw.macro_test.) ]);
+    $exe_file = catfile("btparse","tests","tex_test$EXEEXT");
+    $objects  = [ map{catfile("btparse","tests","$_.o")}(qw.tex_test.) ];
+    if (!$self->up_to_date($objects, $exe_file)) {
+        $CCL->($cbuilder,
+               exe_file => $exe_file,
+               extra_linker_flags => '-Lbtparse/src -lbtparse ',
+               objects => $objects);
+    }
 
-    ## FIXME - uptodate
-    $CCL->($cbuilder,
-           exe_file => "btparse/tests/name_test$EXEEXT",
-           extra_linker_flags => '-Lbtparse/src -lbtparse ',
-           objects => [ map "btparse/tests/$_.o", (qw.name_test.) ]);
+    $exe_file = catfile("btparse","tests","macro_test$EXEEXT");
+    $objects  = [ map{catfile("btparse","tests","$_.o")}(qw.macro_test.) ];
+    if (!$self->up_to_date($objects, $exe_file)) {
+        $CCL->($cbuilder,
+               exe_file => $exe_file,
+               extra_linker_flags => '-Lbtparse/src -lbtparse ',
+               objects => $objects);
+    }
 
-    ## FIXME - uptodate
-    $CCL->($cbuilder,
-           exe_file => "btparse/tests/pufiry_test$EXEEXT",
-           extra_linker_flags => '-Lbtparse/src -lbtparse ',
-           objects => [ map "btparse/tests/$_.o", (qw.purify_test.) ]);
+    $exe_file = catfile("btparse","tests","name_test$EXEEXT");
+    $objects  = [ map{catfile("btparse","tests","$_.o")}(qw.name_test.) ];
+    if (!$self->up_to_date($objects, $exe_file)) {
+        $CCL->($cbuilder,
+               exe_file => $exe_file,
+               extra_linker_flags => '-Lbtparse/src -lbtparse ',
+               objects => $objects);
+    }
+
+    $exe_file = catfile("btparse","tests","purify_test$EXEEXT");
+    $objects  = [ map{catfile("btparse","tests","$_.o")}(qw.purify_test.) ];
+    if (!$self->up_to_date($objects, $exe_file)) {
+        $CCL->($cbuilder,
+               exe_file => $exe_file,
+               extra_linker_flags => '-Lbtparse/src -lbtparse ',
+               objects => $objects);
+    }
 }
 
 sub ACTION_create_library {
@@ -247,11 +276,14 @@ sub ACTION_create_library {
     my $libpath = $self->notes('lib_path');
     $libpath = catfile($libpath, "libbtparse$LIBEXT");
     my $libfile = "btparse/src/libbtparse$LIBEXT";
-    $LD->($cbuilder,
-          module_name => 'btparse',
-          ($^O =~ /darwin/)?(extra_linker_flags => "-install_name $libpath"):(),
-          objects => \@objects,
-          lib_file => $libfile);
+
+    if (!$self->up_to_date(\@objects, $libfile)) {
+        $LD->($cbuilder,
+              module_name => 'btparse',
+              ($^O =~ /darwin/)?(extra_linker_flags => "-install_name $libpath"):(),
+              objects => \@objects,
+              lib_file => $libfile);
+    }
 
     my $libdir = catdir($self->blib, 'usrlib');
     mkpath( $libdir, 0, 0777 ) unless -d $libdir;

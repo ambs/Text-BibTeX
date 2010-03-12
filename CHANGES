@@ -1,7 +1,11 @@
-
+Release 0.41 - 
+--------------------
 * tested under Solaris and FreeBSD.
 * fixed compilation/installation under Mac OS X.
 * fixed some C code on format-security (thanks to Jerome Quelin).
+* fixed build system to check for dependencies.
+* added patch from Philip Kime to fix names with commas handling.
+* bundled some modules required just for build in the distribution.
 
 Release 0.40 - 7 March, 2010
 ----------------------------

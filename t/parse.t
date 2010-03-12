@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 
+use Capture::Tiny 'capture';
 use IO::Handle;
 use Test::More tests => 32;
 
