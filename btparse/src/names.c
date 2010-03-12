@@ -298,6 +298,7 @@ find_commas (name_loc * loc, char *name, int max_commas)
 
    for (i = 0; i < len; i++)
    {
+      update_depth (name, i, depth);
       if (depth == 0 && name[i] == ',')
       {
          num_commas++;
