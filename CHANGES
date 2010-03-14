@@ -1,3 +1,11 @@
+* names with more than two commas are left untouched if protected by
+  braces.
+* can now deal with names with hyphens and generate the correct BibTeX
+  compatible abbreviations.
+* can generate initials for protected name parts, like BibTeX can.
+* can deal with generating initials for names which contains Unicode
+  characters.
+
 Release 0.41 - 14 March, 2010
 -----------------------------
 * tested under Solaris and FreeBSD.
