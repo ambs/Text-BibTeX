@@ -333,17 +333,19 @@ count_virtual_char (char *    string,
                     int       offset, 
                     int *     vchar_count,
                     int *     depth,
-                    boolean * in_special)
+                    boolean * in_special,
+                    int *     utf8_length)
 {
    switch (string[offset])
    {
       case '{': 
       {
          /* start of a special char? */
-         if (*depth == 0 && string[offset+1] == '\\')
+        if (*depth == 0 && string[offset+1] == '\\')
             *in_special = TRUE;
-         (*depth)++;
+        (*depth)++;
          break;
+
       }
       case '}': 
       {
@@ -355,11 +357,29 @@ count_virtual_char (char *    string,
          }
          (*depth)--;
          break;
+
       }
       default:
       {
          /* anything else? (possibly inside a special char) */
-         if (! *in_special) (*vchar_count)++;
+         if (! *in_special)
+           /* Have to take care with UTF-8 chars here - we need to increment
+              only when we have a full character which could be multi-byte */
+         {
+           /* not tracking utf8 char yet, so start */ 
+           if (*utf8_length == 0)
+             *utf8_length = get_uchar(string, offset);
+           /* Final byte in utf8 char so count this as a "character" */ 
+           if (*utf8_length == 1)
+           {
+             (*vchar_count)++;
+             *utf8_length = 0;
+           }
+           /* Inside a multi-byte utf-8 char so decrement the count as we move along
+              the bytes */ 
+           if (*utf8_length > 1)
+             (*utf8_length)--;
+         }
       }
    }
 } /* count_virtual_char () */
@@ -389,6 +409,7 @@ string_length (char * string)
    int      length;
    int      depth;
    boolean  in_special;
+   int      utf8_length;
    int      i;
 
    if (string == NULL)
@@ -397,10 +418,11 @@ string_length (char * string)
    length = 0;
    depth = 0;
    in_special = FALSE;
+   utf8_length = 0;
 
    for (i = 0; string[i] != 0; i++)
    {
-      count_virtual_char (string, i, &length, &depth, &in_special);
+     count_virtual_char (string, i, &length, &depth, &in_special, &utf8_length);
    }
 
    return length;
@@ -416,34 +438,77 @@ string_length (char * string)
               of `prefix_len'
 @DESCRIPTION: Counts the number of physical characters from the beginning
               of `string' needed to extract a sub-string with virtual
-              length `prefix_len'.
+              length `prefix_len'. There is a special case emulating BibTeX
+              where we want to ignore beginning '{' which are not escaping
+              a virtual char, for example '{Some Organization}' with prefix_len
+              1 should return "S".
 @CALLS      : count_virtual_char()
 @CALLERS    : format_name()
 @CREATED    : 1997/11/03, GPW
 @MODIFIED   : 
 -------------------------------------------------------------------------- */
 static int
-string_prefix (char * string, int prefix_len)
+string_prefix (char * string, int prefix_start, int prefix_len)
 {
    int     i;
    int     vchars_seen;
    int     depth;
    boolean in_special;
+   int      utf8_length;
 
    vchars_seen = 0;
    depth = 0;
    in_special = FALSE;
+   utf8_length = 0;
 
-   for (i = 0; string[i] != 0; i++)
+   for (i = prefix_start; string[i] != 0; i++)
    {
-      count_virtual_char (string, i, &vchars_seen, &depth, &in_special);
+     count_virtual_char (string, i, &vchars_seen, &depth, &in_special, &utf8_length);
       if (vchars_seen == prefix_len)
-         return i+1;
+        return (i+1)-prefix_start;
    }
 
-   return i;
+   return i-prefix_start;
    
 } /* string_prefix() */
+
+
+/* ------------------------------------------------------------------------
+@NAME       : string_prefix_start()
+@INPUT      : string
+@OUTPUT     : 
+@RETURNS    : index where we need to start looking at name part when 
+              abbreviating
+@DESCRIPTION: If we are not in a special but depth == 1 then we need
+              start at index 1 (examples "{John Henry} Ford" or
+              "{Some Organisation Inc.}
+@CALLS      : 
+@CALLERS    : format_name()
+@CREATED    : 2010/03/13, PK
+@MODIFIED   : 
+-------------------------------------------------------------------------- */
+static int
+string_prefix_start (char * string, int index)
+{
+   int     i;
+   int     vchars_seen;
+   int     depth;
+   boolean in_special;
+   int      utf8_length;
+
+   vchars_seen = 0;
+   depth = 0;
+   in_special = FALSE;
+   utf8_length = 0;
+
+   count_virtual_char (string, index, &vchars_seen, &depth, &in_special, &utf8_length);
+   if (! in_special && depth == 1)
+     return index+1;
+
+   return index;
+   
+} /* string_prefix_start() */
+
 
 
 /* ------------------------------------------------------------------------
@@ -613,6 +678,95 @@ format_firstpass (bt_name *        name,
 
 
 /* ------------------------------------------------------------------------
+@NAME       : get_uchar()
+@INPUT      : string
+              offset in string
+@OUTPUT     : number of bytes required to gobble the next unicode character
+@RETURNS    : 
+@DESCRIPTION: In order to deal with unicode chars when calculating abbreviations,
+              we need to know how many bytes the next character is.
+@CALLS      : 
+@CALLERS    : count_virtual_char()
+@CREATED    : 2010/03/14, PK
+@MODIFIED   : 
+-------------------------------------------------------------------------- */
+
+
+get_uchar(char * string, int offset)
+{
+  unsigned char * bytes = (unsigned char *)string;
+
+  if(!string)
+    return 0;
+
+  if (     (// ASCII
+            bytes[offset] == 0x09 ||
+            bytes[offset] == 0x0A ||
+            bytes[offset] == 0x0D ||
+            (0x20 <= bytes[offset] && bytes[offset] <= 0x7E)
+            )
+           )
+    {
+      return 1;
+    }
+
+  if(     (// non-overlong 2-byte
+           (0xC2 <= bytes[offset] && bytes[offset] <= 0xDF) &&
+           (0x80 <= bytes[offset+1] && bytes[offset+1] <= 0xBF)
+           )
+          )
+    {
+      return 2;
+    }
+
+  if(     (// excluding overlongs
+           bytes[offset] == 0xE0 &&
+           (0xA0 <= bytes[offset+1] && bytes[offset+1] <= 0xBF) &&
+           (0x80 <= bytes[offset+2] && bytes[offset+2] <= 0xBF)
+           ) ||
+          (// straight 3-byte
+           ((0xE1 <= bytes[offset] && bytes[offset] <= 0xEC) ||
+            bytes[offset] == 0xEE ||
+            bytes[offset] == 0xEF) &&
+           (0x80 <= bytes[offset+1] && bytes[offset+1] <= 0xBF) &&
+           (0x80 <= bytes[offset+2] && bytes[offset+2] <= 0xBF)
+           ) ||
+          (// excluding surrogates
+           bytes[offset] == 0xED &&
+           (0x80 <= bytes[offset+1] && bytes[offset+1] <= 0x9F) &&
+           (0x80 <= bytes[offset+2] && bytes[offset+2] <= 0xBF)
+           )
+          )
+    {
+      return 3;
+    }
+
+  if(     (// planes 1-3
+           bytes[offset] == 0xF0 &&
+           (0x90 <= bytes[offset+1] && bytes[offset+1] <= 0xBF) &&
+           (0x80 <= bytes[offset+2] && bytes[offset+2] <= 0xBF) &&
+           (0x80 <= bytes[offset+3] && bytes[offset+3] <= 0xBF)
+           ) ||
+          (// planes 4-15
+           (0xF1 <= bytes[offset] && bytes[offset] <= 0xF3) &&
+           (0x80 <= bytes[offset+1] && bytes[offset+1] <= 0xBF) &&
+           (0x80 <= bytes[offset+2] && bytes[offset+2] <= 0xBF) &&
+           (0x80 <= bytes[offset+3] && bytes[offset+3] <= 0xBF)
+           ) ||
+          (// plane 16
+           bytes[offset] == 0xF4 &&
+           (0x80 <= bytes[offset+1] && bytes[offset+1] <= 0x8F) &&
+           (0x80 <= bytes[offset+2] && bytes[offset+2] <= 0xBF) &&
+           (0x80 <= bytes[offset+3] && bytes[offset+3] <= 0xBF)
+           )
+          )
+    {
+      return 4;
+    }
+  return -1; /* Shouldn't get here */
+}
+
+/* ------------------------------------------------------------------------
 @NAME       : format_name()
 @INPUT      : format
               tokens     - token list (eg. from format_firstpass())
@@ -636,14 +790,26 @@ format_name (bt_name_format * format,
    int         num_parts;
 
    int     offset;                      /* into fname */
+   int     tmpoffset;
    int     i;                           /* loop over parts */
    int     j;                           /* loop over tokens */
+   int     k;                           /* loop within tokens */
    bt_namepart part;
    int     prefix_len;
+   int     abbrev_prefix_len;
+   int     prefix_start;                /* Index where to start looking for abbrev */
+   int     abbrev_prefix_start;         /* Index where to start looking for abbrev
+                                           but taking into account post-part token
+                                           to deal with hyphens in terse abbrevs */
    int     token_len;                   /* "physical" length (characters) */
    int     token_vlen;                  /* "virtual" length (special char */
                                         /* counts as one character) */
    boolean should_tie;
+
+   int     vchars_seen;
+   int     depth;
+   boolean in_special;
+   int     utf8_length;
 
    /* 
     * Cull format->parts down by keeping only those parts that are actually
@@ -674,20 +840,71 @@ format_name (bt_name_format * format,
       {
          offset += append_text (fname, offset, 
                                 format->pre_token[part], 0, -1);
+
          if (format->abbrev[part])
          {
-            prefix_len = string_prefix (tokens[part][j], 1);
-            token_len = append_text (fname, offset,
-                                     tokens[part][j], 0, prefix_len);
-            token_vlen = 1;
+           /* Set up tracking of depth and specials so we can ignore
+              hyphenated token parts within protected braces */
+           vchars_seen = 0;
+           depth = 0;
+           in_special = FALSE;
+           utf8_length = 0;
+
+           for (k = 0 ; tokens[part][j][k] != 0; k++)
+           {
+
+             count_virtual_char (tokens[part][j], k, &vchars_seen, &depth, &in_special, &utf8_length);
+             prefix_start = string_prefix_start (tokens[part][j], k);
+
+             /* Add initial from the begining of the string */
+             if (k == 0)
+             {
+               prefix_len = string_prefix (tokens[part][j], prefix_start, 1);
+               token_len = append_text (fname, offset,
+                                        tokens[part][j], prefix_start, prefix_len);
+               offset += token_len;
+             }
+             /* Add initials for hyphenated names unless in protecting braces */
+             if (tokens[part][j][k] == '-' && depth == 0 && in_special == FALSE)
+             {
+               tmpoffset = 0;
+               tmpoffset = append_text (fname, offset, 
+                                      format->post_token[part], 0, -1);
+               offset += tmpoffset;
+
+               prefix_len = string_prefix (tokens[part][j], prefix_start+1, 1);
+
+               /* We need to skip adding hyphens to terse abbreviated names so:
+                "Abraham-Smith" normally is "A.-S." but with no post_token, should
+                be "AS" and not "A-S" */
+               if (tmpoffset == 0)
+               {
+                 abbrev_prefix_start = prefix_start+1;
+                 abbrev_prefix_len = prefix_len;
+               }
+               else /* There is a post_token so we keep the hyphens */
+               {
+                 abbrev_prefix_start = prefix_start;
+                 abbrev_prefix_len = prefix_len+1;
+               }
+
+               token_len = append_text (fname, offset,
+                                        tokens[part][j],
+                                        abbrev_prefix_start, abbrev_prefix_len);
+
+               offset += token_len;
+             }
+           }
+           token_vlen = 1;
          }
          else
          {
             token_len = append_text (fname, offset,
                                      tokens[part][j], 0, -1);
+            offset += token_len;
             token_vlen = string_length (tokens[part][j]);
          }
-         offset += token_len;
+
          offset += append_text (fname, offset, 
                                 format->post_token[part], 0, -1);
 
