@@ -297,10 +297,10 @@ sub ACTION_test {
     my $self = shift;
 
     if ($^O =~ /darwin/i) {
-        $ENV{DYLD_LIBRARY_PATH} = catdir($self->blib,"usrlib").":$ENV{DYLD_LIBRARY_PATH}";
+        $ENV{DYLD_LIBRARY_PATH} = catdir($self->blib,"usrlib");
     }
     if ($^O =~ /(freebsd|solaris|linux)/i) {
-        $ENV{LD_LIBRARY_PATH} = catdir($self->blib,"usrlib").":$ENV{LD_LIBRARY_PATH}";
+        $ENV{LD_LIBRARY_PATH} = catdir($self->blib,"usrlib");
     }
 
     $self->SUPER::ACTION_test

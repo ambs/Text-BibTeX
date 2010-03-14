@@ -23,6 +23,8 @@ require 5.004;
 use strict;
 use Carp;
 
+use Text::BibTeX;
+
 =head1 NAME
 
 Text::BibTeX::Name - interface to BibTeX-style author names

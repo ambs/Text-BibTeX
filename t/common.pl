@@ -1,5 +1,5 @@
 use Carp;
-use Capture::Tiny;
+use Capture::Tiny 'capture';
 
 sub no_err {
     err_like( $_[0], qr/^$/);
@@ -8,7 +8,7 @@ sub no_err {
 sub err_like {
     my ($stdout, $stderr);
 
-    ($stdout, $stderr) = capture(\&{$_[0]});
+    ($stdout, $stderr) = capture \&{$_[0]};
 
   SKIP: {
         skip "STDERR not available under Win32", 1 if $^O =~ /mswin32/i;
