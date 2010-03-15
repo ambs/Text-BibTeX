@@ -23,8 +23,8 @@ sub ACTION_code {
     }
 
     my $version = $self->notes('btparse_version');
-    my $alloca_h = 'undef';
-    $alloca_h = 'define' if Config::AutoConf->check_header("alloca.h");
+    my $alloca_h = 'undef HAVE_ALLOCA_H';
+    $alloca_h = 'define HAVE_ALLOCA_H 1' if Config::AutoConf->check_header("alloca.h");
     _interpolate("btparse/src/bt_config.h.in",
                  "btparse/src/bt_config.h",
                  PACKAGE  => "\"libbtparse\"",

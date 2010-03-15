@@ -13,7 +13,7 @@
 
 /* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
    */
-#[% ALLOCA_H %] HAVE_ALLOCA_H
+#[% ALLOCA_H %]
 
 /* Define to 1 if the system has the type `boolean'. */
 #undef HAVE_BOOLEAN
