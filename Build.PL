@@ -5,12 +5,6 @@ use lib 'inc';
 use MyBuilder;
 
 my $version = get_version();
-interpolate("btparse/src/bt_config.h.in",
-            "btparse/src/bt_config.h",
-            PACKAGE => "\"libbtparse\"",
-            FPACKAGE => "\"libbtparse $version\"",
-            VERSION => "\"$version\"",
-           );
 
 
 my $builder = MyBuilder->new
@@ -76,17 +70,3 @@ sub get_version {
 }
 
 
-
-sub interpolate {
-    my ($from, $to, %config) = @_;
-	
-    print "Creating new '$to' from '$from'.\n";
-    open FROM, $from or die "Cannot open file '$from' for reading.\n";
-    open TO, ">", $to or die "Cannot open file '$to' for writing.\n";
-    while (<FROM>) {
-        s/\[%\s*(\S+)\s*%\]/$config{$1}/ge;		
-        print TO;
-    }
-    close TO;
-    close FROM;
-}

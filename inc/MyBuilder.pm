@@ -22,6 +22,18 @@ sub ACTION_code {
         mkpath $path unless -d $path;
     }
 
+    my $version = $self->notes('btparse_version');
+    my $alloca_h = 'undef';
+    $alloca_h = 'define' if Config::AutoConf->check_header("alloca.h");
+    _interpolate("btparse/src/bt_config.h.in",
+                 "btparse/src/bt_config.h",
+                 PACKAGE  => "\"libbtparse\"",
+                 FPACKAGE => "\"libbtparse $version\"",
+                 VERSION  => "\"$version\"",
+                 ALLOCA_H => $alloca_h
+                );
+
+
     $self->dispatch("create_manpages");
     $self->dispatch("create_objects");
     $self->dispatch("create_library");
@@ -305,5 +317,21 @@ sub ACTION_test {
 
     $self->SUPER::ACTION_test
 }
+
+
+sub _interpolate {
+    my ($from, $to, %config) = @_;
+	
+    print "Creating new '$to' from '$from'.\n";
+    open FROM, $from or die "Cannot open file '$from' for reading.\n";
+    open TO, ">", $to or die "Cannot open file '$to' for writing.\n";
+    while (<FROM>) {
+        s/\[%\s*(\S+)\s*%\]/$config{$1}/ge;		
+        print TO;
+    }
+    close TO;
+    close FROM;
+}
+
 
 1;
