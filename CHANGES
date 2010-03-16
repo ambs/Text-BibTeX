@@ -1,3 +1,5 @@
+Release 0.42 - 16 March, 2010
+-----------------------------
 * names with more than two commas are left untouched if protected by
   braces.
 * can now deal with names with hyphens and generate the correct BibTeX
@@ -5,6 +7,8 @@
 * can generate initials for protected name parts, like BibTeX can.
 * can deal with generating initials for names which contains Unicode
   characters.
+* fixed compilation on machines needing alloca.h
+* added new README file with more up-to-date information.
 
 Release 0.41 - 14 March, 2010
 -----------------------------
