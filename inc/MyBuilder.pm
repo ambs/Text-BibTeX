@@ -7,6 +7,7 @@ use strict;
 use Config;
 use Carp;
 
+use Config::AutoConf;
 use Config::AutoConf::Linker;
 
 use ExtUtils::ParseXS;
@@ -19,8 +20,8 @@ sub ACTION_install {
     my $self = shift;
     $self->SUPER::ACTION_install;
     if ($^O =~ /linux/) {
-        print "Running ldconfig\n";
-        system("ldconfig");
+        my $linux = Config::AutoConf->check_prog("ldconfig");
+        system $linux if (-x $linux);
     }
 }
 

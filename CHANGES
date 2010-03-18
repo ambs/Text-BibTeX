@@ -1,3 +1,8 @@
+Release 0.43 - 18 March, 2010
+-----------------------------
+* small fix on warnings issue
+* run ldconfig after installing the .so file under linux
+
 Release 0.42 - 16 March, 2010
 -----------------------------
 * names with more than two commas are left untouched if protected by
