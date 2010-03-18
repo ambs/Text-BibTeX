@@ -310,8 +310,10 @@ void lexer_overflow (unsigned char **lastpos, unsigned char **nextpos)
            zzchar, zzchar, zzbegexpr-zzlextext);
 #endif
 
-   notify ("lexical buffer overflowed (reallocating to %d bytes)",
-                    zzbufsize+ZZLEXBUFSIZE);
+   /* Removed this as it's not that useful to know and is disconcerting
+    for Text::BibTeX users */
+   /*   notify ("lexical buffer overflowed (reallocating to %d bytes)",
+        zzbufsize+ZZLEXBUFSIZE); */
    realloc_lex_buffer (ZZLEXBUFSIZE, lastpos, nextpos);
 
 } /* lexer_overflow () */
