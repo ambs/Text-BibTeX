@@ -15,6 +15,14 @@ use ExtUtils::Mkbootstrap;
 use File::Spec::Functions qw.catdir catfile.;
 use File::Path qw.mkpath.;
 
+sub ACTION_install {
+    my $self = shift;
+    $self->SUPER::ACTION_install;
+    if ($^O =~ /linux/) {
+        system("ldconfig");
+    }
+}
+
 sub ACTION_code {
     my $self = shift;
 
