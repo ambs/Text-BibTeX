@@ -19,6 +19,7 @@ sub ACTION_install {
     my $self = shift;
     $self->SUPER::ACTION_install;
     if ($^O =~ /linux/) {
+        print "Running ldconfig\n";
         system("ldconfig");
     }
 }
