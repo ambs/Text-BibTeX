@@ -1,3 +1,7 @@
+Release 0.44...
+-----------------------------
+* RPath information on link - Thanks to Jens Rehsack
+
 Release 0.43 - 18 March, 2010
 -----------------------------
 * small fix on warnings issue
