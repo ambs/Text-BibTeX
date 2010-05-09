@@ -17,14 +17,14 @@ package Text::BibTeX;
 use 5.008001;                          # needed for Text::BibTeX::Entry
 
 use strict;
-use UNIVERSAL qw(isa can);              # for 'check_class' subroutine
+#use UNIVERSAL qw(isa can);              # for 'check_class' subroutine
 use Carp;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $AUTOLOAD);
 
 require Exporter;
 require DynaLoader;
 
-our $VERSION='0.44_1';
+our $VERSION='0.44';
 
 @ISA = qw(Exporter DynaLoader);
 %EXPORT_TAGS = (nodetypes => [qw(BTAST_STRING BTAST_MACRO BTAST_NUMBER)],
@@ -470,7 +470,7 @@ sub check_class
       }
    }
 
-   if ($superclass && ! isa ($package, $superclass))
+   if ($superclass && ! $package->isa($superclass))
    {
       die "Text::BibTeX::Structure: $description \"$package\" " .
           "improperly defined: ! isa ($superclass)\n";
@@ -479,7 +479,7 @@ sub check_class
    my $method;
    for $method (@$methods)
    {
-      unless (can ($package, $method))
+      unless ($package->can($method))
       {
          die "Text::BibTeX::Structure: $description \"$package\" " .
              "improperly defined: no method \"$method\"\n";

@@ -19,7 +19,7 @@ package Text::BibTeX::Entry;
 require 5.004;                          # for isa, and delete on a slice
 
 use strict;
-use UNIVERSAL 'isa';
+
 use Carp;
 use Text::BibTeX qw(:metatypes :nodetypes);
 
@@ -186,7 +186,7 @@ sub new
    {
       my $status;
 
-      if (@source == 1 && isa ($source[0], 'Text::BibTeX::File'))
+      if (@source == 1 && ref($source[0]) && $source[0]->isa ('Text::BibTeX::File'))
       { 
          my $file = $source[0];
          $status = $self->read ($file);
@@ -227,7 +227,7 @@ sub read
    my ($self, $source, $preserve) = @_;
    croak "`source' argument must be ref to open Text::BibTeX::File " .
          "(or descendant) object"
-      unless (isa ($source, 'Text::BibTeX::File'));
+      unless ($source->isa('Text::BibTeX::File'));
 
    my $fn = $source->{'filename'};
    my $fh = $source->{'handle'};
@@ -288,7 +288,7 @@ sub _preserve
    $preserve = $self->{'file'}->preserve_values
       if ! defined $preserve && 
          defined $self->{'file'} &&
-         isa ($self->{'file'}, 'Text::BibTeX::File');
+           $self->{'file'}->isa ('Text::BibTeX::File');
    require Text::BibTeX::Value if $preserve;
    $preserve;
 }
@@ -774,7 +774,7 @@ sub print_s
       else                              # a Text::BibTeX::Value object
       {
          confess "value is a reference, but not to Text::BibTeX::Value object"
-            unless isa ($value, 'Text::BibTeX::Value');
+            unless $value->isa ('Text::BibTeX::Value');
          my @values = $value->values;
          foreach (@values)
          {
