@@ -19,7 +19,7 @@ use File::Path qw.mkpath.;
 sub ACTION_install {
     my $self = shift;
     $self->SUPER::ACTION_install;
-    if ($^O =~ /linux/) {
+    if ($^O =~ /linux/ && $ENV{USER} eq 'root') {
         my $linux = Config::AutoConf->check_prog("ldconfig");
         system $linux if (-x $linux);
     }
