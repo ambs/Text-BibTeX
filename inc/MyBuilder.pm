@@ -18,6 +18,11 @@ use File::Path qw.mkpath.;
 
 sub ACTION_install {
     my $self = shift;
+    if (defined $self->{properties}{install_base}) {
+        my $usrlib = catdir($self->{properties}{install_base} => 'lib');
+        $self->install_path( 'usrlib' => $usrlib );
+        warn "libbtparse.so will install on $usrlib. Be sure to add it to your LIBRARY_PATH\n"
+    }
     $self->SUPER::ACTION_install;
     if ($^O =~ /linux/ && $ENV{USER} eq 'root') {
         my $linux = Config::AutoConf->check_prog("ldconfig");
