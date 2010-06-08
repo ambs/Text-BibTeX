@@ -1,8 +1,13 @@
 
+Release 0.45 - 8 June, 2010
+---------------------------
 * fixed ldconfig call under linux, now only if the user is root.
+* fixed library installation path when user specifies different
+  installbase during install action.
+  (thanks to François for both fixes)
 
 Release 0.44 - 9 May, 2010
------------------------------
+--------------------------
 * RPath information on link - Thanks to Jens Rehsack
 * removed dependency on 'UNIVERSAL' as it is now built-in
   (change for perl 5.12 deprecation)
