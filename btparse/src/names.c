@@ -694,7 +694,9 @@ split_general_name (name_loc * loc,
    {                                    /* lowercase tokens */
       if (last_lc == comma_token[0])    /* lc string ends at first comma */
       {
-         name_warning (loc, "no capitalized tokens before first comma");
+        /* No longer very useful as a warning since we can have Unicode bits now
+           and so "capitalised" doesn't really have consistent meaning any more */
+        /*         name_warning (loc, "no capitalized tokens before first comma"); */
          last_lc--;
       }
       

@@ -1,4 +1,8 @@
 
+Release 0.46 - 24 August, 2010
+------------------------------
+* support entry keys in unicode. Thanks to Philip Kime.
+
 Release 0.45 - 8 June, 2010
 ---------------------------
 * fixed ldconfig call under linux, now only if the user is root.

@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use IO::Handle;
-use Test::More tests => 44;
+use Test::More tests => 46;
 
 use vars qw($DEBUG);
 
@@ -16,7 +16,7 @@ BEGIN {
 # ----------------------------------------------------------------------
 # entry creation and parsing from a string
 
-my ($text, $entry, @warnings, $result);
+my ($text, $entry, @warnings, $result, $text_uck, $entry_uck);
 
 $text = <<'TEXT';
 @foo { mykey,
@@ -25,6 +25,19 @@ $text = <<'TEXT';
   f3 = foo
     }
 TEXT
+
+# Test with a Unicode key
+$text_uck = <<'TEXT';
+@foo { mykeyŠ,
+  f1 = {f1val},
+  f2 = {f1val}
+    }
+TEXT
+
+ok($entry_uck = new Text::BibTeX::Entry);
+ok($entry_uck->parse_s($text_uck));
+
+
 
 ok($entry = new Text::BibTeX::Entry);
 
