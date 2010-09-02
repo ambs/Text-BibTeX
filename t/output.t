@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use IO::Handle;
-use Test::More tests => 12;
+use Test::More tests => 10;
 
 use vars qw($DEBUG);
 
@@ -28,12 +28,8 @@ $text = <<'TEXT';
   year = 1997
 }
 TEXT
-
-my $quote_warning = 'found \" (at brace-depth zero )?in string';
-
-err_like sub {
-    ok($entry = new Text::BibTeX::Entry $text);
-    ok($entry->parse_ok); }, qr/$quote_warning/;
+ok($entry = new Text::BibTeX::Entry $text);
+ok($entry->parse_ok);
 
 $new_text = $entry->print_s;
 
@@ -43,10 +39,8 @@ ok($new_text =~ /^\@article\{homer97,$/m &&
       $new_text =~ /^\s*journal\s*=\s*[{"]Journal[^\}]*Studies[}"],$/m &&
       $new_text =~ /^\s*year\s*=\s*[{"]1997[}"],?$/m);
 
-err_like sub {
-    $new_entry = new Text::BibTeX::Entry $new_text;
-    ok($entry->parse_ok);
-}, qr/$quote_warning/;
+$new_entry = new Text::BibTeX::Entry $new_text;
+ok($entry->parse_ok);
 
 ok($entry->type eq $new_entry->type);
 ok($entry->key eq $new_entry->key);

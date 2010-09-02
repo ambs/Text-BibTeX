@@ -121,10 +121,6 @@ static int     JunkCount;               /* non-whitespace chars at toplevel */
  *     flags if we have already detected (and warned) that the current
  *     string appears to be a runaway, so that we don't warn again
  *     (and again and again and again)
- *   QuoteWarned:
- *     flags if we have already warned about seeing a '"' in a string,
- *     because they tend to come in pairs and one warning per string 
- *     is enough
  *
  * (See bibtex.g for an explanation of my runaway string detection heuristic.)
  */
@@ -133,9 +129,6 @@ static int     BraceDepth;              /* depth of brace-nesting */
 static int     ParenDepth;              /* depth of parenthesis-nesting */
 static int     StringStart = -1;        /* start line of current string */
 static int     ApparentRunaway;         /* current string looks like runaway */
-static int     QuoteWarned;             /* already warned about " in string? */
-
-
 
 /* ----------------------------------------------------------------------
  * Miscellaneous functions:
@@ -593,7 +586,6 @@ void start_string (char start_char)
    ParenDepth = 0;
    StringStart = zzline;
    ApparentRunaway = 0;
-   QuoteWarned = 0;
    if (start_char == '{')
       open_brace ();
    if (start_char == '(')
@@ -802,12 +794,6 @@ void quote_in_string (void)
       else
          internal_error ("Illegal string opener \"%c\"", StringOpener);
 
-      if (!QuoteWarned && at_top)
-      {
-         lexical_warning ("found \" at brace-depth zero in string "
-                          "(TeX accents in BibTeX should be inside braces)");
-         QuoteWarned = 1;
-      }
       zzmore ();
    }
 }
