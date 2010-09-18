@@ -151,8 +151,11 @@ void zzcr_attr (Attrib *a, int tok, char *txt)
    {
       int   len = strlen (txt);
 
-      assert ((txt[0] == '{' && txt[len-1] == '}')
-              || (txt[0] == '\"' && txt[len-1] == '\"'));
+      assert (
+          (txt[0] == '{'  && txt[len-1] == '}')
+          ||
+          (txt[0] == '\"' && txt[len-1] == '\"')
+          );
       txt[len-1] = (char) 0;            /* remove closing quote from string */
       txt++;                            /* so we'll skip the opening quote */
    }
@@ -856,13 +859,14 @@ void check_runaway_string (void)
       zzline++;
    }
 
-   /* standardize whitespace (convert all to space) */
+   /* standardize whitespace (convert all to space) but don't accept ascii 160 
+      as space which most broken ctype.h do as this breaks lots of Unicode things */
 
    len = strlen (zzbegexpr);
    for (i = 0; i < len; i++)
    {
-      if (isspace (zzbegexpr[i]))
-         zzbegexpr[i] = ' ';
+       if (isspace (zzbegexpr[i]) && zzbegexpr[i] != 160)
+           zzbegexpr[i] = ' ';
    }
    
 

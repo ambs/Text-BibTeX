@@ -211,7 +211,6 @@ _parse_s (entry_ref, text, preserve=FALSE)
     CODE:
 
         top = bt_parse_entry_s (text, NULL, 1, options, &status);
-
         if (!top)                  /* no entry found -- return false to perl */
         {
            XSRETURN_NO;

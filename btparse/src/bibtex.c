@@ -84,10 +84,10 @@ entry(_root)
 AST **_root;
 #endif
 {
-	zzRULE;
-	zzBLOCK(zztasp1);
-	zzMake0;
-	{
+    zzRULE;
+    zzBLOCK(zztasp1);
+    zzMake0;
+    {
 	bt_metatype metatype;   
 	zzmatch(AT);  zzCONSUME;
 	zzmatch(NAME); zzsubroot(_root, &_sibling, &_tail);
@@ -95,7 +95,7 @@ AST **_root;
 	metatype = entry_metatype();
 	zzastArg(1)->nodetype = BTAST_ENTRY;
 	zzastArg(1)->metatype = metatype;
- zzCONSUME;
+        zzCONSUME;
 
 	body(zzSTR, metatype ); zzlink(_root, &_sibling, &_tail);
 	zzEXIT(zztasp1);
@@ -104,7 +104,7 @@ fail:
 	zzEXIT(zztasp1);
 	zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
 	zzresynch(setwd1, 0x2);
-	}
+    }
 }
 
 void
@@ -116,15 +116,15 @@ AST **_root;
  bt_metatype metatype ;
 #endif
 {
-	zzRULE;
-	zzBLOCK(zztasp1);
-	zzMake0;
-	{
+    zzRULE;
+    zzBLOCK(zztasp1);
+    zzMake0;
+    {
 	if ( (LA(1)==STRING) ) {
-		if (!(metatype == BTE_COMMENT )) {zzfailed_pred("   metatype == BTE_COMMENT ");}
-		zzmatch(STRING); zzsubchild(_root, &_sibling, &_tail);
-		zzastArg(1)->nodetype = BTAST_STRING;   
- zzCONSUME;
+            if (!(metatype == BTE_COMMENT )) {zzfailed_pred("   metatype == BTE_COMMENT ");}
+            zzmatch(STRING); zzsubchild(_root, &_sibling, &_tail);
+            zzastArg(1)->nodetype = BTAST_STRING;   
+            zzCONSUME;
 
 	}
 	else {
@@ -320,31 +320,28 @@ AST **_root;
 	zzBLOCK(zztasp1);
 	zzMake0;
 	{
-	if ( (LA(1)==STRING) ) {
+            if ( (LA(1)==STRING) ) {
 		zzmatch(STRING); zzsubchild(_root, &_sibling, &_tail);
 		zzastArg(1)->nodetype = BTAST_STRING;   
- zzCONSUME;
-
-	}
-	else {
+                zzCONSUME;
+            }
+            else {
 		if ( (LA(1)==NUMBER) ) {
-			zzmatch(NUMBER); zzsubchild(_root, &_sibling, &_tail);
-			zzastArg(1)->nodetype = BTAST_NUMBER;   
- zzCONSUME;
-
+                    zzmatch(NUMBER); zzsubchild(_root, &_sibling, &_tail);
+                    zzastArg(1)->nodetype = BTAST_NUMBER;   
+                    zzCONSUME;
 		}
 		else {
-			if ( (LA(1)==NAME) ) {
-				zzmatch(NAME); zzsubchild(_root, &_sibling, &_tail);
-				zzastArg(1)->nodetype = BTAST_MACRO;   
- zzCONSUME;
-
-			}
-			else {zzFAIL(1,zzerr5,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+                    if ( (LA(1)==NAME) ) {
+                        zzmatch(NAME); zzsubchild(_root, &_sibling, &_tail);
+                        zzastArg(1)->nodetype = BTAST_MACRO;   
+                        zzCONSUME;
+                    }
+                    else {zzFAIL(1,zzerr5,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
 		}
-	}
-	zzEXIT(zztasp1);
-	return;
+            }
+            zzEXIT(zztasp1);
+            return;
 fail:
 	zzEXIT(zztasp1);
 	zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);

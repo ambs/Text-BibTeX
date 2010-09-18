@@ -27,6 +27,8 @@
 #include "my_dmalloc.h"
 
 
+
+
 char *   InputFilename;
 btshort   StringOptions[NUM_METATYPES] = 
 {
@@ -238,6 +240,7 @@ AST * bt_parse_entry_s (char *    entry_text,
    }
 
    zzast_sp = ZZAST_STACKSIZE;          /* workaround apparent pccts bug */
+
    start_parse (NULL, entry_text, line);
 
    entry (&entry_ast);                  /* enter the parser */

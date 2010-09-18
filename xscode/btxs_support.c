@@ -103,12 +103,12 @@ convert_value (char * field_name, AST * field, boolean preserve)
        * Get the stashes for the two classes into which we'll be 
        * blessing things.
        */
-      val_stash = gv_stashpv ("Text::BibTeX::Value", TRUE);
+      val_stash  = gv_stashpv ("Text::BibTeX::Value",       TRUE);
       sval_stash = gv_stashpv ("Text::BibTeX::SimpleValue", TRUE);
-      if (val_stash == NULL || sval_stash == NULL)
-      {
-         croak ("unable to get stash for one or both of " 
-                "Text::BibTeX::Value or Text::BibTeX::SimpleValue");
+
+      if (val_stash == NULL || sval_stash == NULL) {
+          croak ("unable to get stash for one or both of " 
+                 "Text::BibTeX::Value or Text::BibTeX::SimpleValue");
       }
 
       /* Start the compound value as an empty list */
@@ -331,11 +331,11 @@ ast_to_hash (SV *    entry_ref,
     * hv_clear() in case higher-up code has put interesting stuff into it.)
     */
 
-   hv_delete (entry, "key", 3, G_DISCARD);
+   hv_delete (entry, "key",    3, G_DISCARD);
    hv_delete (entry, "fields", 6, G_DISCARD);
-   hv_delete (entry, "lines", 5, G_DISCARD);
+   hv_delete (entry, "lines",  5, G_DISCARD);
    hv_delete (entry, "values", 6, G_DISCARD);
-   hv_delete (entry, "value", 5, G_DISCARD);
+   hv_delete (entry, "value",  5, G_DISCARD);
 
    /*
     * Perform entry post-processing.  How exactly we post-process depends on

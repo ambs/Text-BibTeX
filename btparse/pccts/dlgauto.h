@@ -419,11 +419,11 @@ more:
 		}else{
 			zzbufovf = 1;
 		}
-		*zznextpos = '\0';
+		*zznextpos = '\0'; 
 		/* make sure doesn't get stuck */
 		zzadvance();
 	}else{
-		*zznextpos = '\0';
+		*zznextpos = '\0'; 
 	}
 #endif
 #ifdef ZZCOL
