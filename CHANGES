@@ -1,3 +1,7 @@
+Release 0.48 - 23 September, 2010
+---------------------------------
+* depend on ExtUtils::LibBuilder for library compilation.
+
 Release 0.47 - 18 September, 2010
 ---------------------------------
 * fixed a problem with 160 char being considered whitespace on many unixes.

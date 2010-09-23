@@ -8,7 +8,7 @@ use Config;
 use Carp;
 
 use Config::AutoConf;
-use Config::AutoConf::Linker;
+use ExtUtils::LibBuilder;
 
 use ExtUtils::ParseXS;
 use ExtUtils::Mkbootstrap;
@@ -36,6 +36,9 @@ sub ACTION_code {
     for my $path (catdir("blib","bindoc"), catdir("blib","bin")) {
         mkpath $path unless -d $path;
     }
+
+    my $libbuilder = ExtUtils::LibBuilder->new;
+    $self->notes('libbuilder', $libbuilder);
 
     my $version = $self->notes('btparse_version');
     my $alloca_h = 'undef HAVE_ALLOCA_H';
@@ -163,11 +166,8 @@ sub ACTION_create_objects {
 sub ACTION_create_binaries {
     my $self = shift;
     my $cbuilder = $self->cbuilder;
-
-    my $EXEEXT = $Config::AutoConf::EXEEXT;
-
-    my ($LD,$CCL) = Config::AutoConf::Linker::detect_library_link_commands($cbuilder);
-    die "Can't get a suitable way to compile a C library\n" if (!$LD || !$CCL);
+    my $libbuilder = $self->notes('libbuilder');
+    my $EXEEXT = $libbuilder->{exeext};
 
     print STDERR "\n** Creating binaries (dumpnames$EXEEXT, biblex$EXEEXT, bibparse$EXEEXT)\n";
 
@@ -177,36 +177,33 @@ sub ACTION_create_binaries {
     my $object   = catfile("btparse","progs","dumpnames.o");
     my $btparselibdir = $self->install_path('usrlib');
     if (!$self->up_to_date($object, $exe_file)) {
-        $CCL->($cbuilder,
-               exe_file => $exe_file,
-               objects  => [ $object ],
-               ($^O !~ /darwin/)?
-               (extra_linker_flags => "-Lbtparse/src -Wl,-R${btparselibdir} -lbtparse "):
-               (extra_linker_flags => "-Lbtparse/src -lbtparse "));
+        $libbuilder->link_executable(exe_file => $exe_file,
+                                     objects  => [ $object ],
+                                     ($^O !~ /darwin/)?
+                                     (extra_linker_flags => "-Lbtparse/src -Wl,-R${btparselibdir} -lbtparse "):
+                                     (extra_linker_flags => "-Lbtparse/src -lbtparse "));
     }
 
     $exe_file = catfile("btparse","progs","biblex$EXEEXT");
     push @toinstall, $exe_file;
     $object   = catfile("btparse","progs","biblex.o");
     if (!$self->up_to_date($object, $exe_file)) {
-        $CCL->($cbuilder,
-               exe_file => $exe_file,
-               objects  => [ $object ],
-               ($^O !~ /darwin/)?
-               (extra_linker_flags => "-Lbtparse/src -Wl,-R${btparselibdir} -lbtparse "):
-               (extra_linker_flags => "-Lbtparse/src -lbtparse "));
+        $libbuilder->link_executable(exe_file => $exe_file,
+                                     objects  => [ $object ],
+                                     ($^O !~ /darwin/)?
+                                     (extra_linker_flags => "-Lbtparse/src -Wl,-R${btparselibdir} -lbtparse "):
+                                     (extra_linker_flags => "-Lbtparse/src -lbtparse "));
     }
 
     $exe_file = catfile("btparse","progs","bibparse$EXEEXT");
     push @toinstall, $exe_file;
     $object   = [map {catfile("btparse","progs","$_.o")} (qw.bibparse args getopt getopt1.)];
     if (!$self->up_to_date($object, $exe_file)) {
-        $CCL->($cbuilder,
-               exe_file => $exe_file,
-               ($^O !~ /darwin/)?
-               (extra_linker_flags => "-Lbtparse/src -Wl,-R${btparselibdir} -lbtparse "):
-               (extra_linker_flags => "-Lbtparse/src -lbtparse "),
-               objects => $object);
+        $libbuilder->link_executable(exe_file => $exe_file,
+                                     ($^O !~ /darwin/)?
+                                     (extra_linker_flags => "-Lbtparse/src -Wl,-R${btparselibdir} -lbtparse "):
+                                     (extra_linker_flags => "-Lbtparse/src -lbtparse "),
+                                     objects => $object);
     }
 
     for my $file (@toinstall) {
@@ -221,10 +218,8 @@ sub ACTION_create_tests {
     my $self = shift;
     my $cbuilder = $self->cbuilder;
 
-    my $EXEEXT = $Config::AutoConf::EXEEXT;
-
-    my ($LD,$CCL) = Config::AutoConf::Linker::detect_library_link_commands($cbuilder);
-    die "Can't get a suitable way to compile a C library\n" if (!$LD || !$CCL);
+    my $libbuilder = $self->notes('libbuilder');
+    my $EXEEXT = $libbuilder->{exeext};
 
     print STDERR "\n** Creating test binaries\n";
 
@@ -232,64 +227,57 @@ sub ACTION_create_tests {
     my $objects  = [ map{catfile("btparse","tests","$_.o")} (qw.simple_test testlib.) ];
 
     if (!$self->up_to_date($objects, $exe_file)) {
-        $CCL->($cbuilder,
-               exe_file => $exe_file,
-               extra_linker_flags => '-Lbtparse/src -lbtparse ',
-               objects => $objects);
+        $libbuilder->link_executable(exe_file => $exe_file,
+                                     extra_linker_flags => '-Lbtparse/src -lbtparse ',
+                                     objects => $objects);
     }
 
     $exe_file = catfile("btparse","tests","read_test$EXEEXT");
     $objects  = [ map{catfile("btparse","tests","$_.o")}(qw.read_test testlib.) ];
     if (!$self->up_to_date($objects, $exe_file)) {
-        $CCL->($cbuilder,
-               exe_file => $exe_file,
-               extra_linker_flags => '-Lbtparse/src -lbtparse ',
-               objects => $objects);
+        $libbuilder->link_executable(exe_file => $exe_file,
+                                     extra_linker_flags => '-Lbtparse/src -lbtparse ',
+                                     objects => $objects);
     }
 
     $exe_file = catfile("btparse","tests","postprocess_test$EXEEXT");
     $objects  = [ map{catfile("btparse","tests","$_.o")}(qw.postprocess_test.) ];
     if (!$self->up_to_date($objects, $exe_file)) {
-        $CCL->($cbuilder,
-               exe_file => $exe_file,
-               extra_linker_flags => '-Lbtparse/src -lbtparse ',
-               objects => $objects);
+        $libbuilder->link_executable(exe_file => $exe_file,
+                                     extra_linker_flags => '-Lbtparse/src -lbtparse ',
+                                     objects => $objects);
     }
 
     $exe_file = catfile("btparse","tests","tex_test$EXEEXT");
     $objects  = [ map{catfile("btparse","tests","$_.o")}(qw.tex_test.) ];
     if (!$self->up_to_date($objects, $exe_file)) {
-        $CCL->($cbuilder,
-               exe_file => $exe_file,
-               extra_linker_flags => '-Lbtparse/src -lbtparse ',
-               objects => $objects);
+        $libbuilder->link_executable(exe_file => $exe_file,
+                                     extra_linker_flags => '-Lbtparse/src -lbtparse ',
+                                     objects => $objects);
     }
 
     $exe_file = catfile("btparse","tests","macro_test$EXEEXT");
     $objects  = [ map{catfile("btparse","tests","$_.o")}(qw.macro_test.) ];
     if (!$self->up_to_date($objects, $exe_file)) {
-        $CCL->($cbuilder,
-               exe_file => $exe_file,
-               extra_linker_flags => '-Lbtparse/src -lbtparse ',
-               objects => $objects);
+        $libbuilder->link_executable(exe_file => $exe_file,
+                                     extra_linker_flags => '-Lbtparse/src -lbtparse ',
+                                     objects => $objects);
     }
 
     $exe_file = catfile("btparse","tests","name_test$EXEEXT");
     $objects  = [ map{catfile("btparse","tests","$_.o")}(qw.name_test.) ];
     if (!$self->up_to_date($objects, $exe_file)) {
-        $CCL->($cbuilder,
-               exe_file => $exe_file,
-               extra_linker_flags => '-Lbtparse/src -lbtparse ',
-               objects => $objects);
+        $libbuilder->link_executable(exe_file => $exe_file,
+                                     extra_linker_flags => '-Lbtparse/src -lbtparse ',
+                                     objects => $objects);
     }
 
     $exe_file = catfile("btparse","tests","purify_test$EXEEXT");
     $objects  = [ map{catfile("btparse","tests","$_.o")}(qw.purify_test.) ];
     if (!$self->up_to_date($objects, $exe_file)) {
-        $CCL->($cbuilder,
-               exe_file => $exe_file,
-               extra_linker_flags => '-Lbtparse/src -lbtparse ',
-               objects => $objects);
+        $libbuilder->link_executable(exe_file => $exe_file,
+                                     extra_linker_flags => '-Lbtparse/src -lbtparse ',
+                                     objects => $objects);
     }
 }
 
@@ -297,7 +285,10 @@ sub ACTION_create_library {
     my $self = shift;
     my $cbuilder = $self->cbuilder;
 
-    my $LIBEXT = $Config::AutoConf::LIBEXT;
+
+    my $libbuilder = $self->notes('libbuilder');
+    my $LIBEXT = $libbuilder->{libext};
+
     print STDERR "\n** Creating libbtparse$LIBEXT\n";
 
     my @modules = qw:init input bibtex err scan error
@@ -307,19 +298,15 @@ sub ACTION_create_library {
 
     my @objects = map { "btparse/src/$_.o" } @modules;
 
-    my ($LD,$CCL) = Config::AutoConf::Linker::detect_library_link_commands($cbuilder);
-    die "Can't get a suitable way to compile a C library\n" if (!$LD || !$CCL);
-
     my $libpath = $self->notes('lib_path');
     $libpath = catfile($libpath, "libbtparse$LIBEXT");
     my $libfile = "btparse/src/libbtparse$LIBEXT";
 
     if (!$self->up_to_date(\@objects, $libfile)) {
-        $LD->($cbuilder,
-              module_name => 'btparse',
-              ($^O =~ /darwin/)?(extra_linker_flags => "-install_name $libpath"):(),
-              objects => \@objects,
-              lib_file => $libfile);
+        $libbuilder->link(module_name => 'btparse',
+                          ($^O =~ /darwin/)?(extra_linker_flags => "-install_name $libpath"):(),
+                          objects => \@objects,
+                          lib_file => $libfile);
     }
 
     my $libdir = catdir($self->blib, 'usrlib');
