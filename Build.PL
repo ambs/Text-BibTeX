@@ -18,7 +18,7 @@ my $builder = MyBuilder->new
                       'File::Copy'           => '0',
                       'Capture::Tiny'        => '0.06',
                       'Config::AutoConf'     => '0.16',
-                      'ExtUtils::LibBuilder' => '0.01',
+                      'ExtUtils::LibBuilder' => '0.02',
                       'ExtUtils::CBuilder'   => '0.27',
                       'Module::Build'        => '0.3603',
                      },
