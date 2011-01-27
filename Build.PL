@@ -14,11 +14,16 @@ my $builder = MyBuilder->new
    dist_author    => ['Alberto Simões <ambs@cpan.org>',
                       'Greg Ward <gward@python.net>'],
    needs_compiler => 1,
+   configure_requires => {
+                          'Module::Build' => 0.36 
+                          'Config::AutoConf'     => '0.16',
+                          'ExtUtils::LibBuilder' => '0.02',
+   },
    build_requires => {
                       'File::Copy'           => '0',
-                      'Capture::Tiny'        => '0.06',
                       'Config::AutoConf'     => '0.16',
                       'ExtUtils::LibBuilder' => '0.02',
+                      'Capture::Tiny'        => '0.06',
                       'ExtUtils::CBuilder'   => '0.27',
                       'Module::Build'        => '0.3603',
                      },
