@@ -29,6 +29,8 @@ my $builder = MyBuilder->new
                       'btparse/src/*.dylib',
                       'btparse/src/*.dll',
                       'btparse/src/*.o',
+                      'xscode/*.o',
+                      'btparse/tests/*.o',
                       'btparse/progs/*.o',
                       'btparse/progs/dumpnames',
                       'btparse/progs/bibparse',

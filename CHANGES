@@ -1,6 +1,7 @@
 Release 0.49 - 27 January, 2011
 -------------------------------
 * Small patch by Philip Kime to enlarge macros buffer size.
+* Fixed Build.PL to clean some object files.
 
 Release 0.48 - 23 September, 2010
 ---------------------------------
