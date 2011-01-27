@@ -15,7 +15,7 @@ my $builder = MyBuilder->new
                       'Greg Ward <gward@python.net>'],
    needs_compiler => 1,
    configure_requires => {
-                          'Module::Build' => 0.36 
+                          'Module::Build' => '0.36' ,
                           'Config::AutoConf'     => '0.16',
                           'ExtUtils::LibBuilder' => '0.02',
    },
