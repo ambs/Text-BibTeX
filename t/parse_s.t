@@ -1,7 +1,7 @@
 # -*- cperl -*-
 use strict;
 use warnings;
-
+use utf8;
 use IO::Handle;
 use Test::More tests => 46;
 
