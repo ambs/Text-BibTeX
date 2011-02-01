@@ -1,3 +1,7 @@
+Release 0.50 - 1 February, 2011
+-------------------------------
+* Fixed name abbreviation when name has hiffens (Philip Kime)
+
 Release 0.49 - 27 January, 2011
 -------------------------------
 * Small patch by Philip Kime to enlarge macros buffer size.

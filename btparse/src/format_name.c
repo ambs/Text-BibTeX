@@ -805,6 +805,7 @@ format_name (bt_name_format * format,
    int     token_vlen;                  /* "virtual" length (special char */
                                         /* counts as one character) */
    boolean should_tie;
+   boolean hyphen_todo;
 
    int     vchars_seen;
    int     depth;
@@ -856,43 +857,39 @@ format_name (bt_name_format * format,
              count_virtual_char (tokens[part][j], k, &vchars_seen, &depth, &in_special, &utf8_length);
              prefix_start = string_prefix_start (tokens[part][j], k);
 
-             /* Add initial from the begining of the string */
-             if (k == 0)
+             /* Add initial from the begining of the string or beginning of after-hyphen
+                string */
+             if (k == 0 || hyphen_todo)
              {
                prefix_len = string_prefix (tokens[part][j], prefix_start, 1);
                token_len = append_text (fname, offset,
                                         tokens[part][j], prefix_start, prefix_len);
                offset += token_len;
+               hyphen_todo = 0;
              }
-             /* Add initials for hyphenated names unless in protecting braces */
+             /* Potentially add a hyphen unless in protecting braces */
              if (tokens[part][j][k] == '-' && depth == 0 && in_special == FALSE)
              {
+               /* Add any post token part e. g. ('.') */
                tmpoffset = 0;
                tmpoffset = append_text (fname, offset, 
                                       format->post_token[part], 0, -1);
                offset += tmpoffset;
 
-               prefix_len = string_prefix (tokens[part][j], prefix_start+1, 1);
-
                /* We need to skip adding hyphens to terse abbreviated names so:
                 "Abraham-Smith" normally is "A.-S." but with no post_token, should
-                be "AS" and not "A-S" */
-               if (tmpoffset == 0)
+                be "AS" and not "A-S". So, only copy the hyphen if there is no post-token*/
+               if (tmpoffset != 0)
                {
-                 abbrev_prefix_start = prefix_start+1;
-                 abbrev_prefix_len = prefix_len;
-               }
-               else /* There is a post_token so we keep the hyphens */
-               {
-                 abbrev_prefix_start = prefix_start;
-                 abbrev_prefix_len = prefix_len+1;
+                 /* copy the hyphen */
+                 append_text (fname, offset,
+                              tokens[part][j],
+                              k, 1);
+                 offset += tmpoffset;
                }
 
-               token_len = append_text (fname, offset,
-                                        tokens[part][j],
-                                        abbrev_prefix_start, abbrev_prefix_len);
-
-               offset += token_len;
+               /* Set a flag to say we need to get the post-hyphen initial */
+               hyphen_todo = 1;
              }
            }
            token_vlen = 1;

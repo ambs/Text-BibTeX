@@ -2,7 +2,7 @@
 use strict;
 use vars qw($DEBUG);
 use IO::Handle;
-use Test::More tests=>22;
+use Test::More tests=>23;
 use Encode;
 use utf8;
 
@@ -80,11 +80,17 @@ my $name10 = new Text::BibTeX::Name '{Šomeone-Šomething} Smith';
 my $format10 = new Text::BibTeX::NameFormat ('f', 1);
 is (decode_utf8($format10->apply ($name10)), 'Š.');
 
-my $name11 = new Text::BibTeX::Name 'Mirian Neuser-Hoffman';
+my $name11 = new Text::BibTeX::Name 'Harold {K}ent-{B}arrow';
 my $format11 = new Text::BibTeX::NameFormat ('l', 1);
-$format11->set_text (BTN_LAST, undef, undef, undef, '');
+$format11->set_text (BTN_LAST, undef, undef, undef, '.');
 $format11->set_options (BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
-is ($format11->apply ($name11), 'NH');
+is (decode_utf8($format11->apply ($name11)), 'K.-B.');
+
+my $name12 = new Text::BibTeX::Name 'Mirian Neuser-Hoffman';
+my $format12 = new Text::BibTeX::NameFormat ('l', 1);
+$format12->set_text (BTN_LAST, undef, undef, undef, '');
+$format12->set_options (BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
+is ($format12->apply ($name12), 'NH');
 
 
 # Start with a basic "von last, jr, first" formatter
