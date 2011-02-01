@@ -107,9 +107,7 @@ sub ACTION_compile_xscode {
         my $btparselibdir = $self->install_path('usrlib');
         $cbuilder->link(
                         module_name => 'Text::BibTeX',
-                        ($^O !~ /darwin/)?
-                        (extra_linker_flags => "-Lbtparse/src -Wl,-R${btparselibdir} -lbtparse "):
-                        (extra_linker_flags => "-Lbtparse/src -lbtparse "),
+                        extra_linker_flags => "-Lbtparse/src -lbtparse ",
                         objects     => $objects,
                         lib_file    => $lib_file,
                        );

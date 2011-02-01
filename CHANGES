@@ -1,3 +1,7 @@
+Release 0.51 - 1 February, 2011
+-------------------------------
+* Fixed environment during Linux/Unix testing
+
 Release 0.50 - 1 February, 2011
 -------------------------------
 * Fixed name abbreviation when name has hiffens (Philip Kime)
