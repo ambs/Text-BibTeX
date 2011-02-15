@@ -90,7 +90,7 @@ my $name12 = new Text::BibTeX::Name 'Mirian Neuser-Hoffman';
 my $format12 = new Text::BibTeX::NameFormat ('l', 1);
 $format12->set_text (BTN_LAST, undef, undef, undef, '');
 $format12->set_options (BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
-is ($format12->apply ($name12), 'NH');
+is ($format12->apply ($name12), 'N-H');
 
 
 # Start with a basic "von last, jr, first" formatter

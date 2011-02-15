@@ -876,17 +876,11 @@ format_name (bt_name_format * format,
                                       format->post_token[part], 0, -1);
                offset += tmpoffset;
 
-               /* We need to skip adding hyphens to terse abbreviated names so:
-                "Abraham-Smith" normally is "A.-S." but with no post_token, should
-                be "AS" and not "A-S". So, only copy the hyphen if there is no post-token*/
-               if (tmpoffset != 0)
-               {
-                 /* copy the hyphen */
-                 append_text (fname, offset,
-                              tokens[part][j],
-                              k, 1);
-                 offset += tmpoffset;
-               }
+               /* copy the hyphen */
+               tmpoffset = append_text (fname, offset,
+                            tokens[part][j],
+                            k, 1);
+               offset += tmpoffset;
 
                /* Set a flag to say we need to get the post-hyphen initial */
                hyphen_todo = 1;
