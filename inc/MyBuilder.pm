@@ -18,7 +18,10 @@ use File::Path qw.mkpath.;
 
 sub ACTION_install {
     my $self = shift;
-    if (defined $self->{properties}{install_base}) {
+    if ($^O =~ /cygwin/i) { # cygwin uses windows lib searching (PATH instead of LD_LIBRARY_PATH)
+        $self->install_path( 'usrlib' => '/usr/local/bin' );
+    }
+    elsif (defined $self->{properties}{install_base}) {
         my $usrlib = catdir($self->{properties}{install_base} => 'lib');
         $self->install_path( 'usrlib' => $usrlib );
         warn "libbtparse.so will install on $usrlib. Be sure to add it to your LIBRARY_PATH\n"
@@ -319,16 +322,24 @@ sub ACTION_test {
     my $self = shift;
 
     if ($^O =~ /darwin/i) {
-        $ENV{DYLD_LIBRARY_PATH} = catdir($self->blib,"usrlib");
+        $ENV{DYLD_LIBRARY_PATH} = catdir($self->blib, "usrlib");
     }
     elsif ($^O =~ /(?:linux|bsd|sun|sol|dragonfly|hpux|irix)/i) {
-        $ENV{LD_LIBRARY_PATH} = catdir($self->blib,"usrlib");
+        $ENV{LD_LIBRARY_PATH} = catdir($self->blib, "usrlib");
     }
     elsif ($^O =~ /aix/i) {
         my $oldlibpath = $ENV{LIBPATH} || '/lib:/usr/lib';
-        $ENV{LIBPATH} = catdir($self->blib,"usrlib").":$oldlibpath";
+        $ENV{LIBPATH} = catdir($self->blib, "usrlib").":$oldlibpath";
     }
-
+    elsif ($^O =~ /cygwin/i) {
+        # cygwin uses windows lib searching (PATH instead of LD_LIBRARY_PATH)
+        my $oldpath = $ENV{PATH};
+        $ENV{PATH} = catdir($self->blib, "usrlib").":$oldpath";
+    }
+    elsif ($^O =~ /mswin32/i) {
+        my $oldpath = $ENV{PATH};
+        $ENV{PATH} = catdir($self->blib, "usrlib").";$oldpath";
+    }
     $self->SUPER::ACTION_test
 }
 

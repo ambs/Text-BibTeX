@@ -1,3 +1,10 @@
+
+Release 0.53 - 10 March, 2011
+-----------------------------
+* Working under Cygwin (Philip Kime)
+* Changed Windows testing mode (based on Cygwin approach)
+  - getting rid of 00_ and zz_ test files. Great!
+
 Release 0.52 - 15 February, 2011
 --------------------------------
 * More name abbreviation tweeks (Philip Kime)

@@ -30,7 +30,7 @@ lib/Text/BibTeX/Bib.pm
 lib/Text/BibTeX/BibFormat.pm
 lib/Text/BibTeX/BibSort.pm
 
-t/00.init.t
+## t/00.init.t
 t/common.pl
 t/bib.t
 t/macro.t
@@ -44,7 +44,7 @@ t/parse_f.t
 t/parse_s.t
 t/purify.t
 t/split_names
-t/zz.cleanup.t
+## t/zz.cleanup.t
 
 examples/append_entries
 
@@ -146,3 +146,4 @@ btparse/tests/testlib.h
 btparse/src/bt_config.h.in
 
 README.OLD
+META.json
