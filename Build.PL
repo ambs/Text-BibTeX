@@ -3,6 +3,7 @@ use warnings;
 
 use lib 'inc';
 use MyBuilder;
+use Config;
 
 my $version = get_version();
 
@@ -55,7 +56,11 @@ my $libdir = $builder->install_destination("bin");
 if ($^O =~ /mswin32/i) {
     $libdir = $ENV{WINDIR} || 'c:\\WINDOWS\\'; ## HACK HACK HACK
 } else {
-    $libdir =~ s/\bbin\b/lib/;
+    if ($Config{archname} =~ /^x86_64/) {
+        $libdir =~ s/\bbin\b/lib64/;
+    } else {
+        $libdir =~ s/\bbin\b/lib/;
+    }
 }
 $builder->notes('btparse_version' => $version);
 $builder->notes('lib_path' => $libdir);
