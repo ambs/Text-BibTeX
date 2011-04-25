@@ -305,7 +305,7 @@ sub ACTION_create_library {
     if ($^O =~ /darwin/) {
         $extra_linker_flags = "-install_name $libpath";
     } else {
-        $extra_linker_flags = "-Wl,-soname,$libfile.1";
+        $extra_linker_flags = "-Wl,-soname,$libfile";
     }
 
     if (!$self->up_to_date(\@objects, $libfile)) {
