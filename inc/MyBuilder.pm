@@ -304,8 +304,8 @@ sub ACTION_create_library {
     my $extra_linker_flags = "";
     if ($^O =~ /darwin/) {
         $extra_linker_flags = "-install_name $libpath";
-    } else {
-        $extra_linker_flags = "-Wl,-soname,$libfile";
+    } elsif ($LIBEXT eq ".so") {
+        $extra_linker_flags = "-Wl,-soname,libbtparse$LIBEXT";
     }
 
     if (!$self->up_to_date(\@objects, $libfile)) {
