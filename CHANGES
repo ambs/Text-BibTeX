@@ -1,7 +1,8 @@
-Release 0.55...
+Release 0.55 - 25 April, 2011
 -----------------------------
 * Added some extra checks for lib64 dir.
 * Rewrote some code on MyBuilder.pm
+* Add soname to library build.
 
 Release 0.54 - 17 April, 2011
 -----------------------------
