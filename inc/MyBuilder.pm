@@ -165,24 +165,26 @@ sub ACTION_create_objects {
 
 
 sub ACTION_create_binaries {
-    my $self = shift;
-    my $cbuilder = $self->cbuilder;
-    my $libbuilder = $self->notes('libbuilder');
-    my $EXEEXT = $libbuilder->{exeext};
+    my $self          = shift;
+    my $cbuilder      = $self->cbuilder;
+    my $libbuilder    = $self->notes('libbuilder');
+    my $EXEEXT        = $libbuilder->{exeext};
+    my $btparselibdir = $self->install_path('usrlib');
 
     print STDERR "\n** Creating binaries (dumpnames$EXEEXT, biblex$EXEEXT, bibparse$EXEEXT)\n";
+
+    my $extra_linker_flags = sprintf("-Lbtparse/src %s -lbtparse ",
+                                     ($^O !~ /darwin/)?"-Wl,-R${btparselibdir}":"");
 
     my @toinstall;
     my $exe_file = catfile("btparse","progs","dumpnames$EXEEXT");
     push @toinstall, $exe_file;
     my $object   = catfile("btparse","progs","dumpnames.o");
-    my $btparselibdir = $self->install_path('usrlib');
+
     if (!$self->up_to_date($object, $exe_file)) {
         $libbuilder->link_executable(exe_file => $exe_file,
                                      objects  => [ $object ],
-                                     ($^O !~ /darwin/)?
-                                     (extra_linker_flags => "-Lbtparse/src -Wl,-R${btparselibdir} -lbtparse "):
-                                     (extra_linker_flags => "-Lbtparse/src -lbtparse "));
+                                     extra_linker_flags => $extra_linker_flags);
     }
 
     $exe_file = catfile("btparse","progs","biblex$EXEEXT");
@@ -191,9 +193,7 @@ sub ACTION_create_binaries {
     if (!$self->up_to_date($object, $exe_file)) {
         $libbuilder->link_executable(exe_file => $exe_file,
                                      objects  => [ $object ],
-                                     ($^O !~ /darwin/)?
-                                     (extra_linker_flags => "-Lbtparse/src -Wl,-R${btparselibdir} -lbtparse "):
-                                     (extra_linker_flags => "-Lbtparse/src -lbtparse "));
+                                     extra_linker_flags => $extra_linker_flags);
     }
 
     $exe_file = catfile("btparse","progs","bibparse$EXEEXT");
@@ -201,10 +201,8 @@ sub ACTION_create_binaries {
     $object   = [map {catfile("btparse","progs","$_.o")} (qw.bibparse args getopt getopt1.)];
     if (!$self->up_to_date($object, $exe_file)) {
         $libbuilder->link_executable(exe_file => $exe_file,
-                                     ($^O !~ /darwin/)?
-                                     (extra_linker_flags => "-Lbtparse/src -Wl,-R${btparselibdir} -lbtparse "):
-                                     (extra_linker_flags => "-Lbtparse/src -lbtparse "),
-                                     objects => $object);
+                                     objects => $object,
+                                     extra_linker_flags => $extra_linker_flags);
     }
 
     for my $file (@toinstall) {
@@ -303,11 +301,18 @@ sub ACTION_create_library {
     $libpath = catfile($libpath, "libbtparse$LIBEXT");
     my $libfile = "btparse/src/libbtparse$LIBEXT";
 
+    my $extra_linker_flags = "";
+    if ($^O =~ /darwin/) {
+        $extra_linker_flags = "-install_name $libpath";
+    } else {
+        $extra_linker_flags = "-Wl,-soname,$libfile.1";
+    }
+
     if (!$self->up_to_date(\@objects, $libfile)) {
-        $libbuilder->link(module_name => 'btparse',
-                          ($^O =~ /darwin/)?(extra_linker_flags => "-install_name $libpath"):(),
-                          objects => \@objects,
-                          lib_file => $libfile);
+        $libbuilder->link(module_name        => 'btparse',
+                          objects            => \@objects,
+                          lib_file           => $libfile,
+                          extra_linker_flags => $extra_linker_flags);
     }
 
     my $libdir = catdir($self->blib, 'usrlib');

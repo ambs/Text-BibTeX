@@ -58,6 +58,11 @@ if ($^O =~ /mswin32/i) {
 } else {
     if ($Config{archname} =~ /^x86_64/) {
         $libdir =~ s/\bbin\b/lib64/;
+        if (!-d $libdir) {
+            my $test = $libdir;
+            $test =~ s/lib64/lib/;
+            $libdir = $test if -d $test;
+        }
     } else {
         $libdir =~ s/\bbin\b/lib/;
     }

@@ -14,113 +14,153 @@ use Text::BibTeX::NameFormat;
 
 $DEBUG = 1;
 
-#setup_stderr;
+{
+    # tests 1..3
+    # Get a name to work with (and just a quick check that the Name class
+    # is in working order)
+    my $name = Text::BibTeX::Name->new
+      ("Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");
 
-# Get a name to work with (and just a quick check that the Name class
-# is in working order)
-my $name = new Text::BibTeX::Name
-        "Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin";
-my @first = $name->part ('first');
-my @von = $name->part ('von');
-my @last = $name->part ('last');
-is_deeply(\@first, [qw(Charles Louis Xavier Joseph)]);
-is_deeply(\@von, [qw(de la)]);
-is_deeply(\@last, ["Vall{\\'e}e", 'Poussin']);
+    my @first = $name->part('first');
+    my @von   = $name->part('von');
+    my @last  = $name->part('last');
 
-my $name1 = new Text::BibTeX::Name
-        '{John Henry} Ford';
-my $format1 = new Text::BibTeX::NameFormat ('f', 1);
-is ($format1->apply ($name1), 'J.');
+    is_deeply \@first, [qw(Charles Louis Xavier Joseph)],
+      "First name is 'Charles Louis Xavier Joseph'";
+    is_deeply \@von,   [qw(de la)],
+      "von part is 'de la'";
+    is_deeply \@last,  ["Vall{\\'e}e", 'Poussin'],
+      "Last name is 'Vall{\\'e}e Poussin'";
+}
 
-my $name2 = new Text::BibTeX::Name
-        '{John} Ford';
-my $format2 = new Text::BibTeX::NameFormat ('f', 1);
-is ($format2->apply ($name2), 'J.');
+{
+    # tests 4..5..
+    my $name1   = Text::BibTeX::Name->new('{John Henry} Ford');
+    my $format1 = Text::BibTeX::NameFormat->new('f', 1);
+    is $format1->apply($name1), 'J.';
 
-my $name3 = new Text::BibTeX::Name
-         '{U.S. Department of Health and Human Services, National Institute of Mental Health, National Heart, Lung and Blood Institute}';
-my $format3 = new Text::BibTeX::NameFormat ('l', 1);
-$format3->set_text (BTN_LAST, undef, undef, undef, '.');
-$format3->set_options (BTN_LAST, 1, BTJ_NOTHING, BTJ_NOTHING);
-is ($format3->apply ($name3), 'U.');
+    my $name2   = Text::BibTeX::Name->new('{John} Ford');
+    my $format2 = Text::BibTeX::NameFormat->new('f', 1);
+    is $format2->apply($name2), 'J.';
+}
 
-my $name4 = new Text::BibTeX::Name "{\\'E}mile Zola";
-my $format4 = new Text::BibTeX::NameFormat ('f', 1);
-is ($format4->apply ($name4), "{\\'E}.");
+{
+    # tests 6..
+    my $name3   = Text::BibTeX::Name->new
+      ('{U.S. Department of Health and Human Services, National Institute of Mental Health,'.
+       'National Heart, Lung and Blood Institute}');
 
-my $name5 = new Text::BibTeX::Name
-         'St John-Mollusc, Oliver';
-my $format5 = new Text::BibTeX::NameFormat ('l', 1);
-$format5->set_text (BTN_LAST, undef, undef, undef, '.');
-$format5->set_options (BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
-is ($format5->apply ($name5), 'S.~J.-M.');
+    my $format3 = Text::BibTeX::NameFormat->new('l', 1);
 
-my $name6 = new Text::BibTeX::Name
-         "St John-{\\'E}mile Mollusc, Oliver";
-my $format6 = new Text::BibTeX::NameFormat ('l', 1);
-$format6->set_text (BTN_LAST, undef, undef, undef, '.');
-$format6->set_options (BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
-is ($format6->apply ($name6), "S.~J.-{\\'E}.~M.");
+    $format3->set_text(BTN_LAST, undef, undef, undef, '.');
+    $format3->set_options(BTN_LAST, 1, BTJ_NOTHING, BTJ_NOTHING);
 
-my $name7 = new Text::BibTeX::Name 'St {John-Mollusc}, Oliver';
-my $format7 = new Text::BibTeX::NameFormat ('l', 1);
-$format7->set_text (BTN_LAST, undef, undef, undef, '.');
-$format7->set_options (BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
-is ($format7->apply ($name7), 'S.~J.');
+    is $format3->apply($name3), 'U.';
+}
 
-my $name8 = new Text::BibTeX::Name 'Šomeone Smith';
-my $format8 = new Text::BibTeX::NameFormat ('f', 1);
-is (decode_utf8($format8->apply ($name8)), 'Š.');
+{
+    # tests 7..8..
+    my $name4   = Text::BibTeX::Name->new("{\\'E}mile Zola");
+    my $format4 = Text::BibTeX::NameFormat->new('f', 1);
+    is $format4->apply($name4), "{\\'E}.";
 
-my $name9 = new Text::BibTeX::Name 'Šomeone-Šomething Smith';
-my $format9 = new Text::BibTeX::NameFormat ('f', 1);
-is (decode_utf8($format9->apply ($name9)), 'Š.-Š.');
+    my $name5   = Text::BibTeX::Name->new('St John-Mollusc, Oliver');
+    my $format5 = Text::BibTeX::NameFormat->new('l', 1);
 
-my $name10 = new Text::BibTeX::Name '{Šomeone-Šomething} Smith';
-my $format10 = new Text::BibTeX::NameFormat ('f', 1);
-is (decode_utf8($format10->apply ($name10)), 'Š.');
+    $format5->set_text(BTN_LAST, undef, undef, undef, '.');
+    $format5->set_options(BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
 
-my $name11 = new Text::BibTeX::Name 'Harold {K}ent-{B}arrow';
-my $format11 = new Text::BibTeX::NameFormat ('l', 1);
-$format11->set_text (BTN_LAST, undef, undef, undef, '.');
-$format11->set_options (BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
-is (decode_utf8($format11->apply ($name11)), 'K.-B.');
+    is $format5->apply($name5), 'S.~J.-M.';
+}
 
-my $name12 = new Text::BibTeX::Name 'Mirian Neuser-Hoffman';
-my $format12 = new Text::BibTeX::NameFormat ('l', 1);
-$format12->set_text (BTN_LAST, undef, undef, undef, '');
-$format12->set_options (BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
-is ($format12->apply ($name12), 'N-H');
+{
+    # tests 9..
+    my $name6   = Text::BibTeX::Name->new("St John-{\\'E}mile Mollusc, Oliver");
+    my $format6 = Text::BibTeX::NameFormat->new('l', 1);
 
+    $format6->set_text (BTN_LAST, undef, undef, undef, '.');
+    $format6->set_options (BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
 
-# Start with a basic "von last, jr, first" formatter
-my $format = new Text::BibTeX::NameFormat ('vljf', 1);
-is ($format->apply ($name), "de~la Vall{\\'e}e~Poussin, C.~L. X.~J.");
-is ($format->apply ($name), $name->format ($format));
+    is $format6->apply($name6), "S.~J.-{\\'E}.~M.";
+}
 
-# Tweak options: force ties between tokens of the first name
-$format->set_options (BTN_FIRST, 1, BTJ_FORCETIE, BTJ_NOTHING);
-is ($format->apply ($name), "de~la Vall{\\'e}e~Poussin, C.~L.~X.~J.");
+{
+    # test 10...
+    my $name7   = Text::BibTeX::Name->new('St {John-Mollusc}, Oliver');
+    my $format7 = Text::BibTeX::NameFormat->new('l', 1);
 
-# And no ties in the "von" part
-$format->set_options (BTN_VON, 0, BTJ_SPACE, BTJ_SPACE);
-is ($format->apply ($name), "de la Vall{\\'e}e~Poussin, C.~L.~X.~J.");
+    $format7->set_text (BTN_LAST, undef, undef, undef, '.');
+    $format7->set_options (BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
 
-# No punctuation in the first name
-$format->set_text (BTN_FIRST, undef, undef, undef, '');
-is ($format->apply ($name), "de la Vall{\\'e}e~Poussin, C~L~X~J");
+    is $format7->apply($name7), 'S.~J.';
+}
 
-# And drop the first name inter-token separation entirely
-$format->set_options (BTN_FIRST, 1, BTJ_NOTHING, BTJ_NOTHING);
-is ($format->apply ($name), "de la Vall{\\'e}e~Poussin, CLXJ");
+{
+    # test 11... to 13
+    my $name8     = Text::BibTeX::Name->new('Šomeone Smith');
+    my $formatter = Text::BibTeX::NameFormat->new('f', 1);
+    is decode_utf8($formatter->apply($name8)), 'Š.';
 
-# Now we get silly: keep the first name tokens jammed together, but
-# don't abbreviate them any more
-$format->set_options (BTN_FIRST, 0, BTJ_NOTHING, BTJ_NOTHING);
-is ($format->apply ($name),
-    "de la Vall{\\'e}e~Poussin, CharlesLouisXavierJoseph");
+    my $name9   = Text::BibTeX::Name->new('Šomeone-Šomething Smith');
+    is decode_utf8($formatter->apply($name9)), 'Š.-Š.';
 
-# OK, but spaces back in to the first name
-$format->set_options (BTN_FIRST, 0, BTJ_SPACE, BTJ_NOTHING);
-is ($format->apply ($name),
-    "de la Vall{\\'e}e~Poussin, Charles Louis Xavier Joseph");
+    my $name10   = Text::BibTeX::Name->new('{Šomeone-Šomething} Smith');
+    is decode_utf8($formatter->apply($name10)), 'Š.';
+}
+
+{
+    # test 14... and 15
+    my $name11   = Text::BibTeX::Name->new('Harold {K}ent-{B}arrow');
+    my $format11 = Text::BibTeX::NameFormat->new('l', 1);
+
+    $format11->set_text(BTN_LAST, undef, undef, undef, '.');
+    $format11->set_options(BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
+
+    is $format11->apply($name11), 'K.-B.';
+
+    my $name12   = Text::BibTeX::Name->new('Mirian Neuser-Hoffman');
+    my $format12 = Text::BibTeX::NameFormat->new('l', 1);
+
+    $format12->set_text(BTN_LAST, undef, undef, undef, '');
+    $format12->set_options(BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
+
+    is $format12->apply($name12), 'N-H';
+}
+
+{
+    # test 16 to 23
+
+    my $name = Text::BibTeX::Name->new
+      ("Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");
+
+    # Start with a basic "von last, jr, first" formatter
+    my $format = Text::BibTeX::NameFormat->new('vljf', 1);
+
+    is $format->apply($name), "de~la Vall{\\'e}e~Poussin, C.~L. X.~J.";
+    is $format->apply($name), $name->format($format);
+
+    # Tweak options: force ties between tokens of the first name
+    $format->set_options(BTN_FIRST, 1, BTJ_FORCETIE, BTJ_NOTHING);
+    is $format->apply($name), "de~la Vall{\\'e}e~Poussin, C.~L.~X.~J.";
+
+    # And no ties in the "von" part
+    $format->set_options(BTN_VON, 0, BTJ_SPACE, BTJ_SPACE);
+    is $format->apply($name), "de la Vall{\\'e}e~Poussin, C.~L.~X.~J.";
+
+    # No punctuation in the first name
+    $format->set_text(BTN_FIRST, undef, undef, undef, '');
+    is $format->apply($name), "de la Vall{\\'e}e~Poussin, C~L~X~J";
+
+    # And drop the first name inter-token separation entirely
+    $format->set_options(BTN_FIRST, 1, BTJ_NOTHING, BTJ_NOTHING);
+    is $format->apply($name), "de la Vall{\\'e}e~Poussin, CLXJ";
+
+    # Now we get silly: keep the first name tokens jammed together, but
+    # don't abbreviate them any more
+    $format->set_options(BTN_FIRST, 0, BTJ_NOTHING, BTJ_NOTHING);
+    is $format->apply($name), "de la Vall{\\'e}e~Poussin, CharlesLouisXavierJoseph";
+
+    # OK, but spaces back in to the first name
+    $format->set_options (BTN_FIRST, 0, BTJ_SPACE, BTJ_NOTHING);
+    is $format->apply($name), "de la Vall{\\'e}e~Poussin, Charles Louis Xavier Joseph";
+}
