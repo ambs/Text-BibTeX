@@ -1,3 +1,8 @@
+Release 0.56 - 8 June, 2011
+---------------------------
+* Use File::Temp instead of POSIX. Fixes some Win32 builds.
+  Thanks to Alex Gough for reporting this build problem.
+
 Release 0.55 - 25 April, 2011
 -----------------------------
 * Added some extra checks for lib64 dir.

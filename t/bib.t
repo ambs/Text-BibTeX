@@ -4,7 +4,7 @@ use warnings;
 
 use vars qw($DEBUG);
 use IO::Handle;
-use POSIX qw(tmpnam);
+use File::Temp qw(tempfile);
 
 use Test::More tests => 42;
 
@@ -39,10 +39,9 @@ ENTRIES
 # (Currently) we have to go through a Text::BibTeX::File object to get
 # Entry objects blessed into a structured entry class, so start
 # by creating the file to parse.
-my $fn = tmpnam . ".bib";
-open F, '>', $fn || die "couldn't create $fn: $!\n";
-print F $entries;
-close F;
+my ($fh, $fn) = tempfile("tmpXXXXX", SUFFIX => '.bib', UNLINK => 1);
+print {$fh} $entries;
+close $fh;
 
 # Open it as a Text::BibTeX::File object, set the structure class (which
 # controls the structured entry class of all entries parsed from that
@@ -56,7 +55,7 @@ my $entry1 = new Text::BibTeX::BibEntry $file;
 my $entry2 = new Text::BibTeX::BibEntry $file;
 
 $file->close;
-unlink ($fn) || warn "couldn't delete temporary file $fn: $!\n";
+#unlink ($fn) || warn "couldn't delete temporary file $fn: $!\n";
 
 # The default options of BibStructure are:
 #   namestyle => 'full'
