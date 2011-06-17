@@ -1,3 +1,7 @@
+Release 0.57 - 17 June, 2011
+---------------------------
+* Mark two tests that fail from time to time as TODO for now.
+
 Release 0.56 - 8 June, 2011
 ---------------------------
 * Use File::Temp instead of POSIX. Fixes some Win32 builds.
