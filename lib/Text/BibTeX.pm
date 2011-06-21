@@ -730,30 +730,6 @@ Copyright (c) 1997-2000 by Gregory P. Ward.  All rights reserved.  This file
 is part of the Text::BibTeX library.  This library is free software; you
 may redistribute it and/or modify it under the same terms as Perl itself.
 
-=head1 AVAILABILITY
-
-The btOOL home page, where you can get up-to-date information about
-C<Text::BibTeX> (and download the latest version) is
-
-   http://starship.python.net/~gward/btOOL/
-
-You will also find the latest version of B<btparse>, the C library
-underlying C<Text::BibTeX>, there.  B<btparse> is needed to build
-C<Text::BibTeX>, and must be downloaded separately.
-
-Both libraries are also available on CTAN (the Comprehensive TeX Archive
-Network, C<http://www.ctan.org/tex-archive/>) and CPAN (the Comprehensive
-Perl Archive Network, C<http://www.cpan.org/>).  Look in
-F<biblio/bibtex/utils/btOOL/> on CTAN, and F<authors/Greg_Ward/> on
-CPAN.  For example,
-
-   http://www.ctan.org/tex-archive/biblio/bibtex/utils/btOOL/
-   http://www.cpan.org/authors/Greg_Ward
-
-will both get you to the latest version of C<Text::BibTeX> and B<btparse>
--- but of course, you should always access busy sites like CTAN and CPAN
-through a mirror.
-
 =cut
 
 1;
