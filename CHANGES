@@ -1,5 +1,10 @@
+Release 0.58 - 21 June, 2011
+----------------------------
+* Remove some old documentation about btparse.
+* Warn users when installing on non standard library path.
+
 Release 0.57 - 17 June, 2011
----------------------------
+----------------------------
 * Mark two tests that fail from time to time as TODO for now.
 
 Release 0.56 - 8 June, 2011

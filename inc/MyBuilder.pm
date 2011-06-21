@@ -18,19 +18,29 @@ use File::Path qw.mkpath.;
 
 sub ACTION_install {
     my $self = shift;
+
+    my $usrlib = $self->install_path( 'usrlib' );
+
     if ($^O =~ /cygwin/i) { # cygwin uses windows lib searching (PATH instead of LD_LIBRARY_PATH)
         $self->install_path( 'usrlib' => '/usr/local/bin' );
     }
     elsif (defined $self->{properties}{install_base}) {
-        my $usrlib = catdir($self->{properties}{install_base} => 'lib');
+        $usrlib = catdir($self->{properties}{install_base} => 'lib');
         $self->install_path( 'usrlib' => $usrlib );
-        warn "libbtparse.so will install on $usrlib. Be sure to add it to your LIBRARY_PATH\n"
     }
     $self->SUPER::ACTION_install;
     if ($^O =~ /linux/ && $ENV{USER} eq 'root') {
         my $linux = Config::AutoConf->check_prog("ldconfig");
         system $linux if (-x $linux);
     }
+    if ($^O =~ /(?:linux|bsd|sun|sol|dragonfly|hpux|irix|darwin)/
+        &&
+        $usrlib !~ m!^/usr(/local)?/lib/?$!)
+      {
+          warn "\n** WARNING **\n"
+             . "It seems you are installing in a non standard path.\n"
+             . "You might need to add $usrlib to your library search path.\n";
+      }
 }
 
 sub ACTION_code {
