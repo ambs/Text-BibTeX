@@ -780,8 +780,8 @@ sub print_s
          {
             $_ = $_->type == &BTAST_STRING ? '{' . $_->text . '}' : $_->text;
          }
-         return join (' # ', @values);            
-      }
+         return join (' # ', @values);
+     }
    }
 
    carp "entry type undefined" unless defined $self->{'type'};
@@ -794,8 +794,8 @@ sub print_s
    {
       carp "entry key undefined" unless defined $self->{'key'};
       $output = sprintf ("@%s{%s,\n",
-                         $self->{'type'} || '', 
-                         $self->{'key'} || '');
+                         $self->{'type'} || '',
+                         $self->{'key'}  || '');
    }
    elsif ($self->{'metatype'} == &BTE_MACRODEF)
    {
@@ -826,8 +826,7 @@ sub print_s
       $output .= "  $field = ";
       $output .= value_to_string ($value);
 
-      $output .= ',' if @fields;        # more fields yet to come
-      $output .= "\n";
+      $output .= ",\n";
    }
 
    # Tack on the last line, and we're done!

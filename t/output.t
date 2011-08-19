@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use IO::Handle;
-use Test::More tests => 10;
+use Test::More tests => 16;
 
 use vars qw($DEBUG);
 
@@ -33,17 +33,18 @@ ok($entry->parse_ok);
 
 $new_text = $entry->print_s;
 
-ok($new_text =~ /^\@article\{homer97,$/m &&
-      $new_text =~ /^\s*author\s*=\s*{H{\\"o}mer Simpson \\"und Ned Flanders},$/m &&
-      $new_text =~ /^\s*title\s*=\s*[{"]Territorial[^}"]*Suburbia[}"],$/m &&
-      $new_text =~ /^\s*journal\s*=\s*[{"]Journal[^\}]*Studies[}"],$/m &&
-      $new_text =~ /^\s*year\s*=\s*[{"]1997[}"],?$/m);
+like $new_text => qr/^\@article\{homer97,\s*$/m;
+like $new_text => qr/^\s*author\s*=\s*{H{\\"o}mer Simpson \\"und Ned Flanders},\s*$/m;
+like $new_text => qr/^\s*title\s*=\s*[{"]Territorial[^}"]*Suburbia[}"],\s*$/m;
+like $new_text => qr/^\s*journal\s*=\s*[{"]Journal[^\}]*Studies[}"],\s*$/m;
+like $new_text => qr/^\s*year\s*=\s*[{"]1997[}"],\s*$/m;
 
 $new_entry = new Text::BibTeX::Entry $new_text;
 ok($entry->parse_ok);
 
-ok($entry->type eq $new_entry->type);
-ok($entry->key eq $new_entry->key);
+is $entry->type => $new_entry->type;
+is $entry->key  => $new_entry->key;
+
 ok(slist_equal (scalar $entry->fieldlist, scalar $new_entry->fieldlist));
 
 @fields = $entry->fieldlist;
@@ -76,7 +77,7 @@ for $i (0 .. 2)
    close (BIB);
 }
 
-ok($new_text eq $contents[0] &&
-      $new_text eq $contents[1] &&
-      $new_text eq $contents[2]);
+is $new_text => $contents[0];
+is $new_text => $contents[1];
+is $new_text => $contents[2];
 

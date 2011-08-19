@@ -1,3 +1,13 @@
+Release 0.60 - 31 July, 2011
+----------------------------
+* Fix test in t/output.t
+
+Release 0.59 - 28 July, 2011
+----------------------------
+* Add comma at the end of each and any line in BibTeX record
+  as all modern parsers support them.
+* Rewrote some tests in t/output.t
+
 Release 0.58 - 21 June, 2011
 ----------------------------
 * Remove some old documentation about btparse.
