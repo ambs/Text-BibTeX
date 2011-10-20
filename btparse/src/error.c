@@ -120,6 +120,8 @@ void print_error (bt_error *err)
 
    fprintf (stderr, "%s\n", err->message);
 
+   fflush(stderr);
+
 } /* print_error() */
 
 

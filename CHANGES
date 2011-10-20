@@ -1,3 +1,9 @@
+Release 0.61 - 20 Outubro, 2011
+-------------------------------
+* Thanks to Philip Kime (again), we have STDERR working on Windows
+  (hopefully)
+* Make Windows tests no longer ignored.
+
 Release 0.60 - 31 July, 2011
 ----------------------------
 * Fix test in t/output.t
