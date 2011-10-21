@@ -19,9 +19,11 @@ package Text::BibTeX::Entry;
 require 5.004;                          # for isa, and delete on a slice
 
 use strict;
-
+use vars qw'$VERSION';
 use Carp;
 use Text::BibTeX qw(:metatypes :nodetypes);
+
+$VERSION = 0;
 
 =head1 NAME
 

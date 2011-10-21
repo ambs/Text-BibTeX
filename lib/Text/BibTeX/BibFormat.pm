@@ -19,13 +19,14 @@ package Text::BibTeX::BibFormat;
 
 use Carp;
 use strict;
-use vars qw(@ISA);
+use vars qw(@ISA $VERSION);
 
 use Text::BibTeX::Name;
 use Text::BibTeX::NameFormat;
 use Text::BibTeX::Structure;
 
 @ISA = qw(Text::BibTeX::StructuredEntry);
+$VERSION = 0;
 
 use Text::BibTeX qw(:subs display_list :nameparts :joinmethods);
 

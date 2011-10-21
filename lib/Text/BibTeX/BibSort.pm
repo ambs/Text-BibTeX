@@ -18,11 +18,12 @@
 
 package Text::BibTeX::BibSort;
 use strict;
-use vars qw(@ISA);
+use vars qw(@ISA $VERSION);
 
 use Text::BibTeX::Structure;
 
 @ISA = qw(Text::BibTeX::StructuredEntry);
+$VERSION = 0;
 
 use Text::BibTeX qw(purify_string change_case);
 

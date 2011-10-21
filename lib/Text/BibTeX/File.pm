@@ -21,6 +21,9 @@ use strict;
 use Carp;
 use IO::File;
 
+use vars qw'$VERSION';
+$VERSION = 0;
+
 =head1 NAME
 
 Text::BibTeX::File - interface to whole BibTeX files

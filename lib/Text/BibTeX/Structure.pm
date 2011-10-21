@@ -23,6 +23,9 @@ require 5.004;                              # for 'isa' and 'can'
 use strict;
 use Carp;
 
+use vars qw'$VERSION';
+$VERSION = 0;
+
 use Text::BibTeX ('check_class');
 
 =head1 NAME

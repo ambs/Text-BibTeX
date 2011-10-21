@@ -21,6 +21,9 @@ use strict;
 use UNIVERSAL 'isa';
 use Carp;
 
+use vars qw'$VERSION';
+$VERSION = 0;
+
 =head1 NAME
 
 Text::BibTeX::Value - interfaces to BibTeX values and simple values
