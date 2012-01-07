@@ -4,6 +4,8 @@ use warnings;
 use lib 'inc';
 use MyBuilder;
 use Config;
+use File::Spec::Functions qw.catdir catfile.;
+use File::Copy;
 
 my $version = get_version();
 
