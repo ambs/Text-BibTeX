@@ -1,4 +1,8 @@
-Release 0.61 - 20 Outubro, 2011
+Release 0.62_01 - 7 January, 2012
+---------------------------------
+* Better installation under Windows, and specifically, Win 7.
+
+Release 0.61 - 20 October, 2011
 -------------------------------
 * Thanks to Philip Kime (again), we have STDERR working on Windows
   (hopefully)

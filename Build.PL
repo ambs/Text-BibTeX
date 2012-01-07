@@ -54,7 +54,23 @@ my $builder = MyBuilder->new
 ## HACK  HACK  HACK  HACK
 my $libdir = $builder->install_destination("bin");
 if ($^O =~ /mswin32/i) {
-    $libdir = $ENV{WINDIR} || 'c:\\WINDOWS\\'; ## HACK HACK HACK
+    $libdir = undef;
+    # Find a place where we can write.
+    my @folders = split /;/, $ENV{PATH};
+    my $installed = 0;
+    my $target = "text-bibtex.$$";
+    while(@folders && !$installed) {
+        $libdir = shift @folders;	
+
+        copy("MANIFEST", catfile($libdir,$target));
+        $installed = 1 if -f catfile($libdir, $target);
+    }
+    if (!$installed) {
+        warn("Wasn't able to find a suitable place for libbtparse.dll!");
+    } else {
+        print STDERR "libbtparse.dll will be installed in $libdir\n";
+        unlink catfile($libdir, $target);
+    }
 } else {
     if ($Config{archname} =~ /^x86_64/) {
         $libdir =~ s/\bbin\b/lib64/;
