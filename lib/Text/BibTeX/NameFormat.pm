@@ -306,3 +306,7 @@ is part of the Text::BibTeX library.  This library is free software; you
 may redistribute it and/or modify it under the same terms as Perl itself.
 
 =cut
+
+
+1;
+
