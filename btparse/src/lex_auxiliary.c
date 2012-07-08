@@ -859,14 +859,25 @@ void check_runaway_string (void)
       zzline++;
    }
 
-   /* standardize whitespace (convert all to space) but don't accept ascii 160 
-      as space which most broken ctype.h do as this breaks lots of Unicode things */
-
    len = strlen (zzbegexpr);
    for (i = 0; i < len; i++)
    {
-       if (isspace (zzbegexpr[i]) && zzbegexpr[i] != 160)
-           zzbegexpr[i] = ' ';
+     /* standardise whitespace (convert all to space). We are not using
+        ctype isspace() as this is unreliable on many modern systems which
+        try to be clever and count as spaces some special things like ASCII
+        160 (non-breaking space) and 133 (horizontal ellipsis). This breaks
+        lots of Unicode chars as they pass through here. What we mean by
+        "whitespace" is nothing so clever, it's just the usual few ASCII
+        chars that should appear as normal spaces.
+     */
+
+     /* if (isspace (zzbegexpr[i])) */
+     if (zzbegexpr[i] == 9 ||
+         zzbegexpr[i] == 10 || 
+         zzbegexpr[i] == 11 || 
+         zzbegexpr[i] == 12 || 
+         zzbegexpr[i] == 13)
+     zzbegexpr[i] = ' ';
    }
    
 

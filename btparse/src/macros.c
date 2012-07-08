@@ -39,10 +39,10 @@
  * something like that.  I'm not sure of the exact Knuthian
  * specification.
  */
-/* Increased 10-fold to accomodate reasonbly string libraries - PK 27/10/2011 */
+/* Increased 100-fold to accomodate large string libraries - PK 27/10/2011 */
 
 #define NUM_MACROS 5449
-#define STRING_SIZE 40960
+#define STRING_SIZE 400960
 
 Sym *AllMacros = NULL;                  /* `scope' so we can get back list */
                                         /* of all macros when done */
