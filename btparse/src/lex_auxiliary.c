@@ -210,7 +210,7 @@ void alloc_lex_buffer (int size)
    {
       zztoktext = (char *) malloc (size * sizeof (char));
       memset (zztoktext, 0, size);
-      zzlextext = zztoktext;
+      zzlextext = (unsigned char*)zztoktext;
       zzbufsize = size;
    }
 } /* alloc_lex_buffer() */
@@ -253,7 +253,7 @@ realloc_lex_buffer (int     size_increment,
    beg = zzbegexpr - zzlextext;
    end = zzendexpr - zzlextext;
    next = *nextpos - (unsigned char *) zzlextext;
-   zzlextext = zztoktext;
+   zzlextext = (unsigned char*)zztoktext;
 
    if (lastpos != NULL)
       *lastpos = zzlextext+zzbufsize-1;
@@ -431,7 +431,7 @@ void at_sign (void)
 
 void toplevel_junk (void)
 {
-   JunkCount += strlen (zzlextext);
+    JunkCount += strlen ((const char*)zzlextext);
    zzskip ();
 }
 
@@ -449,7 +449,7 @@ void name (void)
       }
       case after_at: 
       {
-         char * etype = zzlextext;
+         char * etype = (char*)zzlextext;
          EntryState = after_type;
 
          if (strcasecmp (etype, "comment") == 0)
@@ -660,7 +660,7 @@ void end_string (char end_char)
 
    if (EntryState == in_comment)
    {
-      int   len = strlen (zzlextext);
+       int   len = strlen ((const char*)zzlextext);
 
       /* 
        * ARG! no, this is wrong -- what if unbalanced braces in the string 
@@ -859,7 +859,7 @@ void check_runaway_string (void)
       zzline++;
    }
 
-   len = strlen (zzbegexpr);
+   len = strlen ((const char*)zzbegexpr);
    for (i = 0; i < len; i++)
    {
      /* standardise whitespace (convert all to space). We are not using

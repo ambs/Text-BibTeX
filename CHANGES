@@ -1,3 +1,7 @@
+Release 0.65 - 26 September, 2012
+---------------------------------
+* Patch to support @ and ~ in names (thanks to Philip Kime)
+
 Release 0.64 - 8 July, 2012
 ---------------------------
 * Patch to expand macro size limit (thanks to Philip Kime)
