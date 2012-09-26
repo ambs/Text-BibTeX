@@ -109,6 +109,9 @@ btparse/src/sym.h
 btparse/src/tokens.h
 btparse/src/util.h
 
+btparse/src/parser.dlg
+btparse/src/bibtex.g
+
 ## Extra C programs
 btparse/progs/args.c
 btparse/progs/args.h           ## NOINST
