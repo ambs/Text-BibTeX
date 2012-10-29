@@ -158,8 +158,13 @@ va_dcl
 	}
 	for (i=1; i<=k; i++)	/* look for offending token */
 	{
+#ifdef LL_K
+            int freeSpace = (LL_K*ZZLEXBUFSIZE+1) - strlen(text);
+#else
+            int freeSpace = (ZZLEXBUFSIZE+1) - strlen(text);
+#endif
 		if ( i>1 ) strcat(text, " ");
-		strcat(text, LATEXT(i));
+		strncat(text, LATEXT(i), freeSpace);
 		if ( !zzset_el((unsigned)LA(i), f[i-1]) ) break;
 	}
 	miss_set = va_arg(ap, SetWordType **);

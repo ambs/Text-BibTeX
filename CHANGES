@@ -1,3 +1,7 @@
+Release 0.66 - 29 October, 2012
+-------------------------------
+* Fix a segmentation fault with strcat and no string limit.
+
 Release 0.65 - 26 September, 2012
 ---------------------------------
 * Patch to support @ and ~ in names (thanks to Philip Kime)
