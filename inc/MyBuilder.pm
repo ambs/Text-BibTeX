@@ -168,6 +168,7 @@ sub ACTION_create_objects {
         $object =~ s/\.c/.o/;
         next if $self->up_to_date($file, $object);
         $cbuilder->compile(object_file  => $object,
+                           extra_compiler_flags=>["-D_FORTIFY_SOURCE=1"],
                            source       => $file,
                            include_dirs => ["btparse/src"]);
     }

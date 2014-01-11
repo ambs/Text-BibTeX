@@ -4,7 +4,7 @@
 @GLOBALS    : 
 @CALLS      : 
 @CREATED    : 1999/11/25, Greg Ward (based on code supplied by
-              Stéphane Genaud <genaud@icps.u-strasbg.fr>)
+              Stephane Genaud <genaud@icps.u-strasbg.fr>)
 @MODIFIED   : 
 @VERSION    : $Id$
 @COPYRIGHT  : Copyright (c) 1996-99 by Gregory P. Ward.  All rights reserved.
@@ -35,7 +35,7 @@
 @GLOBALS    : 
 @CALLS      : 
 @CALLERS    : 
-@CREATED    : 1999/11/25, GPW (from Stéphane Genaud)
+@CREATED    : 1999/11/25, GPW (from Stephane Genaud)
 @MODIFIED   : 
 -------------------------------------------------------------------------- */
 void bt_set_text (AST * node, char * new_text)
@@ -57,7 +57,7 @@ void bt_set_text (AST * node, char * new_text)
               Otherwise a duplicate of 'new_key' is copied into the entry
               AST (so the caller can free that string without worry).
 @CALLS      : bt_set_text ()
-@CREATED    : 1999/11/25, GPW (from Stéphane Genaud)
+@CREATED    : 1999/11/25, GPW (from Stephane Genaud)
 @MODIFIED   : 
 -------------------------------------------------------------------------- */
 void bt_entry_set_key (AST * entry, char * new_key)
