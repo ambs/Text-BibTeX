@@ -33,7 +33,7 @@ sub ACTION_install {
         my $linux = Config::AutoConf->check_prog("ldconfig");
         system $linux if (-x $linux);
     }
-    if ($^O =~ /(?:linux|bsd|sun|sol|dragonfly|hpux|irix|darwin)/
+    if ($^O =~ /(?:linux|bsd|sun|sol|dragonfly|hpux|irix|darwin|gnu)/
         &&
         $usrlib !~ m!^/usr(/local)?/lib/?$!)
       {
@@ -340,7 +340,7 @@ sub ACTION_test {
     if ($^O =~ /darwin/i) {
         $ENV{DYLD_LIBRARY_PATH} = catdir($self->blib, "usrlib");
     }
-    elsif ($^O =~ /(?:linux|bsd|sun|sol|dragonfly|hpux|irix)/i) {
+    elsif ($^O =~ /(?:linux|bsd|sun|sol|dragonfly|hpux|irix|gnu)/i) {
         $ENV{LD_LIBRARY_PATH} = catdir($self->blib, "usrlib");
     }
     elsif ($^O =~ /aix/i) {
