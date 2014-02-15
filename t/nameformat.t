@@ -2,7 +2,7 @@
 use strict;
 use vars qw($DEBUG);
 use IO::Handle;
-use Test::More tests=>23;
+use Test::More tests=>26;
 use Encode;
 use utf8;
 
@@ -97,7 +97,7 @@ $DEBUG = 1;
 
 TODO: {
     local $TODO = "Check why this fails on some machines";
-    # test 11... to 13
+    # test 11... to 16
     my $name8     = Text::BibTeX::Name->new('Šomeone Smith');
     my $formatter = Text::BibTeX::NameFormat->new('f', 1);
     is decode_utf8($formatter->apply($name8)), 'Š.';
@@ -109,29 +109,45 @@ TODO: {
     my $formatter = Text::BibTeX::NameFormat->new('f', 1);
     my $name10   = Text::BibTeX::Name->new('{Šomeone-Šomething} Smith');
     is decode_utf8($formatter->apply($name10)), 'Š.';
+
+    # Initial is 2 bytes long in UTF8
+    my $formatterlast = Text::BibTeX::NameFormat->new('f', 1);
+    my $name11   = Text::BibTeX::Name->new('Żaa Smith');
+    is decode_utf8($formatterlast->apply($name11)), 'Ż.';
+
+    # Initial is 3 bytes long in UTF8 (Z + 2 byte combining mark)
+    $formatterlast = Text::BibTeX::NameFormat->new('f', 1);
+    my $name12   = Text::BibTeX::Name->new('Z̃ Smith');
+    is decode_utf8($formatterlast->apply($name12)), 'Z̃.';
+
+    # Initial is 7 bytes long in UTF8 (A + 3 * 2 byte combining marks)
+    $formatterlast = Text::BibTeX::NameFormat->new('f', 1);
+    my $name13   = Text::BibTeX::Name->new('A̧̦̓ Smith');
+    is decode_utf8($formatterlast->apply($name13)), 'A̧̦̓.';
+
 }
 
 {
-    # test 14... and 15
-    my $name11   = Text::BibTeX::Name->new('Harold {K}ent-{B}arrow');
+    # test 17... and 18
+    my $name14   = Text::BibTeX::Name->new('Harold {K}ent-{B}arrow');
     my $format11 = Text::BibTeX::NameFormat->new('l', 1);
 
     $format11->set_text(BTN_LAST, undef, undef, undef, '.');
     $format11->set_options(BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
 
-    is $format11->apply($name11), 'K.-B.';
+    is $format11->apply($name14), 'K.-B.';
 
-    my $name12   = Text::BibTeX::Name->new('Mirian Neuser-Hoffman');
+    my $name15   = Text::BibTeX::Name->new('Mirian Neuser-Hoffman');
     my $format12 = Text::BibTeX::NameFormat->new('l', 1);
 
     $format12->set_text(BTN_LAST, undef, undef, undef, '');
     $format12->set_options(BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
 
-    is $format12->apply($name12), 'N-H';
+    is $format12->apply($name15), 'N-H';
 }
 
 {
-    # test 16 to 23
+    # test 19 to 26
 
     my $name = Text::BibTeX::Name->new
       ("Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");

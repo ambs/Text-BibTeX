@@ -6,7 +6,7 @@
 @GLOBALS    : 
 @CREATED    : 
 @MODIFIED   : 
-@VERSION    : $Id$
+@VERSION    : $Id: format_name.c 9577 2011-02-15 21:34:08Z ambs $
 @COPYRIGHT  : Copyright (c) 1996-99 by Gregory P. Ward.  All rights reserved.
 
               This file is part of the btparse library.  This library is
@@ -681,7 +681,7 @@ format_firstpass (bt_name *        name,
 @NAME       : get_uchar()
 @INPUT      : string
               offset in string
-@OUTPUT     : number of bytes required to gobble the next unicode character
+@OUTPUT     : number of bytes required to gobble the next unicode character, including any combining marks
 @RETURNS    : 
 @DESCRIPTION: In order to deal with unicode chars when calculating abbreviations,
               we need to know how many bytes the next character is.
@@ -691,10 +691,10 @@ format_firstpass (bt_name *        name,
 @MODIFIED   : 
 -------------------------------------------------------------------------- */
 
-
 get_uchar(char * string, int offset)
 {
   unsigned char * bytes = (unsigned char *)string;
+  int init;
 
   if(!string)
     return 0;
@@ -707,7 +707,7 @@ get_uchar(char * string, int offset)
             )
            )
     {
-      return 1;
+      init = 1;
     }
 
   if(     (// non-overlong 2-byte
@@ -716,7 +716,7 @@ get_uchar(char * string, int offset)
            )
           )
     {
-      return 2;
+      init = 2;
     }
 
   if(     (// excluding overlongs
@@ -738,7 +738,7 @@ get_uchar(char * string, int offset)
            )
           )
     {
-      return 3;
+      init = 3;
     }
 
   if(     (// planes 1-3
@@ -761,9 +761,40 @@ get_uchar(char * string, int offset)
            )
           )
     {
-      return 4;
+      init = 4;
     }
-  return -1; /* Shouldn't get here */
+
+  /* Now check for combining marks which are separate even in NFC */
+  int c = 0;
+  while (bytes[offset+init+c]) {
+    /* 0300–036F - Combining Diacritical Marks */
+    if (  bytes[offset+init+c] == 0xCC &&
+          (0x80 <= bytes[offset+init+1+c] && bytes[offset+init+1+c] <= 0xAF)
+          )
+      {
+        c = c + 2; /* Skip to next possible combining mark */
+      }
+    /* 1DC0–1DFF - Combining Diacritical Marks Supplement */
+    else if (  bytes[offset+init+c] == 0xE1 &&
+               bytes[offset+init+1+c] == 0xB7 &&
+               (0x80 <= bytes[offset+init+2+c] && bytes[offset+init+2+c] <= 0xBF)
+               )
+      {
+        c = c + 3; /* Skip to next possible combining mark */
+      }
+    /* FE20–FE2F - Combining Half Marks */
+    else if (  bytes[offset+init+c] == 0xEF &&
+               bytes[offset+init+1+c] == 0xB8 &&
+               (0xA0 <= bytes[offset+init+2+c] && bytes[offset+init+2+c] <= 0xAF)
+               )
+      {
+        c = c + 3; /* Skip to next possible combining mark */
+      }
+    else {
+      break;
+    }
+  }
+  return init+c;
 }
 
 /* ------------------------------------------------------------------------
