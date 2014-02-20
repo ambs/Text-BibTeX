@@ -1,5 +1,11 @@
 Revision history for Perl module Text::BibTeX
 
+0.67 2013-02-20
+ * Reformatted changelog (thanks to Sergey Romanov)
+ * Remove accents from C source file for Sun compiler probs.
+ * Add 'gnu' as a system name.
+ * Fixes for UTF-8 handling of combining marks 
+
 0.66 2012-10-29
  * Fix a segmentation fault with strcat and no string limit.
 
