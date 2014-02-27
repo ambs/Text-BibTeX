@@ -869,7 +869,9 @@ sub get_options
 
 package Text::BibTeX::StructuredEntry;
 use strict;
-use vars qw(@ISA);
+use vars qw(@ISA $VERSION);
+$VERSION = 0.1;
+
 use Carp;
 
 @ISA = ('Text::BibTeX::Entry');
