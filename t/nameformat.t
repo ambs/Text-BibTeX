@@ -95,8 +95,7 @@ $DEBUG = 1;
     is $format7->apply($name7), 'S.~J.';
 }
 
-TODO: {
-    local $TODO = "Check why this fails on some machines";
+{
     # test 11... to 16
     my $name8     = Text::BibTeX::Name->new('Šomeone Smith');
     my $formatter = Text::BibTeX::NameFormat->new('f', 1);
@@ -104,8 +103,7 @@ TODO: {
 
     my $name9   = Text::BibTeX::Name->new('Šomeone-Šomething Smith');
     is decode_utf8($formatter->apply($name9)), 'Š.-Š.';
-}
-{
+
     my $formatter = Text::BibTeX::NameFormat->new('f', 1);
     my $name10   = Text::BibTeX::Name->new('{Šomeone-Šomething} Smith');
     is decode_utf8($formatter->apply($name10)), 'Š.';
