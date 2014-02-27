@@ -497,13 +497,13 @@ find_lc_tokens (bt_stringlist * tokens,
    while (i < tokens->num_items)
    {
       char * token = tokens->items[i];
-      if (*first_lc == -1 && token != NULL && islower (token[0]))
+      if (*first_lc == -1 && token != NULL && isulower (token))
       {
          *first_lc = i;
 
          i++;
          char * token = tokens->items[i];
-         while (i < tokens->num_items && token != NULL && islower (token[0])) {
+         while (i < tokens->num_items && token != NULL && isulower (token)) {
             i++;
             token = tokens->items[i];
          }
