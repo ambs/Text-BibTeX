@@ -24,7 +24,7 @@ use strict;
 use Carp;
 
 use vars qw'$VERSION';
-$VERSION = 0;
+$VERSION = 0.1;
 
 use Text::BibTeX ('check_class');
 

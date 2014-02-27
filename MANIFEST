@@ -150,3 +150,4 @@ btparse/src/bt_config.h.in
 
 README.OLD
 META.json
+MANIFEST.SKIP

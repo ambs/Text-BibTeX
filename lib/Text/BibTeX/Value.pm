@@ -22,7 +22,7 @@ use UNIVERSAL 'isa';
 use Carp;
 
 use vars qw'$VERSION';
-$VERSION = 0;
+$VERSION = 0.1;
 
 =head1 NAME
 
