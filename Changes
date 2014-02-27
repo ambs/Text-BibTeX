@@ -1,5 +1,12 @@
 Revision history for Perl module Text::BibTeX
 
+0.68 2013-02-27
+ * Replacement for islower() which understands all Unicode 6.2.0
+   chars with "LOWERCASE" property. Now we can detect prefices
+   not just in ASCII ... this also seems to have fixed the strange
+   windows XP test failures, probably due to undefined islower(). See RT #92864
+ * Fixed strange problem with Solaris coredumping due to 0.67 changes.
+
 0.67 2013-02-20
  * Reformatted changelog (thanks to Sergey Romanov)
  * Remove accents from C source file for Sun compiler probs.
