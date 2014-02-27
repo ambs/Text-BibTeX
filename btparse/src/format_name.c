@@ -332,10 +332,9 @@ count_virtual_char (char *    string,
                     int       offset, 
                     int *     vchar_count,
                     int *     depth,
-                    boolean * in_special)
+                    boolean * in_special,
+                    int *     utf8_length)
 {
-   int utf8_length = 0;
-
    switch (string[offset])
    {
       case '{': 
@@ -367,18 +366,18 @@ count_virtual_char (char *    string,
               only when we have a full character which could be multi-byte */
          {
            /* not tracking utf8 char yet, so start */ 
-           if (utf8_length == 0)
-             utf8_length = get_uchar(string, offset);
+           if (*utf8_length == 0)
+             *utf8_length = get_uchar(string, offset);
            /* Final byte in utf8 char so count this as a "character" */ 
-           if (utf8_length == 1)
+           if (*utf8_length == 1)
            {
              (*vchar_count)++;
-             utf8_length = 0;
+             *utf8_length = 0;
            }
            /* Inside a multi-byte utf-8 char so decrement the count as we move along
               the bytes */ 
-           if (utf8_length > 1)
-             utf8_length--;
+           if (*utf8_length > 1)
+             (*utf8_length)--;
          }
       }
    }
@@ -409,6 +408,7 @@ string_length (char * string)
    int      length;
    int      depth;
    boolean  in_special;
+   int      utf8_length;
    int      i;
 
    if (string == NULL)
@@ -417,10 +417,11 @@ string_length (char * string)
    length = 0;
    depth = 0;
    in_special = FALSE;
+   utf8_length = 0;
 
    for (i = 0; string[i] != 0; i++)
    {
-     count_virtual_char (string, i, &length, &depth, &in_special);
+     count_virtual_char (string, i, &length, &depth, &in_special, &utf8_length);
    }
 
    return length;
@@ -452,14 +453,16 @@ string_prefix (char * string, int prefix_start, int prefix_len)
    int     vchars_seen;
    int     depth;
    boolean in_special;
+   int      utf8_length;
 
    vchars_seen = 0;
    depth = 0;
    in_special = FALSE;
+   utf8_length = 0;
 
    for (i = prefix_start; string[i] != 0; i++)
    {
-     count_virtual_char (string, i, &vchars_seen, &depth, &in_special);
+     count_virtual_char (string, i, &vchars_seen, &depth, &in_special, &utf8_length);
       if (vchars_seen == prefix_len)
         return (i+1)-prefix_start;
    }
@@ -490,12 +493,14 @@ string_prefix_start (char * string, int index)
    int     vchars_seen;
    int     depth;
    boolean in_special;
+   int      utf8_length;
 
    vchars_seen = 0;
    depth = 0;
    in_special = FALSE;
+   utf8_length = 0;
 
-   count_virtual_char (string, index, &vchars_seen, &depth, &in_special);
+   count_virtual_char (string, index, &vchars_seen, &depth, &in_special, &utf8_length);
    if (! in_special && depth == 1)
      return index+1;
 
@@ -715,6 +720,7 @@ format_name (bt_name_format * format,
    int     vchars_seen;
    int     depth;
    boolean in_special;
+   int     utf8_length;
 
    /* 
     * Cull format->parts down by keeping only those parts that are actually
@@ -753,11 +759,12 @@ format_name (bt_name_format * format,
            vchars_seen = 0;
            depth = 0;
            in_special = FALSE;
+           utf8_length = 0;
 
            for (k = 0 ; tokens[part][j][k] != 0; k++)
            {
 
-             count_virtual_char (tokens[part][j], k, &vchars_seen, &depth, &in_special);
+             count_virtual_char (tokens[part][j], k, &vchars_seen, &depth, &in_special, &utf8_length);
              prefix_start = string_prefix_start (tokens[part][j], k);
 
              /* Add initial from the begining of the string or beginning of after-hyphen
