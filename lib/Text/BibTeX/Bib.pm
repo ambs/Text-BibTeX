@@ -109,8 +109,9 @@ BibTeX 0.99-style bibliography databases.)
 
 package Text::BibTeX::BibStructure;
 use strict;
-use vars qw(@ISA);
+use vars qw(@ISA $VERSION);
 @ISA = qw(Text::BibTeX::Structure);
+$VERSION = '0.1';
 
 =head1 STRUCTURE OPTIONS
 
@@ -447,7 +448,9 @@ L<Text::BibTeX::BibFormat> for details on these two methods.
 
 package Text::BibTeX::BibEntry;
 use strict;
-use vars qw(@ISA);
+use vars qw(@ISA $VERSION);
+
+$VERSION = '0.1';
 
 use Text::BibTeX::BibSort;
 use Text::BibTeX::BibFormat;

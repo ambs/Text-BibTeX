@@ -244,6 +244,10 @@ use strict;
 use Carp;
 use Text::BibTeX qw(:nodetypes);
 
+use vars qw($VERSION);
+$VERSION = '0.1';
+
+
 =head2 Text::BibTeX::SimpleValue methods
 
 =over

@@ -1,5 +1,8 @@
 Revision history for Perl module Text::BibTeX
 
+0.69 2013-02-27
+ * Fixes in the distribution, namely adding versions to unversioned packages.
+
 0.68 2013-02-27
  * Replacement for islower() which understands all Unicode 6.2.0
    chars with "LOWERCASE" property. Now we can detect prefices
