@@ -104,7 +104,7 @@ $DEBUG = 1;
     my $name9   = Text::BibTeX::Name->new('Šomeone-Šomething Smith');
     is decode_utf8($formatter->apply($name9)), 'Š.-Š.';
 
-    my $formatter = Text::BibTeX::NameFormat->new('f', 1);
+    $formatter = Text::BibTeX::NameFormat->new('f', 1);
     my $name10   = Text::BibTeX::Name->new('{Šomeone-Šomething} Smith');
     is decode_utf8($formatter->apply($name10)), 'Š.';
 
