@@ -1,5 +1,4 @@
 
-
   Text::BibTeX
 ---------------------------------------------------------------------------
 
@@ -33,7 +32,7 @@
   btparse documentation is a further 30 pages).  You can find it at
   the btOOL home page:
 
-    http://starship.python.net/~gward/btOOL/
+    http://www.gerg.ca/software/btOOL/
 
 
   INSTALLATION
