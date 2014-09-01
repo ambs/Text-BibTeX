@@ -1,5 +1,8 @@
 Revision history for Perl module Text::BibTeX
 
+0.70 2014-09-01
+ * Added metadata for metacpan.
+
 0.69 2013-02-27
  * Fixes in the distribution, namely adding versions to unversioned packages.
 

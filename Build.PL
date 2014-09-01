@@ -17,8 +17,13 @@ my $builder = MyBuilder->new
    dist_author    => ['Alberto Simões <ambs@cpan.org>',
                       'Greg Ward <gward@python.net>'],
    needs_compiler => 1,
+   meta_merge => {
+        resources  => {
+            repository => 'http://github.com/ambs/Text-BibTeX',
+        },
+    },
    configure_requires => {
-                          'Module::Build' => '0.36' ,
+                          'Module::Build'        => '0.36',
                           'Config::AutoConf'     => '0.16',
                           'ExtUtils::LibBuilder' => '0.02',
    },
