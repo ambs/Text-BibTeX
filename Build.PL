@@ -79,7 +79,7 @@ if ($^O =~ /mswin32/i) {
         unlink catfile($libdir, $target);
     }
 } else {
-    if ($Config{archname} =~ /^x86_64/) {
+    if ($Config{archname} =~ /^x86_64|^ppc64|^s390x|^aarch64/) {
         $libdir =~ s/\bbin\b/lib64/;
         if (!-d $libdir) {
             my $test = $libdir;
