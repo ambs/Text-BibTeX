@@ -18,7 +18,7 @@
 package Text::BibTeX::Value;
 
 use strict;
-use UNIVERSAL 'isa';
+use Scalar::Util 'blessed';
 use Carp;
 
 use vars qw'$VERSION';
@@ -206,7 +206,7 @@ sub new
          if ref $sval eq 'ARRAY' && @$sval == 2;
       croak "simple value is neither a two-element array ref " .
             "nor a Text::BibTeX::SimpleValue object"
-         unless isa ($sval, 'Text::BibTeX::SimpleValue');
+         unless blessed($sval) && $sval->isa('Text::BibTeX::SimpleValue');
       push (@$self, $sval);
    }
 

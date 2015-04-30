@@ -1,5 +1,9 @@
 Revision history for Perl module Text::BibTeX
 
+...
+ * Stop using UNIVERSAL (5.21.3 requirement).
+   Thanks to Jitka Plesnikova
+
 0.70 2014-09-01
  * Added metadata for metacpan.
 
