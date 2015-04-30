@@ -27,6 +27,9 @@ my $builder = MyBuilder->new
                           'Config::AutoConf'     => '0.16',
                           'ExtUtils::LibBuilder' => '0.02',
    },
+   requires => {
+   	             'Scalar::Util' => '1.42',
+   },
    build_requires => {
                       'File::Copy'           => '0',
                       'Config::AutoConf'     => '0.16',
