@@ -129,10 +129,10 @@ va_dcl
 #endif
 {
 #ifdef LL_K
-	static char text[LL_K*ZZLEXBUFSIZE+1];
+	static char text[LL_K*ZZLEXBUFSIZE+1+1]; // allocate an extra byte for strncat() to drop a trailing NULL
 	SetWordType *f[LL_K];
 #else
-	static char text[ZZLEXBUFSIZE+1];
+	static char text[ZZLEXBUFSIZE+1+1]; // allocate an extra byte for strncat() to drop a trailing NULL
 	SetWordType *f[1];
 #endif
 	SetWordType **miss_set;
@@ -164,7 +164,7 @@ va_dcl
             int freeSpace = (ZZLEXBUFSIZE+1) - strlen(text);
 #endif
 		if ( i>1 ) strcat(text, " ");
-		strncat(text, LATEXT(i), freeSpace-1); // strncat(a,b,n) will actually write n+1 bytes because of the terminating NULL, unlike strlcpy (non-standard OpenBSD function) which writes exactly n.  this may end up dropping a character, but this is debug output from a failure case, so it doesn't matter much.
+		strncat(text, LATEXT(i), freeSpace); // strncat(a,b,n) will actually write n+1 bytes because of the terminating NULL, unlike strlcpy (non-standard OpenBSD function) which writes exactly n.  this may end up dropping a character, but this is debug output from a failure case, so it doesn't matter much.
 		if ( !zzset_el((unsigned)LA(i), f[i-1]) ) break;
 	}
 	miss_set = va_arg(ap, SetWordType **);
