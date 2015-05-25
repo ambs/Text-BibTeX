@@ -264,7 +264,7 @@ convert_value_entry (AST *top, HV *entry, boolean preserve)
 {
    HV *    lines;                 /* line numbers of entry and its fields */
    AST *   item,
-       *   prev_item;
+       *   prev_item = NULL;
    int     last_line;
    char *  value;
    SV *    sv_value;
@@ -282,11 +282,13 @@ convert_value_entry (AST *top, HV *entry, boolean preserve)
    item = NULL;
    while (item = bt_next_value (top, item, NULL, NULL))
       prev_item = item;
-   last_line = prev_item->line;
-   hv_store (lines, "STOP", 4, newSViv (last_line), 0);
+   if (prev_item) {
+      last_line = prev_item->line;
+      hv_store (lines, "STOP", 4, newSViv (last_line), 0);
 
-   /* Store the line number hash in the entry hash */
-   hv_store (entry, "lines", 5, newRV ((SV *) lines), 0);
+      /* Store the line number hash in the entry hash */
+      hv_store (entry, "lines", 5, newRV ((SV *) lines), 0);
+   }
 
    /* And get the value of the entry as a single string (fully processed) */
 
