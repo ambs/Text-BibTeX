@@ -1,6 +1,8 @@
 Revision history for Perl module Text::BibTeX
 
-...
+0.71 2015-05-28
+ * Fix segmentation fault when btparse fails parsing a long
+   entry. Thanks to Dale Evans.
  * Stop using UNIVERSAL (5.21.3 requirement).
    Thanks to Jitka Plesnikova
 
