@@ -86,6 +86,7 @@ Text::BibTeX::Entry - read and parse BibTeX files
    $entry->warn ($entry_warning);
    # or:
    $entry->warn ($field_warning, $field);
+   $entry->clone;
 
 =head1 DESCRIPTION
 
@@ -210,6 +211,42 @@ sub new
       return $status unless $status;    # parse failed -- tell our caller
    }
    $self;
+}
+
+=item clone
+
+Clone a Text::BibTeX::Entry object, returning the clone. This re-uses the reference to any
+Text::BibTeX::Structure or Text::BibTeX::File but copies everything else,
+so that the clone can be modified apart from the original.
+
+=cut
+
+sub clone
+{
+  my $self = shift;
+  my $clone = {};
+  # Use the same structure object - won't be changed
+  if ($self->{structure}) {
+    $clone->{structure} = $self->{structure};
+  }
+  # Use the same file object - won't be changed
+  if ($self->{file}) {
+    $clone->{file} = $self->{file}
+  }
+  # These might be changed so make copies
+  $clone->{type}     = $self->{type};
+  $clone->{key}      = $self->{key};
+  $clone->{status}   = $self->{status};
+  $clone->{metatype} = $self->{metatype};
+  $clone->{fields}   = [ map {$_} @{$self->{fields}} ];
+  while (my ($k, $v) = each %{$self->{values}}) {
+    $clone->{values}{$k} = $v;
+  }
+  while (my ($k, $v) = each %{$self->{lines}}) {
+    $clone->{lines}{$k} = $v;
+  }
+  bless $clone, ref($self);
+  return $clone;
 }
 
 =item read (BIBFILE)

@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use IO::Handle;
-use Test::More tests => 16;
+use Test::More tests => 20;
 
 use vars qw($DEBUG);
 
@@ -81,3 +81,9 @@ is $new_text => $contents[0];
 is $new_text => $contents[1];
 is $new_text => $contents[2];
 
+my $clone = $entry->clone;
+is ref($clone) => 'Text::BibTeX::Entry';
+is $clone->get('title') => 'Territorial Imperatives in Modern Suburbia';
+$clone->set('title', 'Changed title');
+is $clone->get('title') => 'Changed title';
+is $entry->get('title') => 'Territorial Imperatives in Modern Suburbia';
