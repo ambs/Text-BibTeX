@@ -23,7 +23,7 @@ require 5.004;
 use strict;
 use Carp;
 use vars qw'$VERSION';
-$VERSION = 0.1;
+$VERSION = 0.73;
 
 =head1 NAME
 
@@ -31,7 +31,7 @@ Text::BibTeX::NameFormat - format BibTeX-style author names
 
 =head1 SYNOPSIS
 
-   $format = new Text::BibTeX::NameFormat ($parts, $abbrev_first);
+   $format = Text::BibTeX::NameFormat->($parts, $abbrev_first);
 
    $format->set_text ($part,
                       $pre_part, $post_part,
@@ -94,28 +94,33 @@ is joined to the next part (C<"la Roche"> versus C<"la~Roche">).
 
 =over 4
 
-=item new (PARTS, ABBREV_FIRST)
+=item new(PARTS, ABBREV_FIRST)
 
-Creates a new name format, with the two most common customizations:
-which parts to include (and in what order), and whether to abbreviate
-the first name.  PARTS should be a string with at most four characters,
-one representing each part that you want to occur in a formatted name.
-For example, C<"fvlj"> means to format names in "first von last jr"
-order, while C<"vljf"> denotes "von last jr first."  ABBREV_FIRST is
-just a boolean value: false to print out the first name in full, and
-true to abbreviate it with periods after each token and discretionary
-ties between tokens.  All intra- and inter-token punctuation and spacing
-is independently controllable with the C<set_text> and C<set_options>
-methods, although these will rarely be necessary---sensible defaults are
-chosen for everything, based on the PARTS and ABBREV_FIRST values that
-you supply.  See the description of C<bt_create_name_format()> in
-L<bt_format_names> for full details of the choices made.
+Creates a new name format, with the two most common customizations: which
+parts to include (and in what order), and whether to abbreviate the first
+name.  PARTS should be a string with at most four characters, one representing
+each part that you want to occur in a formatted name (defaults to C<"fvlj">).
+For example, C<"fvlj"> means to format names in "first von last jr" order,
+while C<"vljf"> denotes "von last jr first."  ABBREV_FIRST is just a boolean
+value: false to print out the first name in full, and true to abbreviate it
+with periods after each token and discretionary ties between tokens (defaults
+to false).  All intra- and inter-token punctuation and spacing is independently
+controllable with the C<set_text> and C<set_options> methods, although these
+will rarely be necessary---sensible defaults are chosen for everything, based
+on the PARTS and ABBREV_FIRST values that you supply.  See the description of
+C<bt_create_name_format()> in L<bt_format_names> for full details of the
+choices made.
 
 =cut
 
 sub new
 {
    my ($class, $parts, $abbrev_first) = @_;
+
+   $parts ||= "fvlj";
+   $abbrev_first //= 0;
+
+   die unless $parts =~ /[fvlj]{1,4}/;
 
    $class = ref ($class) || $class;
    my $self = bless {}, $class;
@@ -255,7 +260,7 @@ The first step is covered in L<Text::BibTeX::Name>; here's a brief
 example:
 
    $orig_name = 'Charles Louis Xavier Joseph de la Vall{\'e}e Poussin';
-   $name = new Text::BibTeX::Name $orig_name;
+   $name = Text::BibTeX::Name->new($orig_name);
 
 The various parts of the name can now be accessed through
 C<Text::BibTeX::Name> methods; for instance C<$name-E<gt>part('von')>
@@ -263,7 +268,7 @@ returns the list C<("de","la")>.
 
 Creating the name format is equally simple:
 
-   $format = new Text::BibTeX::NameFormat ('vljf', 1);
+   $format = Text::BibTeX::NameFormat->new('vljf', 1);
 
 creates a format that will print the name in "von last jr first" order,
 with the first name abbreviated.  And for no extra charge, you get the
