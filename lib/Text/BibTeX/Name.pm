@@ -33,15 +33,15 @@ Text::BibTeX::Name - interface to BibTeX-style author names
 
 =head1 SYNOPSIS
 
-   $name = new Text::BibTeX::Name;
+   $name = Text::BibTeX::Name->new();
    $name->split('J. Random Hacker');
    # or:
-   $name = new Text::BibTeX::Name ('J. Random Hacker');
+   $name = Text::BibTeX::Name->new('J. Random Hacker');
 
    @firstname_tokens = $name->part ('first');
    $lastname = join (' ', $name->part ('last'));
 
-   $format = new Text::BibTeX::NameFormat;
+   $format = Text::BibTeX::NameFormat->new();
    # ...customize $format...
    $formatted = $name->format ($format);
 
@@ -114,7 +114,7 @@ Note that every part is a list of tokens, even if there is only one
 token in that part; empty parts get empty token lists.  Every token is
 just a string.  Writing this example in actual code is simple:
 
-   $name = new Text::BibTeX::Name ("John Smith");  # or "Smith, John"
+   $name = Text::BibTeX::Name->new("John Smith");  # or "Smith, John"
    $name->part ('first');       # returns list ("John")
    $name->part ('last');        # returns list ("Smith")
    $name->part ('von');         # returns list ()
@@ -269,7 +269,7 @@ way is the job of another module: see L<Text::BibTeX::NameFormat>.
 
 =over 4
 
-=item new (CLASS [, NAME [, FILENAME, LINE, NAME_NUM]])
+=item new([ NAME [, FILENAME, LINE, NAME_NUM]])
 
 Creates a new C<Text::BibTeX::Name> object.  If NAME is supplied, it
 must be a string containing a single name, and it will be be passed to
@@ -330,7 +330,7 @@ Returns the list of tokens in part PARTNAME of a name previously split with
 C<split>.  For example, suppose a C<Text::BibTeX::Name> object is created and
 initialized like this:
 
-   $name = new Text::BibTeX::Name;
+   $name = Text::BibTeX::Name->new();
    $name->split ('Charles Louis Xavier Joseph de la Vall{\'e}e Poussin');
 
 Then this code:
