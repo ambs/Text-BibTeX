@@ -37,15 +37,15 @@ Text::BibTeX::Entry - read and parse BibTeX files
    # Text::BibTeX::File, opened for reading and writing (respectively):
 
    # Entry creation/parsing methods:
-   $entry = new Text::BibTeX::Entry;
+   $entry = Text::BibTeX::Entry->new();
    $entry->read ($bibfile);
    $entry->parse ($filename, $filehandle);
    $entry->parse_s ($entry_text);
 
    # or:
-   $entry = new Text::BibTeX::Entry $bibfile;
-   $entry = new Text::BibTeX::Entry $filename, $filehandle;
-   $entry = new Text::BibTeX::Entry $entry_text;
+   $entry = Text::BibTeX::Entry->new( $bibfile );
+   $entry = Text::BibTeX::Entry->new( $filename, $filehandle );
+   $entry = Text::BibTeX::Entry->new( $entry_text );
    
    # Entry query methods
    warn "error in input" unless $entry->parse_ok;
@@ -155,16 +155,16 @@ C<$filename> (error handling ignored):
 
    # good ol' fashioned filehandle and GLOB ref
    open (BIBFILE, $filename);
-   $entry = new Text::BibTeX::Entry ($filename, \*BIBFILE);
+   $entry = Text::BibTeX::Entry->new($filename, \*BIBFILE);
 
    # newfangled IO::File thingy
-   $file = new IO::File $filename;
-   $entry = new Text::BibTeX::Entry ($filename, $file);
+   $file = IO::File->new($filename);
+   $entry = Text::BibTeX::Entry->new($filename, $file);
 
 But using a C<Text::BibTeX::File> object is simpler and preferred:
 
-   $file = new Text::BibTeX::File $filename;
-   $entry = new Text::BibTeX::Entry $file;
+   $file  = Text::BibTeX::File->new($filename);
+   $entry = Text::BibTeX::Entry->new($file);
 
 Returns the new object, unless SOURCE is supplied and reading/parsing
 the entry fails (e.g., due to end of file) -- then it returns false.
@@ -618,7 +618,7 @@ sub names
 #      unless defined $filename;         # undefined $filename
    for $i (0 .. $#names)
    {
-      $names[$i] = new Text::BibTeX::Name ($names[$i], $filename, $line, $i);
+      $names[$i] = Text::BibTeX::Name->new($names[$i], $filename, $line, $i);
    }
    @names;
 }
