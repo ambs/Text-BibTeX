@@ -56,10 +56,10 @@ Text::BibTeX - interface to read and parse BibTeX files
 
    use Text::BibTeX;
 
-   $bibfile = new Text::BibTeX::File "foo.bib";
-   $newfile = new Text::BibTeX::File ">newfoo.bib";
+   $bibfile = Text::BibTeX::File->new("foo.bib");
+   $newfile = Text::BibTeX::File->new(">newfoo.bib");
 
-   while ($entry = new Text::BibTeX::Entry $bibfile)
+   while ($entry = Text::BibTeX::Entry->($bibfile))
    {
       next unless $entry->parse_ok;
 
@@ -395,11 +395,11 @@ sub bibloop (&$;$)
    my $file;
    while ($file = shift @$files)
    {
-      my $bib = new Text::BibTeX::File $file;
+      my $bib = Text::BibTeX::File->new($file);
       
       while (! $bib->eof())
       {
-         my $entry = new Text::BibTeX::Entry $bib;
+         my $entry = Text::BibTeX::Entry->new($bib);
          next unless $entry->parse_ok;
 
          my $result = &$action ($entry);
