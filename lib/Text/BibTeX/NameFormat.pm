@@ -23,7 +23,7 @@ require 5.004;
 use strict;
 use Carp;
 use vars qw'$VERSION';
-$VERSION = 0.73;
+$VERSION = 0.74;
 
 =head1 NAME
 
@@ -118,7 +118,7 @@ sub new
    my ($class, $parts, $abbrev_first) = @_;
 
    $parts ||= "fvlj";
-   $abbrev_first //= 0;
+   $abbrev_first = defined($abbrev_first)? $abbrev_first : 0;
 
    die unless $parts =~ /[fvlj]{1,4}/;
 

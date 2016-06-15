@@ -1,5 +1,8 @@
 Revision history for Perl module Text::BibTeX
 
+0.74 2016-06-15
+ * Get perl 5.8.x back.
+
 0.73 2016-06-14
  * Change some documentation in order to use ->new method, instead
    of older 'new Class()' approach;
