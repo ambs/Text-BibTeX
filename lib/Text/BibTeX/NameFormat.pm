@@ -20,7 +20,6 @@ package Text::BibTeX::NameFormat;
 
 require 5.004;
 
-use Encode 'decode_utf8';
 use strict;
 use Carp;
 use vars qw'$VERSION';
@@ -248,7 +247,7 @@ sub apply
  
    my $ans = format_name ($name_struct, $format_struct);
 
-   $ans = decode_utf8($ans) if $Text::BibTeX::utf8;
+   $ans = Text::BibTeX->_process_result($ans);
    
    return $ans;
 }
