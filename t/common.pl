@@ -52,12 +52,14 @@ sub test_entry {
     }
 
     ok(slist_equal ([$entry->fieldlist], $fields));
-    for $i (0 .. $#$fields) {
-        my $val = $entry->get ($fields->[$i]) || '';
 
+    for $i (0 .. $#$fields) {   
+        my $val = $entry->get ($fields->[$i]) || '';        
         ok($entry->exists ($fields->[$i]));
         is($val, $values->[$i]);
     }
+
+
 
     @vals = map ($_ || '', $entry->get (@$fields));
     ok (slist_equal (\@vals, $values));

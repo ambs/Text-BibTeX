@@ -151,3 +151,5 @@ btparse/src/bt_config.h.in
 README.OLD
 META.json
 MANIFEST.SKIP
+t/corpora.bib
+t/from_file.t
