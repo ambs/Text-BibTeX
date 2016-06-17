@@ -20,6 +20,7 @@ package Text::BibTeX::NameFormat;
 
 require 5.004;
 
+use Encode 'decode_utf8';
 use strict;
 use Carp;
 use vars qw'$VERSION';
@@ -30,6 +31,8 @@ $VERSION = 0.74;
 Text::BibTeX::NameFormat - format BibTeX-style author names
 
 =head1 SYNOPSIS
+
+   use Text::BibTeX; ## do not use NameFormat directly
 
    $format = Text::BibTeX::NameFormat->($parts, $abbrev_first);
 
@@ -242,7 +245,12 @@ sub apply
       croak "invalid Name object: no C structure";
    my $format_struct = $self->{'_cstruct'} ||
       croak "invalid NameFormat object: no C structure";
-   format_name ($name_struct, $format_struct);
+ 
+   my $ans = format_name ($name_struct, $format_struct);
+
+   $ans = decode_utf8($ans) if $Text::BibTeX::utf8;
+   
+   return $ans;
 }
 
 =back

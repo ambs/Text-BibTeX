@@ -13,13 +13,14 @@
 # ----------------------------------------------------------------------
 
 package Text::BibTeX;
+use Text::BibTeX::Name;
+use Text::BibTeX::NameFormat;
 
 use 5.008001;                          # needed for Text::BibTeX::Entry
 
 use strict;
-#use UNIVERSAL qw(isa can);              # for 'check_class' subroutine
 use Carp;
-use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $AUTOLOAD);
+use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @EXPORT_FAIL);
 
 require Exporter;
 require DynaLoader;
@@ -45,8 +46,20 @@ our $VERSION='0.74';
               @{$EXPORT_TAGS{'nodetypes'}},
               @{$EXPORT_TAGS{'nameparts'}},
               @{$EXPORT_TAGS{'joinmethods'}},
-              'check_class', 'display_list');
+              'check_class', 'display_list','utf8');
 @EXPORT = @{$EXPORT_TAGS{'metatypes'}};
+@EXPORT_FAIL = (qw.utf8.);
+
+our $utf8 = 0;
+
+sub export_fail {
+	my $self = shift;
+	my @args = grep { $_ ne "utf8"} @_;
+	if (scalar(@args) != scalar(@_)) {
+		$utf8 = 1;
+	}
+	return @args;
+}
 
 =head1 NAME
 
