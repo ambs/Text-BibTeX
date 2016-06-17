@@ -56,6 +56,8 @@ ok($entry->{fields}[0] eq 'f1' &&
 ok(scalar keys %{$entry->{'values'}} == 3);
 ok($entry->{'values'}{f1} eq 'hello there');
 
+
+
 # Now the same tests again, but using the object's methods
 test_entry ($entry, 'foo', 'mykey',
             ['f1', 'f2', 'f3'],

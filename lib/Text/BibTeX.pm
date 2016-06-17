@@ -66,8 +66,19 @@ sub export_fail {
 sub _process_result {
   my ($self, $result) = @_; 
    
-  $result = NFC(decode_utf8($result)) if $utf8;
-  
+  if ($utf8)  {
+    if (!ref($result)) {
+      $result = NFC(decode_utf8($result));
+    }
+    # elsif (ref($result) eq "ARRAY") {
+    #   $result = [map{$self->_process_result($_)} @$result]; 
+    # }
+    # elsif (ref($result) eq "HASH") {
+    #   for my $key (keys %$result) {
+    #     $result->{$key} = $self->_process_result($result->{$key});
+    #   }
+    # }
+  }
   return $result;
 }
 

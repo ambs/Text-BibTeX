@@ -349,9 +349,12 @@ sub part {
     croak "unknown name part"
         unless $partname =~ /^(first|von|last|jr)$/;
 
-    exists $self->{$partname}
-        ? map { Text::BibTeX->_process_result($_) } @{ $self->{$partname} }
-        : ();
+    if ( exists $self->{$partname} ) {
+        my @x = map { Text::BibTeX->_process_result($_) }
+            @{ $self->{$partname} };
+        return @x > 1 ? @x : $x[0];
+    }
+    return undef;
 }
 
 
