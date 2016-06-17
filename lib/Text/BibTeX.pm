@@ -15,7 +15,9 @@
 package Text::BibTeX;
 use Text::BibTeX::Name;
 use Text::BibTeX::NameFormat;
+use Unicode::Normalize;
 
+use Encode 'decode_utf8';
 use 5.008001;                          # needed for Text::BibTeX::Entry
 
 use strict;
@@ -50,7 +52,7 @@ our $VERSION='0.74';
 @EXPORT = @{$EXPORT_TAGS{'metatypes'}};
 @EXPORT_FAIL = (qw.utf8.);
 
-our $utf8 = 0;
+my $utf8 = 0;
 
 sub export_fail {
 	my $self = shift;
@@ -59,6 +61,14 @@ sub export_fail {
 		$utf8 = 1;
 	}
 	return @args;
+}
+
+sub _process_result {
+  my ($self, $result) = @_; 
+   
+  $result = NFC(decode_utf8($result)) if $utf8;
+  
+  return $result;
 }
 
 =head1 NAME

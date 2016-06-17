@@ -119,7 +119,7 @@ $DEBUG = 1;
     # Initial is 7 bytes long in UTF8 (A + 3 * 2 byte combining marks)
     $formatterlast = Text::BibTeX::NameFormat->new('f', 1);
     my $name13   = Text::BibTeX::Name->new('A̧̦̓ Smith');
-    is $formatterlast->apply($name13), 'A̧̦̓.';
+    is $formatterlast->apply($name13), 'A̧̦̓.';
 
 }
 

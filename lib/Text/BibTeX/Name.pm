@@ -25,7 +25,6 @@ use Carp;
 use vars qw'$VERSION';
 $VERSION = 0.74;
 
-use Encode 'decode_utf8';
 use Text::BibTeX;
 
 =head1 NAME
@@ -344,16 +343,15 @@ would return the list C<('de','la')>.
 
 =cut
 
-sub _u8 {
-   $Text::BibTeX::utf8 ? decode_utf8($_[0]) : $_[0]
-}
-sub part
-{
-   my ($self, $partname) = @_;
+sub part {
+    my ( $self, $partname ) = @_;
 
-   croak "unknown name part" 
-      unless $partname =~ /^(first|von|last|jr)$/;
-   exists $self->{$partname} ? map { _u8($_) } @{$self->{$partname}} : ();
+    croak "unknown name part"
+        unless $partname =~ /^(first|von|last|jr)$/;
+
+    exists $self->{$partname}
+        ? map { Text::BibTeX->_process_result($_) } @{ $self->{$partname} }
+        : ();
 }
 
 
