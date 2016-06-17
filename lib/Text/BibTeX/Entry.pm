@@ -493,10 +493,7 @@ sub get
 
    my @x = @{$self->{'values'}}{@fields};
 
-   # Ugly workarround for undefs that were failing using a map construct.
-   for (my $i = 0; $i < @x; $i++) {
-     $x[$i] = Text::BibTeX->_process_result($x[$i]) if defined $x[$i];
-   }
+   @x = map {defined ? Text::BibTeX->_process_result($_): undef} @x;
 
    return @x > 1 ? @x : $x[0];
 }
