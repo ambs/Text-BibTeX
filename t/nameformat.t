@@ -3,14 +3,12 @@ use strict;
 use vars qw($DEBUG);
 use IO::Handle;
 use Test::More tests=>26;
-use Encode;
 use utf8;
 
 require "t/common.pl";
 
-use Text::BibTeX qw(:nameparts :joinmethods);
-use Text::BibTeX::Name;
-use Text::BibTeX::NameFormat;
+use Text::BibTeX qw(utf8 :nameparts :joinmethods);
+
 
 $DEBUG = 1;
 
@@ -99,29 +97,29 @@ $DEBUG = 1;
     # test 11... to 16
     my $name8     = Text::BibTeX::Name->new('Šomeone Smith');
     my $formatter = Text::BibTeX::NameFormat->new('f', 1);
-    is decode_utf8($formatter->apply($name8)), 'Š.';
+    is $formatter->apply($name8), 'Š.';
 
     my $name9   = Text::BibTeX::Name->new('Šomeone-Šomething Smith');
-    is decode_utf8($formatter->apply($name9)), 'Š.-Š.';
+    is $formatter->apply($name9), 'Š.-Š.';
 
     $formatter = Text::BibTeX::NameFormat->new('f', 1);
     my $name10   = Text::BibTeX::Name->new('{Šomeone-Šomething} Smith');
-    is decode_utf8($formatter->apply($name10)), 'Š.';
+    is $formatter->apply($name10), 'Š.';
 
     # Initial is 2 bytes long in UTF8
     my $formatterlast = Text::BibTeX::NameFormat->new('f', 1);
     my $name11   = Text::BibTeX::Name->new('Żaa Smith');
-    is decode_utf8($formatterlast->apply($name11)), 'Ż.';
+    is $formatterlast->apply($name11), 'Ż.';
 
     # Initial is 3 bytes long in UTF8 (Z + 2 byte combining mark)
     $formatterlast = Text::BibTeX::NameFormat->new('f', 1);
     my $name12   = Text::BibTeX::Name->new('Z̃ Smith');
-    is decode_utf8($formatterlast->apply($name12)), 'Z̃.';
+    is $formatterlast->apply($name12), 'Z̃.';
 
     # Initial is 7 bytes long in UTF8 (A + 3 * 2 byte combining marks)
     $formatterlast = Text::BibTeX::NameFormat->new('f', 1);
     my $name13   = Text::BibTeX::Name->new('A̧̦̓ Smith');
-    is decode_utf8($formatterlast->apply($name13)), 'A̧̦̓.';
+    is $formatterlast->apply($name13), 'A̧̦̓.';
 
 }
 

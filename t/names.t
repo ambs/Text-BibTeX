@@ -2,14 +2,14 @@
 use strict;
 use warnings;
 use vars qw($DEBUG);
-use Encode;
+
 use IO::Handle;
-use Test::More tests => 62;
+use Test::More tests => 60;
 use utf8;
 
+use Text::BibTeX 'utf8';
+
 BEGIN {
-    use_ok("Text::BibTeX");
-    use_ok("Text::BibTeX::Name");
     require "t/common.pl";
 }
 
@@ -99,13 +99,13 @@ my $protected_test = <<'PROT';
 PROT
 
 my $uname = new Text::BibTeX::Name('фон дер Иванов, И. И.');
-is (decode_utf8(join('', $uname->part('last'))), 'Иванов');
-is (decode_utf8(join('', $uname->part('first'))), 'И.И.');
-is (decode_utf8(join(' ', $uname->part('von'))), 'фон дер');# 2-byte UTF-8 lowercase
+is (join('', $uname->part('last')), 'Иванов');
+is (join('', $uname->part('first')), 'И.И.');
+is (join(' ', $uname->part('von')), 'фон дер');# 2-byte UTF-8 lowercase
 $uname = new Text::BibTeX::Name('ꝥaa Smith, John');
-is (decode_utf8(join('', $uname->part('von'))), 'ꝥaa');# 3-byte UTF-8 lowercase (U+A765)
+is (join('', $uname->part('von')), 'ꝥaa');# 3-byte UTF-8 lowercase (U+A765)
 $uname = new Text::BibTeX::Name('𝓺aa Smith, John');
-is (decode_utf8(join('', $uname->part('von'))), '𝓺aa');# 4-byte UTF-8 lowercase (U+1D4FA)
+is (join('', $uname->part('von')), '𝓺aa');# 4-byte UTF-8 lowercase (U+1D4FA)
 
 ok ($pentry = new Text::BibTeX::Entry $protected_test);
 my $pauthor = $pentry->get ('author');
