@@ -59,7 +59,8 @@ sub _process_result {
     return NFC(decode($encoding, $result))
    }
    else {
-    return decode($encoding, $result)
+    my $tmp = decode($encoding, $result);
+    return NFC(decode("utf-8", encode($encoding, $tmp)));
    }
 }
 
