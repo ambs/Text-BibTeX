@@ -54,13 +54,13 @@ err_like( sub{ ok(! defined macro_text('bar') ); }, qr/undefined macro "bar"/);
 # macros we're interested in into the macro table so we can
 # successfully parse the regular entry
 print "parsing macro-definition entry to define 3 macros\n" if $DEBUG;
-$entry = new Text::BibTeX::Entry;
+$entry = Text::BibTeX::Entry->new();;
 
 no_err( sub{ $entry->parse_s($macrodef); } );
 
 test_entry($entry, 'string', undef,
            [qw(foo sons bar)],
-           ['  The Foo   Journal', ' \& Sons', 'Bar    \& Sons']);
+           ['  The Foo   Journal', ' \& Sons', 'Bar    \& Sons'], "test 1");
 
 # Direct access to macro table, part 2: make sure the macros we've just
 # defined now have the correct values
@@ -91,7 +91,7 @@ no_err( sub { $entry->parse_s ($regular); });
 
 test_entry ($entry, 'article', 'my_article',
             [qw(author journal publisher)],
-            ['Us and Them', 'The Foo Journal', 'FuBar \& Sons']);
+            ['Us and Them', 'The Foo Journal', 'FuBar \& Sons'], "test 2");
 
 
 # Delete the 'bar' macro and change 'foo' -- this should result in
@@ -113,4 +113,4 @@ err_like( sub { $entry->parse_s ($regular); }, qr/undefined macro "bar"/);
 
 test_entry ($entry, 'article', 'my_article',
             [qw(author journal publisher)],
-            ['Us and Them', 'The Journal of Fooology', 'Fu']);
+            ['Us and Them', 'The Journal of Fooology', 'Fu'], "test 3");

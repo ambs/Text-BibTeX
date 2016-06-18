@@ -30,12 +30,12 @@ Text::BibTeX::File - interface to whole BibTeX files
 
 =head1 SYNOPSIS
 
-   use Text::BibTeX;     # this loads Text::BibTeX::File
+   use Text::BibTeX::File;
 
-   $bib = new Text::BibTeX::File "foo.bib" or die "foo.bib: $!\n";
+   $bib = Text::BibTeX::File->new("foo.bib") or die "foo.bib: $!\n";
    # or:
    $bib = new Text::BibTeX::File;
-   $bib->open ("foo.bib") || die "foo.bib: $!\n";
+   $bib->open("foo.bib", {ENCODING => 'utf-8'}) || die "foo.bib: $!\n";
 
    $bib->set_structure ($structure_name,
                         $option1 => $value1, ...);
@@ -61,19 +61,35 @@ These concepts are fully documented in L<Text::BibTeX::Structure>.
 
 =over 4
 
-=item new ([FILENAME [,MODE [,PERMS]]]) 
+=item new ([FILENAME], [OPTS]) 
 
-Creates a new C<Text::BibTeX::File> object.  If FILENAME is supplied,
-passes it to the C<open> method (along with MODE and PERMS if they
-are supplied).  If the C<open> fails, C<new> fails and returns false; if
-the C<open> succeeds (or if FILENAME isn't supplied), C<new> returns the
-new object reference.
+Creates a new C<Text::BibTeX::File> object.  If FILENAME is supplied, passes
+it to the C<open> method (along with OPTS).  If the C<open> fails, C<new>
+fails and returns false; if the C<open> succeeds (or if FILENAME isn't
+supplied), C<new> returns the new object reference.
 
-=item open (FILENAME [,MODE [,PERMS]])
+=item open (FILENAME [OPTS])
 
-Opens the file specified by FILENAME, possibly using MODE and PERMS.
-See L<IO::File> for full semantics; this C<open> is just a front end for
-C<IO::File::open>.
+Opens the file specified by FILENAME. OPTS is an hashref that can have
+the following values:
+
+=over 4
+
+=item MODE
+
+mode as specified by L<IO::File>
+
+=item PERMS
+
+permissions as specified by L<IO::File>. Can only be used in conjunction
+with C<MODE>
+
+=item ENCODING
+
+encoding for this file. Note that all output will default to this
+encoding.
+
+=back 
 
 =item close ()
 
@@ -95,17 +111,27 @@ sub new
 
    $class = ref ($class) || $class;
    my $self = bless {}, $class;
-   ($self->open (@_) || return undef) if @_; # filename [, mode [, perms]]
+   ($self->open (@_) || return undef) if @_; 
    $self;
 }
 
 sub open
 {
-   my $self = shift;
+   my ($self) = shift;
+   $self->{filename} = shift;
 
-   $self->{filename} = $_[0];
+   my $opts = shift if ref $_[0] eq "HASH";
+
+   $self->{encoding} = $opts->{ENCODING} || "utf-8";
+
+   my @args = ($self->{filename});
+   if (exists $opts->{MODE}) {
+      push @args, $opts->{MODE};
+      push @args, $opts->{PERMS} if exists $opts->{PERMS};
+   }
+
    $self->{handle} = new IO::File;
-   $self->{handle}->open (@_);          # filename, maybe mode, maybe perms
+   $self->{handle}->open (@args);          # filename, maybe mode, maybe perms
 }
 
 sub close

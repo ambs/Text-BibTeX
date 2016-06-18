@@ -33,7 +33,7 @@ Text::BibTeX::Name - interface to BibTeX-style author names
 
 =head1 SYNOPSIS
 
-   use Text::BibTeX; # do not use ::Name directly
+   use Text::BibTeX::Name;
 
    $name = Text::BibTeX::Name->new();
    $name->split('J. Random Hacker');
@@ -271,7 +271,7 @@ way is the job of another module: see L<Text::BibTeX::NameFormat>.
 
 =over 4
 
-=item new([ NAME [, FILENAME, LINE, NAME_NUM]])
+=item new([ [OPTS,] NAME [, FILENAME, LINE, NAME_NUM]])
 
 Creates a new C<Text::BibTeX::Name> object.  If NAME is supplied, it
 must be a string containing a single name, and it will be be passed to
@@ -279,17 +279,31 @@ the C<split> method for further processing.  FILENAME, LINE, and
 NAME_NUM, if present, are all also passed to C<split> to allow better
 error messages.
 
+If the first argument is a hash reference, it is used to define
+configuration values. At the moment the available values are:
+
+=over 4 
+
+=item ENCODING
+
+Set the encoding to be used. Default to 'utf-8'.
+
+   Text::BibTeX::Name->new( { ENCODING => 'latin1' }, "Alberto Simões"});
+
+=back
+
 =cut
 
-sub new
-{
-   my ($class, $name, $filename, $line, $name_num) = @_;
+sub new {
+    my $class = shift;
+    my $opts = ref $_[0] eq 'HASH' ? shift : {};
+    my ( $name, $filename, $line, $name_num ) = @_;
 
-   $class = ref ($class) || $class;
-   my $self = bless {}, $class;
-   $self->split ($name, $filename, $line, $name_num, 1)
-      if (defined $name);
-   $self;
+    $class = ref($class) || $class;
+    my $self = bless { encoding => $opts->{ENCODING} || "utf-8" }, $class;
+    $self->split( $name, $filename, $line, $name_num, 1 )
+        if ( defined $name );
+    $self;
 }
 
 
@@ -350,7 +364,7 @@ sub part {
         unless $partname =~ /^(first|von|last|jr)$/;
 
     if ( exists $self->{$partname} ) {
-        my @x = map { Text::BibTeX->_process_result($_) }
+        my @x = map { Text::BibTeX->_process_result($_, $self->{encoding}) }
             @{ $self->{$partname} };
         return @x > 1 ? @x : $x[0];
     }

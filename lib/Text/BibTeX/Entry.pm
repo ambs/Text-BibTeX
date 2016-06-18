@@ -31,7 +31,7 @@ Text::BibTeX::Entry - read and parse BibTeX files
 
 =head1 SYNOPSIS
 
-   use Text::BibTeX;            # do not use Text::BibTeX::Entry alone!
+   use Text::BibTeX::Entry;
 
    # ...assuming that $bibfile and $newbib are both objects of class
    # Text::BibTeX::File, opened for reading and writing (respectively):
@@ -271,6 +271,7 @@ sub read
    my $fn = $source->{'filename'};
    my $fh = $source->{'handle'};
    $self->{'file'} = $source;        # store File object for later use
+   $self->{encoding} = $source->{encoding};
    return $self->parse ($fn, $fh, $preserve);
 }
 
@@ -408,7 +409,10 @@ sub metatype   { shift->{'metatype'}; }
 sub type       { shift->{'type'}; }
 
 sub key        { 
-  Text::BibTeX->_process_result(shift->{'key'});
+  my $self = shift;
+  exists $self->{key}
+    ? Text::BibTeX->_process_result($self->{key}, $self->{encoding})
+    : undef;
 }
 
 sub num_fields { scalar @{shift->{'fields'}}; }
@@ -495,13 +499,14 @@ sub get
 
    my @x = @{$self->{'values'}}{@fields};
 
-   @x = map {defined ? Text::BibTeX->_process_result($_): undef} @x;
+   @x = map {defined ? Text::BibTeX->_process_result($_, $self->{encoding}): undef} @x;
 
    return (@x > 1) ? @x : $x[0];
 }
 
 sub value { 
-  Text::BibTeX->_process_result(shift->{'value'})
+  my $self = shift;
+  Text::BibTeX->_process_result($self->{value}, $self->{encoding});
 }
 
 
@@ -879,7 +884,7 @@ sub print_s
    # Tack on the last line, and we're done!
    $output .= "}\n\n";
    
-   Text::BibTeX->_process_result($output);
+   Text::BibTeX->_process_result($output, $self->{encoding});
 }
 
 =back

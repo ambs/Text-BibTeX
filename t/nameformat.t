@@ -7,7 +7,7 @@ use utf8;
 
 require "t/common.pl";
 
-use Text::BibTeX qw(utf8 :nameparts :joinmethods);
+use Text::BibTeX qw(:nameparts :joinmethods);
 
 
 $DEBUG = 1;
