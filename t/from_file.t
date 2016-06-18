@@ -4,9 +4,9 @@ use warnings;
 use Test::More tests => 5;
 use utf8;
 
-use Text::BibTeX 'utf8';
+use Text::BibTeX;
 
-my $bibtex = Text::BibTeX::File->new("t/corpora.bib");
+my $bibtex = Text::BibTeX::File->new("t/corpora.bib", { ENCODING => 'utf-8'});
 is ref($bibtex), "Text::BibTeX::File";
 
 my @entries;

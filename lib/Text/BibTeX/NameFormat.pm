@@ -31,7 +31,7 @@ Text::BibTeX::NameFormat - format BibTeX-style author names
 
 =head1 SYNOPSIS
 
-   use Text::BibTeX; ## do not use NameFormat directly
+   use Text::BibTeX::NameFormat;
 
    $format = Text::BibTeX::NameFormat->($parts, $abbrev_first);
 
@@ -41,6 +41,7 @@ Text::BibTeX::NameFormat - format BibTeX-style author names
 
    $format->set_options ($part, $abbrev, $join_tokens, $join_part
 
+   ## Uses the encoding stored in $name
    $formatted_name = $format->apply ($name);
 
 =head1 DESCRIPTION
@@ -247,7 +248,7 @@ sub apply
  
    my $ans = format_name ($name_struct, $format_struct);
 
-   $ans = Text::BibTeX->_process_result($ans);
+   $ans = Text::BibTeX->_process_result($ans, $name->{encoding});
    
    return $ans;
 }

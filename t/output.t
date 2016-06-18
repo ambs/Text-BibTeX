@@ -64,7 +64,7 @@ $bib = new IO::File $test[1], O_CREAT|O_WRONLY
 $entry->print ($bib);
 $bib->close;
 
-$bib = new Text::BibTeX::File $test[2], O_CREAT|O_WRONLY
+$bib = Text::BibTeX::File->new($test[2], {MODE => O_CREAT|O_WRONLY})
    or die "couldn't create $test[2]: $!\n";
 $entry->write ($bib);
 $bib->close;
@@ -77,9 +77,9 @@ for $i (0 .. 2)
    close (BIB);
 }
 
-is $new_text => $contents[0];
-is $new_text => $contents[1];
-is $new_text => $contents[2];
+is $new_text => $contents[0], "Contents [0]";
+is $new_text => $contents[1], "Contents [1]";
+is $new_text => $contents[2], "Contents [2]";
 
 my $clone = $entry->clone;
 is ref($clone) => 'Text::BibTeX::Entry';

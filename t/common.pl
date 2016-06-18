@@ -37,18 +37,20 @@ sub slist_equal {
 }
 
 sub test_entry {
-    my ($entry, $type, $key, $fields, $values) = @_;
+    my ($entry, $type, $key, $fields, $values, $test) = @_;
     my ($i, @vals);
+
+    $test ||= "";
 
     croak "test_entry: num fields != num values"
       unless $#$fields == $#$values;
-    ok($entry->parse_ok);
-    is($entry->type, $type);
+    ok($entry->parse_ok, "Parse ok for $test");
+    is($entry->type, $type, "Type ok for $test");
 
     if (defined $key) {
-        is($entry->key, $key);
+        is($entry->key, $key, "Key ok for $test");
     } else {
-        ok(!defined $entry->key);
+        ok(!defined $entry->key, "Key ok for $test");
     }
 
     ok(slist_equal ([$entry->fieldlist], $fields));
@@ -58,8 +60,6 @@ sub test_entry {
         ok($entry->exists ($fields->[$i]));
         is($val, $values->[$i]);
     }
-
-
 
     @vals = map ($_ || '', $entry->get (@$fields));
     ok (slist_equal (\@vals, $values));

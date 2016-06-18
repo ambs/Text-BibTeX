@@ -46,13 +46,13 @@ close $fh;
 # Open it as a Text::BibTeX::File object, set the structure class (which
 # controls the structured entry class of all entries parsed from that
 # file), and get the structure class (so we can set options on it).
-my $file = new Text::BibTeX::File ($fn);
+my $file = Text::BibTeX::File->new ($fn);
 $file->set_structure ('Bib');
 my $structure = $file->structure;
 
 # Read the two entries
-my $entry1 = new Text::BibTeX::BibEntry $file;
-my $entry2 = new Text::BibTeX::BibEntry $file;
+my $entry1 = Text::BibTeX::BibEntry->new( $file );
+my $entry2 = Text::BibTeX::BibEntry->new( $file );
 
 $file->close;
 #unlink ($fn) || warn "couldn't delete temporary file $fn: $!\n";

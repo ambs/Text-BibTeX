@@ -7,7 +7,7 @@ use IO::Handle;
 use Test::More tests => 60;
 use utf8;
 
-use Text::BibTeX 'utf8';
+use Text::BibTeX;
 
 BEGIN {
     require "t/common.pl";
@@ -32,7 +32,8 @@ sub test_name {
             $ok &= ! $name->part ($partnames[$i]);
         }
     }
-    ok(keys %$name <= 4 && $ok);
+    # Only 5 keys max: first, von, last, jr AND encoding.
+    ok(keys %$name <= 5 && $ok);
 }
 
 
