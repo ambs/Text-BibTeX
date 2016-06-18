@@ -631,7 +631,8 @@ sub names
 #      unless defined $filename;         # undefined $filename
    for $i (0 .. $#names)
    {
-      $names[$i] = Text::BibTeX::Name->new($names[$i], $filename, $line, $i);
+      $names[$i] = Text::BibTeX::Name->new(
+        {encoding => $self->{encoding}},$names[$i], $filename, $line, $i);
    }
    @names;
 }
