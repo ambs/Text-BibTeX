@@ -20,7 +20,7 @@ use 5.008001;                          # needed for Text::BibTeX::Entry
 
 use strict;
 use Carp;
-use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @EXPORT_FAIL);
+use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $AUTOLOAD);
 
 require Exporter;
 require DynaLoader;
