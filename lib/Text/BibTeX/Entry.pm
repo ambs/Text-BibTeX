@@ -407,7 +407,9 @@ sub metatype   { shift->{'metatype'}; }
 
 sub type       { shift->{'type'}; }
 
-sub key        { shift->{'key'}; }
+sub key        { 
+  Text::BibTeX->_process_result(shift->{'key'});
+}
 
 sub num_fields { scalar @{shift->{'fields'}}; }
 
@@ -495,10 +497,12 @@ sub get
 
    @x = map {defined ? Text::BibTeX->_process_result($_): undef} @x;
 
-   return @x > 1 ? @x : $x[0];
+   return (@x > 1) ? @x : $x[0];
 }
 
-sub value { shift->{'value'} }
+sub value { 
+  Text::BibTeX->_process_result(shift->{'value'})
+}
 
 
 =head2 Author name methods
@@ -874,7 +878,8 @@ sub print_s
 
    # Tack on the last line, and we're done!
    $output .= "}\n\n";
-   $output;
+   
+   Text::BibTeX->_process_result($output);
 }
 
 =back
