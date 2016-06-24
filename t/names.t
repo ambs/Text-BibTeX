@@ -4,9 +4,9 @@ use warnings;
 use vars qw($DEBUG);
 
 use IO::Handle;
-use Test::More tests => 60;
+use Test::More tests => 61;
 use utf8;
-
+use Encode 'encode';
 use Text::BibTeX;
 
 BEGIN {
@@ -65,7 +65,7 @@ my ($text, $entry, $pentry, $uentry);
 $namelist = join (' and ', @orig_namelist);
 @namelist = Text::BibTeX::split_list
    ($namelist, 'and', 'test', 0, 'name');
-is_deeply(\@orig_namelist, \@namelist);
+is_deeply(\@orig_namelist, \@namelist, "same lists...");
 
 my $i;
 foreach $i (0 .. $#namelist)
@@ -73,7 +73,7 @@ foreach $i (0 .. $#namelist)
    is($namelist[$i], $orig_namelist[$i]);
    my %parts;
    Text::BibTeX::Name::_split (\%parts, $namelist[$i], 'test', 0, $i, 0);
-   ok (keys %parts <= 4);
+   ok (keys %parts <= 4, "number keys is OK");
 
    my @name = map { join ('+', ref $_ ? @$_ : ()) }
      @parts{'first','von','last','jr'};
@@ -99,16 +99,21 @@ my $protected_test = <<'PROT';
 }
 PROT
 
-my $uname = new Text::BibTeX::Name('фон дер Иванов, И. И.');
-is (join('', $uname->part('last')), 'Иванов');
+my $uname = Text::BibTeX::Name->new({binmode => 'utf-8'},'фон дер Иванов, И. И.');
+is (join('', $uname->part('last')), 'Иванов', "Testing unicode...");
 is (join('', $uname->part('first')), 'И.И.');
 is (join(' ', $uname->part('von')), 'фон дер');# 2-byte UTF-8 lowercase
-$uname = new Text::BibTeX::Name('ꝥaa Smith, John');
+
+$uname = Text::BibTeX::Name->new({binmode => 'utf-8'},'ꝥaa Smith, John');
 is (join('', $uname->part('von')), 'ꝥaa');# 3-byte UTF-8 lowercase (U+A765)
-$uname = new Text::BibTeX::Name('𝓺aa Smith, John');
+$uname = Text::BibTeX::Name->new({binmode => 'utf-8'},'𝓺aa Smith, John');
 is (join('', $uname->part('von')), '𝓺aa');# 4-byte UTF-8 lowercase (U+1D4FA)
 
-ok ($pentry = new Text::BibTeX::Entry $protected_test);
+$uname = Text::BibTeX::Name->new({binmode => 'raw'},'𝓺aa Smith, John');
+is (join('', $uname->part('von')), encode('UTF-8','𝓺aa'), "check raw mode");# 4-byte UTF-8 lowercase (U+1D4FA)
+
+
+ok ($pentry = Text::BibTeX::Entry->new($protected_test));
 my $pauthor = $pentry->get ('author');
 is ($pauthor, '{U.S. Department of Health and Human Services, National Institute of Mental Health, National Heart, Lung and Blood Institute}');
 @pnames = $pentry->split ('author');
@@ -118,7 +123,7 @@ ok (@pnames == 1);
 test_name ($pnames[0], [undef, undef, ['{U.S. Department of Health and Human Services, National Institute of Mental Health, National Heart, Lung and Blood Institute}'], undef]);
 
 
-ok ($entry = new Text::BibTeX::Entry $text);
+ok ($entry = Text::BibTeX::Entry->new($text));
 my $author = $entry->get ('author');
 is ($author, 'Homer Simpson and Flanders, Jr., Ned Q. and {Foo Bar and Co.}');
 @names = $entry->split ('author');

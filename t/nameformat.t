@@ -4,6 +4,8 @@ use vars qw($DEBUG);
 use IO::Handle;
 use Test::More tests=>26;
 use utf8;
+use Encode 'decode';
+use Unicode::Normalize;
 
 require "t/common.pl";
 
@@ -35,11 +37,11 @@ $DEBUG = 1;
     # tests 4..5..
     my $name1   = Text::BibTeX::Name->new('{John Henry} Ford');
     my $format1 = Text::BibTeX::NameFormat->new('f', 1);
-    is $format1->apply($name1), 'J.';
+    is $format1->apply($name1), 'J.', "first name is abbreviated correctly [1]";
 
     my $name2   = Text::BibTeX::Name->new('{John} Ford');
     my $format2 = Text::BibTeX::NameFormat->new('f', 1);
-    is $format2->apply($name2), 'J.';
+    is $format2->apply($name2), 'J.', "first name is abbreviated correctly [2]";
 }
 
 {
@@ -53,14 +55,14 @@ $DEBUG = 1;
     $format3->set_text(BTN_LAST, undef, undef, undef, '.');
     $format3->set_options(BTN_LAST, 1, BTJ_NOTHING, BTJ_NOTHING);
 
-    is $format3->apply($name3), 'U.';
+    is $format3->apply($name3), 'U.', 'big institution';
 }
 
 {
     # tests 7..8..
     my $name4   = Text::BibTeX::Name->new("{\\'E}mile Zola");
     my $format4 = Text::BibTeX::NameFormat->new('f', 1);
-    is $format4->apply($name4), "{\\'E}.";
+    is $format4->apply($name4), "{\\'E}.", "accented first letter";
 
     my $name5   = Text::BibTeX::Name->new('St John-Mollusc, Oliver');
     my $format5 = Text::BibTeX::NameFormat->new('l', 1);
@@ -68,7 +70,7 @@ $DEBUG = 1;
     $format5->set_text(BTN_LAST, undef, undef, undef, '.');
     $format5->set_options(BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
 
-    is $format5->apply($name5), 'S.~J.-M.';
+    is $format5->apply($name5), 'S.~J.-M.', "abbreviated surname";
 }
 
 {
@@ -79,7 +81,7 @@ $DEBUG = 1;
     $format6->set_text (BTN_LAST, undef, undef, undef, '.');
     $format6->set_options (BTN_LAST, 1, BTJ_MAYTIE, BTJ_NOTHING);
 
-    is $format6->apply($name6), "S.~J.-{\\'E}.~M.";
+    is $format6->apply($name6), "S.~J.-{\\'E}.~M.", "Abbreviated accented surname";
 }
 
 {
@@ -95,31 +97,33 @@ $DEBUG = 1;
 
 {
     # test 11... to 16
+
+    ## This in raw mode
     my $name8     = Text::BibTeX::Name->new('Šomeone Smith');
     my $formatter = Text::BibTeX::NameFormat->new('f', 1);
-    is $formatter->apply($name8), 'Š.';
+    is NFC(decode('UTF-8',$formatter->apply($name8))), 'Š.', "raw test 1";
 
     my $name9   = Text::BibTeX::Name->new('Šomeone-Šomething Smith');
-    is $formatter->apply($name9), 'Š.-Š.';
+    is NFC(decode('UTF-8',$formatter->apply($name9))), 'Š.-Š.', "raw test 2";
 
     $formatter = Text::BibTeX::NameFormat->new('f', 1);
-    my $name10   = Text::BibTeX::Name->new('{Šomeone-Šomething} Smith');
-    is $formatter->apply($name10), 'Š.';
+    my $name10   = Text::BibTeX::Name->new({binmode=>'utf-8'},'{Šomeone-Šomething} Smith');
+    is $formatter->apply($name10), 'Š.', "utf-8 [1]";
 
     # Initial is 2 bytes long in UTF8
     my $formatterlast = Text::BibTeX::NameFormat->new('f', 1);
-    my $name11   = Text::BibTeX::Name->new('Żaa Smith');
-    is $formatterlast->apply($name11), 'Ż.';
+    my $name11   = Text::BibTeX::Name->new({binmode=>'utf-8'},'Żaa Smith');
+    is $formatterlast->apply($name11), 'Ż.', "utf-8 [2]";
 
     # Initial is 3 bytes long in UTF8 (Z + 2 byte combining mark)
     $formatterlast = Text::BibTeX::NameFormat->new('f', 1);
-    my $name12   = Text::BibTeX::Name->new('Z̃ Smith');
-    is $formatterlast->apply($name12), 'Z̃.';
+    my $name12   = Text::BibTeX::Name->new({binmode=>'utf-8'},'Z̃ Smith');
+    is $formatterlast->apply($name12), 'Z̃.', "utf-8 [3]";
 
     # Initial is 7 bytes long in UTF8 (A + 3 * 2 byte combining marks)
     $formatterlast = Text::BibTeX::NameFormat->new('f', 1);
-    my $name13   = Text::BibTeX::Name->new('A̧̦̓ Smith');
-    is $formatterlast->apply($name13), 'A̧̦̓.';
+    my $name13   = Text::BibTeX::Name->new({binmode=>'utf-8'},'A̧̦̓ Smith');
+    is $formatterlast->apply($name13), 'A̧̦̓.', "utf-8 [3]";
 
 }
 

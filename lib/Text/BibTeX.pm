@@ -51,18 +51,28 @@ our $VERSION='0.74';
 
 use Encode;
 use Unicode::Normalize;
+
 sub _process_result {
-   my ($self, $result, $encoding) = @_; 
-   $encoding ||= "utf-8";
-   
-   if ($encoding =~ /utf-?8/i) {
-    return NFC(decode($encoding, $result))
-   }
-   else {
-    my $tmp = decode($encoding, $result);
-    return NFC(decode("utf-8", encode($encoding, $tmp)));
-   }
+    my ( $self, $result, $encoding ) = @_;
+
+    if ( $encoding eq "utf-8" ) {
+        return NFC( decode( $encoding, $result ) );
+    }
+    else { return $result; }
+
 }
+
+sub _process_argument {
+    my ( $self, $value, $encoding ) = @_;
+
+    if ( $encoding eq "utf-8" ) {
+        return encode( $encoding, $value );
+    }
+    else {
+        return $value;
+    }
+}
+
 
 =head1 NAME
 

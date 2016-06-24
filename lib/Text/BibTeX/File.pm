@@ -35,7 +35,7 @@ Text::BibTeX::File - interface to whole BibTeX files
    $bib = Text::BibTeX::File->new("foo.bib") or die "foo.bib: $!\n";
    # or:
    $bib = new Text::BibTeX::File;
-   $bib->open("foo.bib", {ENCODING => 'utf-8'}) || die "foo.bib: $!\n";
+   $bib->open("foo.bib", {binmode => 'utf-8'}) || die "foo.bib: $!\n";
 
    $bib->set_structure ($structure_name,
                         $option1 => $value1, ...);
@@ -84,10 +84,14 @@ mode as specified by L<IO::File>
 permissions as specified by L<IO::File>. Can only be used in conjunction
 with C<MODE>
 
-=item ENCODING
+=item BINMODE
 
-encoding for this file. Note that all output will default to this
-encoding.
+by default, Text::BibTeX uses bytes directly. Thus, you need to encode
+strings accordingly with the encoding of the files you are reading. You can
+also select UTF-8. In this case, Text::BibTeX will return UTF-8 strings in
+NFC mode. Note that at the moment files with BOM are not supported.
+
+Valid values are 'raw/bytes' or 'utf-8'.
 
 =back 
 
@@ -115,24 +119,33 @@ sub new
    $self;
 }
 
-sub open
-{
-   my ($self) = shift;
-   $self->{filename} = shift;
+sub open {
+    my ($self) = shift;
+    $self->{filename} = shift;
 
-   my $opts = shift if ref $_[0] eq "HASH";
+    $self->{binmode} = 'bytes';
+    my @args = ( $self->{filename} );
 
-   $self->{encoding} = $opts->{ENCODING} || "utf-8";
+    if ( ref $_[0] eq "HASH" ) {
+        my $opts = {};
+        $opts = shift;
+        $opts->{ lc $_ } = $opts->{$_} for ( keys %$opts );
+        $self->{binmode} = 'utf-8'
+            if exists $opts->{binmode} && $opts->{binmode} =~ /utf-?8/i;
 
-   my @args = ($self->{filename});
-   if (exists $opts->{MODE}) {
-      push @args, $opts->{MODE};
-      push @args, $opts->{PERMS} if exists $opts->{PERMS};
-   }
+        if ( exists $opts->{MODE} ) {
+            push @args, $opts->{MODE};
+            push @args, $opts->{PERMS} if exists $opts->{PERMS};
+        }
+    }
+    else {
+        push @args, @_;
+    }
 
-   $self->{handle} = new IO::File;
-   $self->{handle}->open (@args);          # filename, maybe mode, maybe perms
+    $self->{handle} = new IO::File;
+    $self->{handle}->open(@args);    # filename, maybe mode, maybe perms
 }
+
 
 sub close
 {

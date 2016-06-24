@@ -6,7 +6,7 @@ use utf8;
 
 use Text::BibTeX;
 
-my $bibtex = Text::BibTeX::File->new("t/corpora.bib", { ENCODING => 'utf-8'});
+my $bibtex = Text::BibTeX::File->new("t/corpora.bib", { binmode => 'utf-8'});
 is ref($bibtex), "Text::BibTeX::File";
 
 my @entries;
