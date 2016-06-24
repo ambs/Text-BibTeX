@@ -271,7 +271,7 @@ sub read
    my $fn = $source->{'filename'};
    my $fh = $source->{'handle'};
    $self->{'file'} = $source;        # store File object for later use
-   $self->{encoding} = $source->{encoding};
+   $self->{binmode} = $source->{binmode};
    return $self->parse ($fn, $fh, $preserve);
 }
 
@@ -393,32 +393,39 @@ context.)
 
 =item fieldlist ()
 
-Returns the list of fields in the entry.  In a scalar context, returns a
-reference to the object's own list of fields.  That way, you can change or
-reorder the field list with minimal interference from the class.  I'm not
-entirely sure if this is a good idea, so don't rely on it existing in the
-future; feel free to play around with it and let me know if you get bitten
-in dangerous ways or find this enormously useful.
+Returns the list of fields in the entry.  
+
+B<WARNING> In scalar context, it no longer returns a
+reference to the object's own list of fields.
 
 =cut
 
 sub parse_ok   { shift->{'status'}; }
 
-sub metatype   { shift->{'metatype'}; }
+sub metatype   {
+    my $self = shift;
+    Text::BibTeX->_process_result( $self->{'metatype'}, $self->{binmode} );
+}
 
-sub type       { shift->{'type'}; }
+sub type {
+    my $self = shift;
+    Text::BibTeX->_process_result( $self->{'type'}, $self->{binmode} );
+}
 
 sub key        { 
   my $self = shift;
   exists $self->{key}
-    ? Text::BibTeX->_process_result($self->{key}, $self->{encoding})
+    ? Text::BibTeX->_process_result($self->{key}, $self->{binmode})
     : undef;
 }
 
 sub num_fields { scalar @{shift->{'fields'}}; }
 
-sub fieldlist  { wantarray ? @{shift->{'fields'}} : shift->{'fields'}; }
-
+sub fieldlist  { 
+  my $self = shift;
+  return map { Text::BibTeX->_process_result($_, $self->{binmode})} @{$self->{'fields'}};
+}
+  
 =item exists (FIELD)
 
 Returns true if a field named FIELD is present in the entry, false
@@ -490,23 +497,23 @@ sub exists
 {
    my ($self, $field) = @_;
 
-   exists $self->{'values'}{$field};
+   exists $self->{values}{Text::BibTeX->_process_argument($field, $self->{binmode})};
 }
 
 sub get
 {
    my ($self, @fields) = @_;
 
-   my @x = @{$self->{'values'}}{@fields};
+   my @x = @{$self->{'values'}}{map {Text::BibTeX->_process_argument($_, $self->{binmode})} @fields};
 
-   @x = map {defined ? Text::BibTeX->_process_result($_, $self->{encoding}): undef} @x;
+   @x = map {defined ? Text::BibTeX->_process_result($_, $self->{binmode}): undef} @x;
 
    return (@x > 1) ? @x : $x[0];
 }
 
 sub value { 
   my $self = shift;
-  Text::BibTeX->_process_result($self->{value}, $self->{encoding});
+  Text::BibTeX->_process_result($self->{value}, $self->{binmode});
 }
 
 
@@ -612,9 +619,17 @@ sub split
 
 #   local $^W = 0                        # suppress spurious warning from 
 #      unless defined $filename;         # undefined $filename
-   Text::BibTeX::split_list ($self->{'values'}{$field}, $delim,
-                             $filename, $line, $desc);
+   $self->_split_list($field, $delim, $filename, $line, $desc);
 }
+
+sub _split_list {
+    my ( $self, $field, $delim, $filename, $line, $desc ) = @_;
+    return
+        map { Text::BibTeX->_process_result( $_, $self->{binmode} ) }
+        Text::BibTeX::split_list( $self->{values}{$field}, $delim, $filename, $line, $desc );
+
+}
+
 
 sub names
 {
@@ -632,7 +647,7 @@ sub names
    for $i (0 .. $#names)
    {
       $names[$i] = Text::BibTeX::Name->new(
-        {encoding => $self->{encoding}},$names[$i], $filename, $line, $i);
+        {binmode => $self->{binmode}},$names[$i], $filename, $line, $i);
    }
    @names;
 }
@@ -710,7 +725,7 @@ sub set_key
 {
    my ($self, $key) = @_;
 
-   $self->{'key'} = $key;
+   $self->{'key'} = Text::BibTeX->_process_argument($key, $self->{binmode});
 }
 
 sub set
@@ -722,7 +737,7 @@ sub set
 
    while (@_)
    {
-      ($field,$value) = (shift,shift);
+      ($field,$value) = (shift,Text::BibTeX->_process_argument(shift, $self->{binmode}));
       push (@{$self->{'fields'}}, $field)
          unless exists $self->{'values'}{$field};
       $self->{'values'}{$field} = $value;
@@ -885,7 +900,7 @@ sub print_s
    # Tack on the last line, and we're done!
    $output .= "}\n\n";
    
-   Text::BibTeX->_process_result($output, $self->{encoding});
+   Text::BibTeX->_process_result($output, $self->{binmode});
 }
 
 =back

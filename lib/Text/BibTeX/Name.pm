@@ -284,11 +284,13 @@ configuration values. At the moment the available values are:
 
 =over 4 
 
-=item ENCODING
+=item BINMODE
 
-Set the encoding to be used. Default to 'utf-8'.
+Set the way Text::BibTeX deals with strings. By default it manages
+strings as bytes. You can set BINMODE to 'utf-8' to get NFC normalized
+UTF-8 strings.
 
-   Text::BibTeX::Name->new( { ENCODING => 'latin1' }, "Alberto Simões"});
+   Text::BibTeX::Name->new( { binmode => 'UTF-8' }, "Alberto Simões"});
 
 =back
 
@@ -297,10 +299,18 @@ Set the encoding to be used. Default to 'utf-8'.
 sub new {
     my $class = shift;
     my $opts = ref $_[0] eq 'HASH' ? shift : {};
+
+    $opts->{ lc $_ } = $opts->{$_} for ( keys %$opts );
+
     my ( $name, $filename, $line, $name_num ) = @_;
 
     $class = ref($class) || $class;
-    my $self = bless { encoding => $opts->{ENCODING} || "utf-8" }, $class;
+    my $self = bless { }, $class;
+
+    $self->{binmode} = 'bytes';
+    $self->{binmode} = 'utf-8'
+        if exists $opts->{binmode} && $opts->{binmode} =~ /utf-?8/i;
+
     $self->split( $name, $filename, $line, $name_num, 1 )
         if ( defined $name );
     $self;
@@ -333,7 +343,7 @@ sub split
    my ($self, $name, $filename, $line, $name_num) = @_;
 
    # Call the XSUB with default values if necessary
-   $self->_split ($name, $filename, 
+   $self->_split (Text::BibTeX->_process_argument($name, $self->{binmode}), $filename, 
                   defined $line ? $line : -1,
                   defined $name_num ? $name_num : -1,
                   1);
@@ -364,7 +374,7 @@ sub part {
         unless $partname =~ /^(first|von|last|jr)$/;
 
     if ( exists $self->{$partname} ) {
-        my @x = map { Text::BibTeX->_process_result($_, $self->{encoding}) }
+        my @x = map { Text::BibTeX->_process_result($_, $self->{binmode}) }
             @{ $self->{$partname} };
         return @x > 1 ? @x : $x[0];
     }
