@@ -49,14 +49,19 @@ our $VERSION='0.75_02';
               'check_class', 'display_list' );
 @EXPORT = @{$EXPORT_TAGS{'metatypes'}};
 
-use Encode;
+use Encode 'encode', 'decode';
 use Unicode::Normalize;
 
 sub _process_result {
     my ( $self, $result, $encoding ) = @_;
 
     if ( $encoding eq "utf-8" ) {
-        return NFC( decode( $encoding, $result ) );
+        if ( utf8::is_utf8($result) ) {
+            return NFC($result);
+        }
+        else {
+            return NFC( decode( $encoding, $result ) );
+        }
     }
     else { return $result; }
 
@@ -65,10 +70,10 @@ sub _process_result {
 sub _process_argument {
     my ( $self, $value, $encoding ) = @_;
 
-    if ( $encoding eq "utf-8" ) {
-        return encode( $encoding, $value );
-    }
-    else {
+     if ( $encoding eq "utf-8" && utf8::is_utf8($value)) {
+         return encode( $encoding, $value );
+     }
+     else {
         return $value;
     }
 }

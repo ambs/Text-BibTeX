@@ -311,7 +311,8 @@ sub new {
     $self->{binmode} = 'utf-8'
         if exists $opts->{binmode} && $opts->{binmode} =~ /utf-?8/i;
 
-    $self->split( $name, $filename, $line, $name_num, 1 )
+    $self->split( Text::BibTeX->_process_argument($name, $self->{binmode}),
+        $filename, $line, $name_num, 1 )
         if ( defined $name );
     $self;
 }
