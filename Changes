@@ -1,6 +1,9 @@
 Revision history for Perl module Text::BibTeX
 
-0.75_1 2016-06-24
+0.75_02 2016-06-25
+ * Minor fix for some perl version parsingproblems.
+
+0.75_01 2016-06-24
  * Added binmode option. Should allow unicode handling directly.
 
 0.74 2016-06-15

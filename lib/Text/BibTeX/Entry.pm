@@ -23,7 +23,7 @@ use vars qw'$VERSION';
 use Carp;
 use Text::BibTeX qw(:metatypes :nodetypes);
 
-$VERSION = 0.75_01;
+$VERSION = 0.75_02;
 
 =head1 NAME
 
@@ -506,7 +506,7 @@ sub get
 
    my @x = @{$self->{'values'}}{map {Text::BibTeX->_process_argument($_, $self->{binmode})} @fields};
 
-   @x = map {defined ? Text::BibTeX->_process_result($_, $self->{binmode}): undef} @x;
+   @x = map {defined($_) ? Text::BibTeX->_process_result($_, $self->{binmode}): undef} @x;
 
    return (@x > 1) ? @x : $x[0];
 }

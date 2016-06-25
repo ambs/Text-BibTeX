@@ -23,7 +23,7 @@ require 5.004;
 use strict;
 use Carp;
 use vars qw'$VERSION';
-$VERSION = 0.75_01;
+$VERSION = 0.75_02;
 
 =head1 NAME
 
