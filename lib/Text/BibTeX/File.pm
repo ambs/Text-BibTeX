@@ -35,7 +35,7 @@ Text::BibTeX::File - interface to whole BibTeX files
    $bib = Text::BibTeX::File->new("foo.bib") or die "foo.bib: $!\n";
    # or:
    $bib = new Text::BibTeX::File;
-   $bib->open("foo.bib", {binmode => 'utf-8'}) || die "foo.bib: $!\n";
+   $bib->open("foo.bib", {binmode => 'utf-8', normalization => 'NFC'}) || die "foo.bib: $!\n";
 
    $bib->set_structure ($structure_name,
                         $option1 => $value1, ...);
@@ -93,6 +93,13 @@ NFC mode. Note that at the moment files with BOM are not supported.
 
 Valid values are 'raw/bytes' or 'utf-8'.
 
+=item NORMALIZATION
+
+by default, Text::BibTeX outputs UTF-8 in NFC form. You can change this by passing
+the name of a different form.
+
+Valid values are those forms supported by the Unicode::Normalize module ('NFD', 'NFDK' etc.)
+
 =back 
 
 =item close ()
@@ -124,6 +131,7 @@ sub open {
     $self->{filename} = shift;
 
     $self->{binmode} = 'bytes';
+    $self->{normalization} = 'NFC';
     my @args = ( $self->{filename} );
 
     if ( ref $_[0] eq "HASH" ) {
@@ -132,6 +140,7 @@ sub open {
         $opts->{ lc $_ } = $opts->{$_} for ( keys %$opts );
         $self->{binmode} = 'utf-8'
             if exists $opts->{binmode} && $opts->{binmode} =~ /utf-?8/i;
+        $self->{normalization} = $opts->{normalization} if exists $opts->{normalization};
 
         if ( exists $opts->{MODE} ) {
             push @args, $opts->{MODE};

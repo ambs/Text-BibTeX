@@ -272,6 +272,7 @@ sub read
    my $fh = $source->{'handle'};
    $self->{'file'} = $source;        # store File object for later use
    $self->{binmode} = $source->{binmode};
+   $self->{normalization} = $source->{normalization};
    return $self->parse ($fn, $fh, $preserve);
 }
 
@@ -404,18 +405,18 @@ sub parse_ok   { shift->{'status'}; }
 
 sub metatype   {
     my $self = shift;
-    Text::BibTeX->_process_result( $self->{'metatype'}, $self->{binmode} );
+    Text::BibTeX->_process_result( $self->{'metatype'}, $self->{binmode}, $self->{normalization} );
 }
 
 sub type {
     my $self = shift;
-    Text::BibTeX->_process_result( $self->{'type'}, $self->{binmode} );
+    Text::BibTeX->_process_result( $self->{'type'}, $self->{binmode}, $self->{normalization} );
 }
 
 sub key        { 
   my $self = shift;
   exists $self->{key}
-    ? Text::BibTeX->_process_result($self->{key}, $self->{binmode})
+    ? Text::BibTeX->_process_result($self->{key}, $self->{binmode}, $self->{normalization})
     : undef;
 }
 
@@ -423,7 +424,7 @@ sub num_fields { scalar @{shift->{'fields'}}; }
 
 sub fieldlist  { 
   my $self = shift;
-  return map { Text::BibTeX->_process_result($_, $self->{binmode})} @{$self->{'fields'}};
+  return map { Text::BibTeX->_process_result($_, $self->{binmode}, $self->{normalization})} @{$self->{'fields'}};
 }
   
 =item exists (FIELD)
@@ -497,23 +498,23 @@ sub exists
 {
    my ($self, $field) = @_;
 
-   exists $self->{values}{Text::BibTeX->_process_argument($field, $self->{binmode})};
+   exists $self->{values}{Text::BibTeX->_process_argument($field, $self->{binmode}, $self->{normalization})};
 }
 
 sub get
 {
    my ($self, @fields) = @_;
 
-   my @x = @{$self->{'values'}}{map {Text::BibTeX->_process_argument($_, $self->{binmode})} @fields};
+   my @x = @{$self->{'values'}}{map {Text::BibTeX->_process_argument($_, $self->{binmode}, $self->{normalization})} @fields};
 
-   @x = map {defined($_) ? Text::BibTeX->_process_result($_, $self->{binmode}): undef} @x;
+   @x = map {defined($_) ? Text::BibTeX->_process_result($_, $self->{binmode}, $self->{normalization}): undef} @x;
 
    return (@x > 1) ? @x : $x[0];
 }
 
 sub value { 
   my $self = shift;
-  Text::BibTeX->_process_result($self->{value}, $self->{binmode});
+  Text::BibTeX->_process_result($self->{value}, $self->{binmode}, $self->{normalization});
 }
 
 
@@ -625,7 +626,7 @@ sub split
 sub _split_list {
     my ( $self, $field, $delim, $filename, $line, $desc ) = @_;
     return
-        map { Text::BibTeX->_process_result( $_, $self->{binmode} ) }
+        map { Text::BibTeX->_process_result( $_, $self->{binmode}, $self->{normalization} ) }
         Text::BibTeX::split_list( $self->{values}{$field}, $delim, $filename, $line, $desc );
 
 }
@@ -647,7 +648,7 @@ sub names
    for $i (0 .. $#names)
    {
       $names[$i] = Text::BibTeX::Name->new(
-        {binmode => $self->{binmode}},$names[$i], $filename, $line, $i);
+        {binmode => $self->{binmode}, normalization => $self->{normalization}},$names[$i], $filename, $line, $i);
    }
    @names;
 }
@@ -725,7 +726,7 @@ sub set_key
 {
    my ($self, $key) = @_;
 
-   $self->{'key'} = Text::BibTeX->_process_argument($key, $self->{binmode});
+   $self->{'key'} = Text::BibTeX->_process_argument($key, $self->{binmode}, $self->{normalization});
 }
 
 sub set
@@ -737,7 +738,7 @@ sub set
 
    while (@_)
    {
-      ($field,$value) = (shift,Text::BibTeX->_process_argument(shift, $self->{binmode}));
+      ($field,$value) = (shift,Text::BibTeX->_process_argument(shift, $self->{binmode}, $self->{normalization}));
       push (@{$self->{'fields'}}, $field)
          unless exists $self->{'values'}{$field};
       $self->{'values'}{$field} = $value;
@@ -900,7 +901,7 @@ sub print_s
    # Tack on the last line, and we're done!
    $output .= "}\n\n";
    
-   Text::BibTeX->_process_result($output, $self->{binmode});
+   Text::BibTeX->_process_result($output, $self->{binmode}, $self->{normalization});
 }
 
 =back

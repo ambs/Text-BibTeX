@@ -53,14 +53,16 @@ use Encode 'encode', 'decode';
 use Unicode::Normalize;
 
 sub _process_result {
-    my ( $self, $result, $encoding ) = @_;
+  no strict 'refs';
+  my ( $self, $result, $encoding, $norm ) = @_;
 
+  my $normsub = \&{"$norm"}; # symbolic ref
     if ( $encoding eq "utf-8" ) {
         if ( utf8::is_utf8($result) ) {
-            return NFC($result);
+            return $normsub->($result);
         }
         else {
-            return NFC( decode( $encoding, $result ) );
+            return $normsub->( decode( $encoding, $result ) );
         }
     }
     else { return $result; }

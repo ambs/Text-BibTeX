@@ -41,7 +41,7 @@ Text::BibTeX::NameFormat - format BibTeX-style author names
 
    $format->set_options ($part, $abbrev, $join_tokens, $join_part
 
-   ## Uses the encoding/binmode stored in $name
+   ## Uses the encoding/binmode and normalization form stored in $name
    $formatted_name = $format->apply ($name);
 
 =head1 DESCRIPTION
@@ -248,7 +248,7 @@ sub apply
  
    my $ans = format_name ($name_struct, $format_struct);
 
-   $ans = Text::BibTeX->_process_result($ans, $name->{binmode});
+   $ans = Text::BibTeX->_process_result($ans, $name->{binmode}, $name->{normalization});
    
    return $ans;
 }

@@ -288,9 +288,9 @@ configuration values. At the moment the available values are:
 
 Set the way Text::BibTeX deals with strings. By default it manages
 strings as bytes. You can set BINMODE to 'utf-8' to get NFC normalized
-UTF-8 strings.
+UTF-8 strings and you can customise the normalization with the NORMALIZATION option.
 
-   Text::BibTeX::Name->new( { binmode => 'UTF-8' }, "Alberto Simões"});
+   Text::BibTeX::Name->new( { binmode => 'utf-8', normalization => 'NFD' }, "Alberto Simões"});
 
 =back
 
@@ -308,10 +308,12 @@ sub new {
     my $self = bless { }, $class;
 
     $self->{binmode} = 'bytes';
+    $self->{normalization} = 'NFC';
     $self->{binmode} = 'utf-8'
         if exists $opts->{binmode} && $opts->{binmode} =~ /utf-?8/i;
+    $self->{normalization} = $opts->{normalization} if exists $opts->{normalization};
 
-    $self->split( Text::BibTeX->_process_argument($name, $self->{binmode}),
+    $self->split( Text::BibTeX->_process_argument($name, $self->{binmode}, $self->{normalization}),
         $filename, $line, $name_num, 1 )
         if ( defined $name );
     $self;
@@ -344,7 +346,7 @@ sub split
    my ($self, $name, $filename, $line, $name_num) = @_;
 
    # Call the XSUB with default values if necessary
-   $self->_split (Text::BibTeX->_process_argument($name, $self->{binmode}), $filename, 
+   $self->_split (Text::BibTeX->_process_argument($name, $self->{binmode}, $self->{normalization}), $filename, 
                   defined $line ? $line : -1,
                   defined $name_num ? $name_num : -1,
                   1);
@@ -375,7 +377,7 @@ sub part {
         unless $partname =~ /^(first|von|last|jr)$/;
 
     if ( exists $self->{$partname} ) {
-        my @x = map { Text::BibTeX->_process_result($_, $self->{binmode}) }
+        my @x = map { Text::BibTeX->_process_result($_, $self->{binmode}, $self->{normalization}) }
             @{ $self->{$partname} };
         return @x > 1 ? @x : $x[0];
     }

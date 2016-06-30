@@ -32,8 +32,8 @@ sub test_name {
             $ok &= ! $name->part ($partnames[$i]);
         }
     }
-    # Only 5 keys max: first, von, last, jr AND encoding.
-    ok(keys %$name <= 5 && $ok);
+    # Only 5 keys max: first, von, last, jr AND encoding, normalization
+    ok(keys %$name <= 6 && $ok);
 }
 
 
