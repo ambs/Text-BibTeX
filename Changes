@@ -3,7 +3,6 @@ Revision history for Perl module Text::BibTeX
 0.75_03 2016-06-30
  * Rename split_list to isplit_list, and creaed split_list wrapper;
  * Added normalization option;
- * Renamed binmode option to mode;
 
 0.75_02 2016-06-25
  * Minor fix for some perl version parsing problems.
