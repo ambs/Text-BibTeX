@@ -132,7 +132,7 @@ sub new
 sub DESTROY
 {
    my $self = shift;
-   free ($self->{'_cstruct'}) 
+   free ($self->{'_cstruct'})
       if defined $self->{'_cstruct'};
 }
 
@@ -179,7 +179,7 @@ sub set_text
 
    $self->{'textrefs'} = [\$pre_part, \$post_part, \$pre_token, \$post_token];
 
-   _set_text ($self->{'_cstruct'}, 
+   _set_text ($self->{'_cstruct'},
               $part,
               $pre_part,
               $post_part,

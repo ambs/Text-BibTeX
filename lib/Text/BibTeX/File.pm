@@ -111,14 +111,14 @@ sub open
 sub close
 {
    my $self = shift;
-   $self->{handle}->close if $self->{handle};   
+   $self->{handle}->close if $self->{handle};
 }
 
 sub eof
 {
    eof (shift->{handle});
 }
-      
+
 sub DESTROY
 {
    my $self = shift;

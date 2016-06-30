@@ -490,7 +490,7 @@ methods---described below---for this.
 
 =cut
 
-sub new 
+sub new
 {
    my ($type, $name, %options) = @_;
 
@@ -726,7 +726,7 @@ sub known_field
    $self->{'fields'}{$type}{$field};    # either 'required', 'optional', or
 }                                       # a constraint record (or undef!)
 
-sub required_fields 
+sub required_fields
 {
    my ($self, $type) = @_;
 
@@ -734,7 +734,7 @@ sub required_fields
    @{$self->{'fieldgroups'}{$type}{'required'}};
 }
 
-sub optional_fields 
+sub optional_fields
 {
    my ($self, $type) = @_;
 
@@ -874,7 +874,9 @@ $VERSION = 0.74;
 
 use Carp;
 
-@ISA = ('Text::BibTeX::Entry');
+#@ISA = ('Text::BibTeX::Entry');
+use base ('Text::BibTeX::Entry');
+
 use Text::BibTeX qw(:metatypes display_list);
 
 =head1 METHODS 2: BASE STRUCTURED ENTRY CLASS
@@ -965,7 +967,7 @@ sub check_required_fields
    my ($self, $warn, $coerce) = @_;
    my ($field, $warning);
    my $num_errors = 0;
-   
+
    foreach $field ($self->{'structure'}->required_fields ($self->type))
    {
       if (! $self->exists ($field))
@@ -980,7 +982,7 @@ sub check_required_fields
          $num_errors++;
       }
    }
-   
+
    # Coercion is always successful, so if $coerce is true return true.
    # Otherwise, return true if no errors found.
 
@@ -1079,7 +1081,7 @@ sub check_field_constraints
                                    $max, display_list ($fields, 1));
             }
             elsif ($min < @$fields && $max == @$fields)
-            {               
+            {
                $warning = sprintf ("at least %d of fields %s must be present",
                                    $min, display_list ($fields, 1));
             }
@@ -1091,8 +1093,8 @@ sub check_field_constraints
             }
             else
             {
-               $warning = sprintf ("between %d and %d of fields %s " . 
-                                   "must be present", 
+               $warning = sprintf ("between %d and %d of fields %s " .
+                                   "must be present",
                                    $min, $max, display_list ($fields, 1))
             }
          }

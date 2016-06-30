@@ -122,7 +122,7 @@ sub sort_key
    }
 
    my $ykey = change_case ('l', (purify_string ($self->get ('year'))));
-   $skey = ($sortby eq 'name') 
+   $skey = ($sortby eq 'name')
       ? $nkey . '    ' . $ykey
       : $ykey . '    ' . $nkey;
    $skey .= '    ' . $self->sort_format_title ('title');
@@ -165,7 +165,7 @@ sub sort_format_names
          #   - lc (purify_string (x)) ought to be sortify (x), but I have
          #     already made sortify a method that only operates on a field,
          #     rather than a generic function (as it is in BibTeX)
-         
+
          $name->split ($sname, $self->filename, $self->line ($field), $i+1);
          $sname = $name->format ($format);
 #         print "s_f_n: about to purify >$sname<\n";
