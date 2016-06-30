@@ -611,26 +611,20 @@ sub split
 {
    my ($self, $field, $delim, $desc) = @_;
 
-   return unless $self->exists ($field);
+   return unless $self->exists($field);
    $delim ||= 'and';
    $desc ||= 'name';
 
-   my $filename = ($self->{'file'} && $self->{'file'}{'filename'});
-   my $line = $self->{'lines'}{$field};
-
 #   local $^W = 0                        # suppress spurious warning from 
 #      unless defined $filename;         # undefined $filename
-   $self->_split_list($field, $delim, $filename, $line, $desc);
+   Text::BibTeX::split_list($self->{values}{$field},
+                            $delim,
+                            ($self->{file} && $self->{file}{filename}),
+                            $self->{lines}{$field},
+                            $desc,
+                            {binmode       => $self->{binmode},
+                             normalization => $self->{normalization}});
 }
-
-sub _split_list {
-    my ( $self, $field, $delim, $filename, $line, $desc ) = @_;
-    return
-        map { Text::BibTeX->_process_result( $_, $self->{binmode}, $self->{normalization} ) }
-        Text::BibTeX::split_list( $self->{values}{$field}, $delim, $filename, $line, $desc );
-
-}
-
 
 sub names
 {

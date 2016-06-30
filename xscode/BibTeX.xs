@@ -73,7 +73,7 @@ bt_cleanup()
 #    purify_string
 
 void
-bt_split_list (string, delim, filename=NULL, line=0, description=NULL)
+bt_isplit_list (string, delim, filename=NULL, line=0, description=NULL)
 
     char *   string
     char *   delim

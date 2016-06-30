@@ -80,6 +80,16 @@ sub _process_argument {
     }
 }
 
+sub split_list {
+    my ( $field, $delim, $filename, $line, $desc, $opts ) = @_;
+    $opts //= {};
+    $opts->{binmode} ||= 'bytes';
+    $opts->{normalization} ||= 'NFC';
+    return
+        map { Text::BibTeX->_process_result( $_, $opts->{binmode}, $opts->{normalization} ) }
+        Text::BibTeX::isplit_list( $field, $delim, $filename, $line, $desc );
+
+}
 
 =head1 NAME
 
@@ -605,7 +615,7 @@ of it as appropriate.  They're just mentioned here for completeness.
 
 =over 4
 
-=item split_list (STRING, DELIM [, FILENAME [, LINE [, DESCRIPTION]]])
+=item split_list (STRING, DELIM [, FILENAME [, LINE [, DESCRIPTION [, OPTS]]]])
 
 Splits a string on a fixed delimiter according to the BibTeX rules for
 splitting up lists of names.  With BibTeX, the delimiter is hard-coded
@@ -614,7 +624,23 @@ STRING are considered delimiters if they are at brace-depth zero,
 surrounded by whitespace, and not at the beginning or end of STRING; the
 comparison is case-insensitive.  See L<bt_split_names> for full details
 of how splitting is done (it's I<not> the same as Perl's C<split>
-function).
+function). OPTS is a hash ref of the same binmode and normalization
+arguments as with, e.g. Text::BibTeX::File->open(). split_list calls isplit_list()
+internally but handles UTF-8 conversion and normalization, if requested.
+
+Returns the list of strings resulting from splitting STRING on DELIM.
+
+=item isplit_list (STRING, DELIM [, FILENAME [, LINE [, DESCRIPTION]]])
+
+Splits a string on a fixed delimiter according to the BibTeX rules for
+splitting up lists of names.  With BibTeX, the delimiter is hard-coded
+as C<"and">; here, you can supply any string.  Instances of DELIM in
+STRING are considered delimiters if they are at brace-depth zero,
+surrounded by whitespace, and not at the beginning or end of STRING; the
+comparison is case-insensitive.  See L<bt_split_names> for full details
+of how splitting is done (it's I<not> the same as Perl's C<split>
+function). This function returns bytes. Use Text::BibTeX::split_list to specify
+the same binmode and normalization arguments as with, e.g. Text::BibTeX::File->open()
 
 Returns the list of strings resulting from splitting STRING on DELIM.
 
