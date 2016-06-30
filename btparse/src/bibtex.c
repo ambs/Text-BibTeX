@@ -18,6 +18,7 @@
 #include "lex_auxiliary.h"
 #include "error.h"
 #include "my_dmalloc.h"
+#include "parse_auxiliary.h"
 
 extern char * InputFilename;            /* for zzcr_ast call in pccts/ast.c */
 #define GENAST
@@ -54,7 +55,7 @@ AST **_root;
 		zzBLOCK(zztasp2);
 		zzMake0;
 		{
-		while ( (LA(1)==AT) ) {
+		while ( LA(1)==AT ) {
 			_ast = NULL; entry(&_ast);
 			/* a little creative forestry... */
 			if ((*_root) == NULL)
@@ -120,7 +121,7 @@ AST **_root;
     zzBLOCK(zztasp1);
     zzMake0;
     {
-	if ( (LA(1)==STRING) ) {
+	if ( LA(1)==STRING) {
             if (!(metatype == BTE_COMMENT )) {zzfailed_pred("   metatype == BTE_COMMENT ");}
             zzmatch(STRING); zzsubchild(_root, &_sibling, &_tail);
             zzastArg(1)->nodetype = BTAST_STRING;   
@@ -128,7 +129,7 @@ AST **_root;
 
 	}
 	else {
-		if ( (LA(1)==ENTRY_OPEN) ) {
+		if ( LA(1)==ENTRY_OPEN) {
 			zzmatch(ENTRY_OPEN);  zzCONSUME;
 			contents(zzSTR, metatype ); zzlink(_root, &_sibling, &_tail);
 			zzmatch(ENTRY_CLOSE);  zzCONSUME;
@@ -163,11 +164,11 @@ AST **_root;
 			zzBLOCK(zztasp2);
 			zzMake0;
 			{
-			if ( (LA(1)==NAME) ) {
+			if ( LA(1)==NAME ) {
 				zzmatch(NAME); zzsubchild(_root, &_sibling, &_tail); zzCONSUME;
 			}
 			else {
-				if ( (LA(1)==NUMBER) ) {
+				if ( LA(1)==NUMBER) {
 					zzmatch(NUMBER); zzsubchild(_root, &_sibling, &_tail); zzCONSUME;
 				}
 				else {zzFAIL(1,zzerr2,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
@@ -213,13 +214,13 @@ AST **_root;
 	zzBLOCK(zztasp1);
 	zzMake0;
 	{
-	if ( (LA(1)==NAME) ) {
+	if ( LA(1)==NAME) {
 		field(zzSTR); zzlink(_root, &_sibling, &_tail);
 		{
 			zzBLOCK(zztasp2);
 			zzMake0;
 			{
-			if ( (LA(1)==COMMA) ) {
+			if ( LA(1)==COMMA) {
 				zzmatch(COMMA);  zzCONSUME;
 				fields(zzSTR); zzlink(_root, &_sibling, &_tail);
 			}
@@ -228,7 +229,7 @@ AST **_root;
 		}
 	}
 	else {
-		if ( (LA(1)==ENTRY_CLOSE) ) {
+		if ( LA(1)==ENTRY_CLOSE) {
 		}
 		else {zzFAIL(1,zzerr4,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
 	}
@@ -291,7 +292,7 @@ AST **_root;
 		zzBLOCK(zztasp2);
 		zzMake0;
 		{
-		while ( (LA(1)==HASH) ) {
+		while ( LA(1)==HASH) {
 			zzmatch(HASH);  zzCONSUME;
 			simple_value(zzSTR); zzlink(_root, &_sibling, &_tail);
 			zzLOOP(zztasp2);
@@ -320,19 +321,19 @@ AST **_root;
 	zzBLOCK(zztasp1);
 	zzMake0;
 	{
-            if ( (LA(1)==STRING) ) {
+            if ( LA(1)==STRING) {
 		zzmatch(STRING); zzsubchild(_root, &_sibling, &_tail);
 		zzastArg(1)->nodetype = BTAST_STRING;   
                 zzCONSUME;
             }
             else {
-		if ( (LA(1)==NUMBER) ) {
+		if ( LA(1)==NUMBER)  {
                     zzmatch(NUMBER); zzsubchild(_root, &_sibling, &_tail);
                     zzastArg(1)->nodetype = BTAST_NUMBER;   
                     zzCONSUME;
 		}
 		else {
-                    if ( (LA(1)==NAME) ) {
+                    if ( LA(1)==NAME)  {
                         zzmatch(NAME); zzsubchild(_root, &_sibling, &_tail);
                         zzastArg(1)->nodetype = BTAST_MACRO;   
                         zzCONSUME;
