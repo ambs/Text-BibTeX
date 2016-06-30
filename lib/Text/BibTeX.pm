@@ -26,7 +26,9 @@ require DynaLoader;
 
 our $VERSION='0.74';
 
-@ISA = qw(Exporter DynaLoader);
+#@ISA = qw(Exporter DynaLoader);
+use base qw(Exporter DynaLoader);
+
 %EXPORT_TAGS = (nodetypes => [qw(BTAST_STRING BTAST_MACRO BTAST_NUMBER)],
                 metatypes => [qw(BTE_UNKNOWN BTE_REGULAR BTE_COMMENT 
                                  BTE_PREAMBLE BTE_MACRODEF)],
@@ -215,7 +217,7 @@ sub AUTOLOAD
       if $constname =~ /^BT/;
    croak ("Unknown Text::BibTeX function: \"$constname\"")
       unless (defined $val);
-   
+
 #   print "          constant ($constname) returned \"$val\"\n";
 
    eval "sub $AUTOLOAD { $val }";
@@ -396,7 +398,7 @@ sub bibloop (&$;$)
    while ($file = shift @$files)
    {
       my $bib = Text::BibTeX::File->new($file);
-      
+
       while (! $bib->eof())
       {
          my $entry = Text::BibTeX::Entry->new($bib);
@@ -484,7 +486,7 @@ sub check_class
          die "Text::BibTeX::Structure: $description \"$package\" " .
              "improperly defined: no method \"$method\"\n";
       }
-   }      
+   }
 }  # &check_class
 
 

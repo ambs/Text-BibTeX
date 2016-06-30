@@ -325,7 +325,7 @@ sub _preserve
    my ($self, $preserve) = @_;
 
    $preserve = $self->{'file'}->preserve_values
-      if ! defined $preserve && 
+      if ! defined $preserve &&
          defined $self->{'file'} &&
            $self->{'file'}->isa ('Text::BibTeX::File');
    require Text::BibTeX::Value if $preserve;
@@ -480,7 +480,7 @@ string.
 
 =cut
 
-sub exists 
+sub exists
 {
    my ($self, $field) = @_;
 
@@ -690,7 +690,7 @@ sub set_metatype
    my ($self, $metatype) = @_;
 
    $self->{'metatype'} = $metatype;
-}   
+}
 
 sub set_key
 {

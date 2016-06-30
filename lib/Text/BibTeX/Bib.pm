@@ -110,7 +110,7 @@ BibTeX 0.99-style bibliography databases.)
 package Text::BibTeX::BibStructure;
 use strict;
 use vars qw(@ISA $VERSION);
-@ISA = qw(Text::BibTeX::Structure);
+use base qw(Text::BibTeX::Structure);
 $VERSION = '0.74';
 
 =head1 STRUCTURE OPTIONS
@@ -228,7 +228,7 @@ supported option.
 
 =cut
 
-sub known_option 
+sub known_option
 {
    my ($self, $option) = @_;
    return exists $default_options{$option};
@@ -371,7 +371,7 @@ sub describe_entry
                       [qw(author title journal year)],
                       [qw(volume number pages month note)]);
    $self->set_fields ('book',
-                      [qw(title publisher year)],  
+                      [qw(title publisher year)],
                       [qw(series address edition month note)],
                       [1, 1, [qw(author editor)]],
                       [0, 1, [qw(volume number)]]);
@@ -455,12 +455,12 @@ $VERSION = '0.74';
 use Text::BibTeX::BibSort;
 use Text::BibTeX::BibFormat;
 
-@ISA = qw(Text::BibTeX::BibSort Text::BibTeX::BibFormat);
+use base qw(Text::BibTeX::BibSort Text::BibTeX::BibFormat);
 
 # Pre-define the "month name" macros for compatibility with BibTeX.
 # This ignores all sorts of issues, like internationalization and
 # abbreviation.  
-my %month_names = 
+my %month_names =
    ('jan' => 'January',
     'feb' => 'February',
     'mar' => 'March',
@@ -476,7 +476,7 @@ my %month_names =
 
 my ($macro, $expansion);
 Text::BibTeX::add_macro_text ($macro, $expansion)
-   while (($macro, $expansion) = each %month_names);    
+   while (($macro, $expansion) = each %month_names);  
 
 1;
 

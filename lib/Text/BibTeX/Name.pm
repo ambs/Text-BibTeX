@@ -317,7 +317,7 @@ sub split
    my ($self, $name, $filename, $line, $name_num) = @_;
 
    # Call the XSUB with default values if necessary
-   $self->_split ($name, $filename, 
+   $self->_split ($name, $filename,
                   defined $line ? $line : -1,
                   defined $name_num ? $name_num : -1,
                   1);
@@ -345,7 +345,7 @@ sub part
 {
    my ($self, $partname) = @_;
 
-   croak "unknown name part" 
+   croak "unknown name part"
       unless $partname =~ /^(first|von|last|jr)$/;
    exists $self->{$partname} ? @{$self->{$partname}} : ();
 }

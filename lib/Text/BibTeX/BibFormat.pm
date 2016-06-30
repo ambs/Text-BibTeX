@@ -25,7 +25,8 @@ use Text::BibTeX::Name;
 use Text::BibTeX::NameFormat;
 use Text::BibTeX::Structure;
 
-@ISA = qw(Text::BibTeX::StructuredEntry);
+#@ISA = qw(Text::BibTeX::StructuredEntry);
+use base qw(Text::BibTeX::StructuredEntry);
 $VERSION = 0.74;
 
 use Text::BibTeX qw(:subs display_list :nameparts :joinmethods);
@@ -162,7 +163,7 @@ sub format_names
    }
 
    return $self->markup_string ('name', display_list($names,0));
-}   
+}
 
 
 sub format_atitle
@@ -476,7 +477,7 @@ sub format
                    "no method $method_name (for type $type)");
       return;
    }
-      
+
    return &$method ($self);
 }
 
