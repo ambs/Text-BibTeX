@@ -34,7 +34,7 @@ Text::BibTeX::File - interface to whole BibTeX files
 
    $bib = Text::BibTeX::File->new("foo.bib") or die "foo.bib: $!\n";
    # or:
-   $bib = new Text::BibTeX::File;
+   $bib =  Text::BibTeX::File->new;
    $bib->open("foo.bib", {binmode => 'utf-8', normalization => 'NFC'}) || die "foo.bib: $!\n";
 
    $bib->set_structure ($structure_name,
@@ -151,7 +151,7 @@ sub open {
         push @args, @_;
     }
 
-    $self->{handle} = new IO::File;
+    $self->{handle} = IO::File->new;
     $self->{handle}->open(@args);    # filename, maybe mode, maybe perms
 }
 
@@ -203,7 +203,7 @@ sub set_structure
    croak "Text::BibTeX::File::set_structure: options list must have even " .
          "number of elements"
       unless @options % 2 == 0;
-   $self->{structure} = new Text::BibTeX::Structure ($structure, @options);
+   $self->{structure} = Text::BibTeX::Structure->new($structure, @options);
 }
 
 sub structure { shift->{structure} }

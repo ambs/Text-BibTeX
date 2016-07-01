@@ -24,13 +24,13 @@ my $regular_file = 'btparse/tests/data/regular.bib';
 # bundled into one call
 open (BIB, $regular_file) || die "couldn't open $regular_file: $!\n";
 
-err_like sub { ok($entry = new Text::BibTeX::Entry $regular_file, \*BIB); },
+err_like sub { ok($entry = Text::BibTeX::Entry->new($regular_file, \*BIB)); },
   qr!$regular_file, line 5, warning: undefined macro "junk"!;
 
 test_entry ($entry, 'book', 'abook',
             [qw(title editor publisher year)],
             ['A Book', 'John Q. Random', 'Foo Bar \& Sons', '1922']);
-ok(! new Text::BibTeX::Entry $regular_file, \*BIB);
+ok(!Text::BibTeX::Entry->new($regular_file, \*BIB));
 
 
 # An interesting note: if I forget the 'seek' here, a bug is exposed in
@@ -63,14 +63,14 @@ test_entry ($entry, 'string', undef, ['junk'], [', III']);
 # Now open that same file using IO::File, and pass in the resulting object
 # instead of a glob ref; everything else here is just the same
 
-$fh = new IO::File $regular_file
+$fh = IO::File->new($regular_file)
    or die "couldn't open $regular_file: $!\n";
-no_err sub { ok($entry = new Text::BibTeX::Entry $regular_file, $fh); };
+no_err sub { ok($entry = Text::BibTeX::Entry->new($regular_file, $fh)); };
 
 test_entry ($entry, 'book', 'abook',
             [qw(title editor publisher year)],
             ['A Book', 'John Q. Random, III', 'Foo Bar \& Sons', '1922']);
-ok(! new Text::BibTeX::Entry $regular_file, $fh);
+ok(!  Text::BibTeX::Entry->new( $regular_file, $fh));
 $fh->seek (0, 0);
 
 # and again, with unbundled 'parse' call
@@ -79,6 +79,6 @@ no_err sub { ok($entry->parse ($regular_file, $fh)); };
 test_entry ($entry, 'book', 'abook',
             [qw(title editor publisher year)],
             ['A Book', 'John Q. Random, III', 'Foo Bar \& Sons', '1922']);
-ok(! new Text::BibTeX::Entry $regular_file, $fh);
+ok(!  Text::BibTeX::Entry->new( $regular_file, $fh));
 
 $fh->close;

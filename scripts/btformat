@@ -63,14 +63,14 @@ die "$usage\nIncorrect number of arguments\n" unless (@ARGV == 1);
 my ($filename, $bibfile, $entry, %select);
 
 $filename = shift;
-$bibfile = new Text::BibTeX::File $filename or die "$filename: $!\n";
+$bibfile =  Text::BibTeX::File->new( $filename) or die "$filename: $!\n";
 $bibfile->set_structure ('Bib', namestyle => 'nopunct', nameorder => 'first');
 
 %select = map { ($_ => 1) } @select
    if @select;
 
 my $entry_num = 0;
-while ($entry = new Text::BibTeX::Entry $bibfile)
+while ($entry =  Text::BibTeX::Entry->new( $bibfile))
 {
    next unless $entry->parse_ok && $entry->metatype == BTE_REGULAR;
    next if (@select && ! $select{$entry->key});

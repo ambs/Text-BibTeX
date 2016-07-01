@@ -18,10 +18,10 @@ die "usage: btcheck file [structure]\n" unless @ARGV == 1 || @ARGV == 2;
 ($filename, $structure) = @ARGV;
 $structure ||= 'Bib';
 
-$bibfile = new Text::BibTeX::File $filename or die "$filename: $!\n";
+$bibfile =  Text::BibTeX::File->new( $filename) or die "$filename: $!\n";
 $bibfile->set_structure ($structure);
 
-while ($entry = new Text::BibTeX::Entry $bibfile) 
+while ($entry =  Text::BibTeX::Entry->new( $bibfile)) 
 {
    next unless $entry->parse_ok and $entry->metatype == BTE_REGULAR;
    my $key = $entry->key;

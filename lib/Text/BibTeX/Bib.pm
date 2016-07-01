@@ -27,7 +27,7 @@ Text::BibTeX::Bib - defines the "Bib" database structure
 
 =head1 SYNOPSIS
 
-   $bibfile = new Text::BibTeX::File $filename;
+   $bibfile = Text::BibTeX::File $filename->new;
    $bibfile->set_structure ('Bib',
                             # Default option values:
                             sortby => 'name',
@@ -45,11 +45,11 @@ Text::BibTeX::Bib - defines the "Bib" database structure
    $bibfile->set_option (labels => 'alpha');   # not implemented yet!
 
    # parse entry from $bibfile and automatically make it a BibEntry
-   $entry = new Text::BibTeX::Entry $bibfile;
+   $entry = Text::BibTeX::Entry->new($bibfile);
 
    # or get an entry from somewhere else which is hard-coded to be
    # a BibEntry
-   $entry = new Text::BibTeX::BibEntry ...;
+   $entry = Text::BibTeX::BibEntry->new(...);
 
    $sortkey = $entry->sort_key;
    @blocks = $entry->format;

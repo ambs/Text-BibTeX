@@ -83,7 +83,7 @@ no_err( sub {
 # calling a parse or read method on an existing object isn't documented
 # as an "ok thing to do", but it is (at least as the XS code currently
 # is!) -- hence I can leave the "new" uncommented
-# $entry = new Text::BibTeX::Entry;
+# $entry = Text::BibTeX::Entry->new();
 print "parsing the regular entry which uses those 2 of those macros\n"
    if $DEBUG;
 

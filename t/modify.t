@@ -24,7 +24,7 @@ $text = <<'TEXT';
 }
 TEXT
 
-ok($entry = new Text::BibTeX::Entry);
+ok($entry = Text::BibTeX::Entry->new);
 ok($entry->parse_s ($text));
 
 ok($entry->type eq 'article');

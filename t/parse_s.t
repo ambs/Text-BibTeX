@@ -34,12 +34,12 @@ $text_uck = <<'TEXT';
     }
 TEXT
 
-ok($entry_uck = new Text::BibTeX::Entry);
+ok($entry_uck = Text::BibTeX::Entry->new());
 ok($entry_uck->parse_s($text_uck));
 
 
 
-ok($entry = new Text::BibTeX::Entry);
+ok($entry = Text::BibTeX::Entry->new());
 
 err_like
   sub { ok($entry->parse_s ($text)); },
@@ -66,7 +66,7 @@ test_entry ($entry, 'foo', 'mykey',
 # Repeat with "bundled" form (new and parse_s in one go)
 
 err_like
-  sub { ok($entry = new Text::BibTeX::Entry $text); },
+  sub { ok($entry = Text::BibTeX::Entry->new($text)); },
   qr/line 3, warning: undefined macro "foo".*line 4, warning: undefined macro "foo"/s;
 
 # Repeat tests of entry contents
@@ -79,7 +79,7 @@ test_entry ($entry, 'foo', 'mykey',
 # look into how btparse responds to bt_parse_s() on an empty string
 # before I know how Text::BibTeX should do it!
 
-# $entry = new Text::BibTeX::Entry;
+# $entry = Text::BibTeX::Entry->new();
 # $result = $entry->parse_s ('');
 # ok(! warnings && ! $result);
 
@@ -98,7 +98,7 @@ $text = <<'TEXT';
 @foo{key, title = "{System}- und {Signaltheorie}"}
 TEXT
 
-no_err sub { $entry = new Text::BibTeX::Entry $text; };
+no_err sub { $entry = Text::BibTeX::Entry->new($text); };
 
 ok($entry->parse_ok);
 test_entry ($entry, 'foo', 'key', 

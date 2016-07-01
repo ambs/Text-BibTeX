@@ -22,8 +22,8 @@ $DEBUG = 0;
 my ($bibfile, $entry);
 my $multiple_file = 'btparse/tests/data/simple.bib';
 
-ok($bibfile = new Text::BibTeX::File $multiple_file);
-err_like sub { ok($entry = new Text::BibTeX::Entry $bibfile); },
+ok($bibfile = Text::BibTeX::File->new( $multiple_file));
+err_like sub { ok($entry =  Text::BibTeX::Entry->new( $bibfile)); },
   qr!$multiple_file, line 5, warning: undefined macro "junk"!;
 
 test_entry ($entry, 'book', 'abook',

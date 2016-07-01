@@ -22,7 +22,7 @@ $DEBUG = 0;
 my ($bibfile, $entry);
 my $multiple_file = 'btparse/tests/data/overflow.bib';
 
-ok($bibfile = new Text::BibTeX::File $multiple_file);
+ok($bibfile =  Text::BibTeX::File->new( $multiple_file));
 # this used to trigger a buffer overflow error on some machines
-$entry = new Text::BibTeX::Entry $bibfile;
+$entry =  Text::BibTeX::Entry->new( $bibfile);
 ok(1,"not segfaulted"); # not segfaulted here
