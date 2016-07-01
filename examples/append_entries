@@ -46,9 +46,9 @@ my ($dest_filename, $source_filename, $key_pattern) = @ARGV;
 
 # Open the two files: dest_file in append mode (ultimately just using
 # perl's builtin 'open'), and source_file in regular read-only mode.
-my $dest_file = new Text::BibTeX::File ">>$dest_filename"
+my $dest_file = Text::BibTeX::File->new(">>$dest_filename")
    or die "couldn't open $dest_filename for appending: $!\n";
-my $source_file = new Text::BibTeX::File $source_filename
+my $source_file = Text::BibTeX::File->new($source_filename)
    or die "couldn't open $source_filename: $!\n";
 
 # Turn on 'value preservation' mode for the input file.  This is mainly so
@@ -60,7 +60,7 @@ $source_file->preserve_values (1);
 # And loop over all entries in the source file, optionally appending
 # each one to the destination file.
 
-while (my $entry = new Text::BibTeX::Entry $source_file)
+while (my $entry = Text::BibTeX::Entry->new($source_file))
 {
    # Skip this entry if it's not a regular entry -- that is, we just
    # drop '@string', '@comment', and '@preamble' entries, probably

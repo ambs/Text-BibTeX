@@ -27,9 +27,9 @@ parse entries from a file, say F<foo.bib> that quite sensibly use the
 month macros (C<jan>, C<feb>, etc.) provided by the BibTeX standard
 style files:
 
-   $bibfile = new Text::BibTeX::File 'foo.bib'    # open file
+   $bibfile = Text::BibTeX::File->new('foo.bib')    # open file
       or die "foo.bib: $!\n";
-   $entry = new Text::BibTeX::Entry $bibfile;     # parse first entry
+   $entry = Text::BibTeX::Entry->new($bibfile);     # parse first entry
 
 Using this code, you might get an "undefined macro" warning for every
 entry parsed from F<foo.bib>.  Apart from the superficial annoyance of
@@ -60,7 +60,7 @@ C<Text::BibTeX> that entries from C<$bibfile> are expected to conform to
 the C<Bib> structure (which is implemented by the C<Text::BibTeX::Bib>
 module, but you don't really need to know that):
 
-   $bibfile = new Text::BibTeX::File 'foo.bib' 
+   $bibfile = Text::BibTeX::File->new('foo.bib')
       or die "foo.bib: $!\n";
    $bibfile->set_structure ('Bib');
 
@@ -84,7 +84,7 @@ man pages, here's the trick: if you pass just a filename to
 C<Text::BibTeX::File>'s C<new> method, then it's treated just like a
 filename passed to Perl's builtin C<open>:
 
-   my $append_file = new Text::BibTeX::File ">>$filename"
+   my $append_file = Text::BibTeX::File->new(">>$filename")
       or die "couldn't open $filename for appending: $!\n";
 
 opens C<$filename> for appending.  If, later on, you have an entry from

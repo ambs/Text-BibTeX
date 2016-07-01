@@ -64,7 +64,7 @@ open (BIB, ">$test[0]") || die "couldn't create $test[0]: $!\n";
 $entry->print (\*BIB);
 close (BIB);
 
-$bib = new IO::File $test[1], O_CREAT|O_WRONLY
+$bib = IO::File->new($test[1], O_CREAT|O_WRONLY)
    or die "couldn't create $test[1]: $!\n";
 $entry->print ($bib);
 $bib->close;

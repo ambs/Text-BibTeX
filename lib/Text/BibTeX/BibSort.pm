@@ -147,8 +147,8 @@ sub sort_format_names
    my ($abbrev, $format, $name);
 
    $abbrev = ! ($self->structure->get_options ('namestyle') eq 'full');
-   $format = new Text::BibTeX::NameFormat ("vljf", $abbrev);
-   $name = new Text::BibTeX::Name;
+   $format =  Text::BibTeX::NameFormat->new ("vljf", $abbrev);
+   $name   = Text::BibTeX::Name->new;
 
    my (@snames, $i, $sname);
    @snames = $self->split ($field);

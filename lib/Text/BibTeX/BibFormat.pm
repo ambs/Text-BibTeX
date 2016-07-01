@@ -148,7 +148,7 @@ sub format_names
       unless $style =~ /^(full|abbrev|nopunct|nospace)$/;
 
    $order = ($order eq 'first') ? 'fvlj' : 'vljf';
-   $format = new Text::BibTeX::NameFormat ($order, ! ($style eq 'full'));
+   $format = Text::BibTeX::NameFormat->new ($order, ! ($style eq 'full'));
 
    $format->set_text (&BTN_FIRST, undef, undef, undef, '')
       if $style eq 'nopunct' || $style eq 'nospace';

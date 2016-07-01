@@ -32,7 +32,7 @@ Text::BibTeX::Value - interfaces to BibTeX values and simple values
 
    use Text::BibTeX;
 
-   $entry = new Text::BibTeX::Entry;
+   $entry = Text::BibTeX::Entry->new;
 
    # set the 'preserve_values' flag to 1 for this parse
    $entry->parse ($filename, $filehandle, 1);
@@ -80,7 +80,7 @@ C<title> field is a single string, and the C<journal> and C<year> fields
 are, respectively, a single macro and a single number.  If you parse
 this entry in the usual way:
 
-   $entry = new Text::BibTeX::Entry $entry_text;
+   $entry = Text::BibTeX::Entry->new($entry_text);
 
 then the C<get> method on C<$entry> would return simple strings.
 Assuming that the C<and> macro is defined as C<" and ">, then
@@ -96,14 +96,14 @@ There are two ways to make this request: per-file and per-entry.  For a
 per-file request, use the C<preserve_values> method on your C<File>
 object:
 
-   $bibfile = new Text::BibTeX::File $filename;
+   $bibfile = Text::BibTeX::File->new($filename);
    $bibfile->preserve_values (1);
 
-   $entry = new Text::BibTeX::Entry $bibfile;
+   $entry = Text::BibTeX::Entry->new($bibfile);
    $entry->get ($field);        # returns a Value object
 
    $bibfile->preserve_values (0);
-   $entry = new Text::BibTeX::Entry $bibfile;
+   $entry = Text::BibTeX::Entry->new($bibfile);
    $entry->get ($field);        # returns a string
 
 If you're not using a C<File> object, or want to control things at a
@@ -111,7 +111,7 @@ finer scale, then you have to pass in the C<preserve_values> flag when
 invoking C<read>, C<parse>, or C<parse_s> on your C<Entry> objects:
 
    # no File object, parsing from a string
-   $entry = new Text::BibTeX::Entry;
+   $entry = Text::BibTeX::Entry->new;
    $entry->parse_s ($entry_text, 0);  # preserve_values=0 (default)
    $entry->get ($field);        # returns a string
 
@@ -183,8 +183,8 @@ two-element list containing the type and text of the simple value.  For
 example, one way to recreate the C<author> field of the example entry in
 L<"DESCRIPTION"> would be:
 
-   $and_macro = new Text::BibTeX::SimpleValue (BTAST_MACRO, 'and');
-   $value = new Text::BibTeX::Value 
+   $and_macro = Text::BibTeX::SimpleValue->new (BTAST_MACRO, 'and');
+   $value = Text::BibTeX::Value->new 
       ([BTAST_STRING, 'Homer Simpson'],
        $and_macro,
        [BTAST_STRING, 'Ned Flanders']);
@@ -202,7 +202,7 @@ sub new
    my $self = bless [], $class;
    while (my $sval = shift)
    {
-      $sval = new Text::BibTeX::SimpleValue @$sval
+      $sval = Text::BibTeX::SimpleValue->new(@$sval)
          if ref $sval eq 'ARRAY' && @$sval == 2;
       croak "simple value is neither a two-element array ref " .
             "nor a Text::BibTeX::SimpleValue object"

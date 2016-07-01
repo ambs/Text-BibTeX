@@ -322,8 +322,8 @@ module.  A short example will illustrate this.
 Typically, a C<Text::BibTeX>-based program is based around a kernel of
 code like this:
 
-   $bibfile = new Text::BibTeX::File "foo.bib";
-   while ($entry = new Text::BibTeX::Entry $bibfile)
+   $bibfile = Text::BibTeX::File->new("foo.bib");
+   while ($entry = Text::BibTeX::Entry->new($bibfile))
    {
       # process $entry
    }
@@ -336,9 +336,9 @@ behaviour.  Let us now suppose that C<$bibfile> is expected to conform
 to a database structure specified by C<$structure> (presumably a
 user-supplied value, and thus unknown at compile-time):
 
-   $bibfile = new Text::BibTeX::File "foo.bib";
+   $bibfile = Text::BibTeX::File->new("foo.bib");
    $bibfile->set_structure ($structure);
-   while ($entry = new Text::BibTeX::Entry $bibfile)
+   while ($entry = Text::BibTeX::Entry->new($bibfile))
    {
       # process $entry
    }
@@ -450,7 +450,7 @@ implements the C<Bib> structure.  Use the pseudo-option C<module> to
 override this module name.  For instance, if the structure C<Foo> is
 implemented by the module C<Foo>:
 
-   $structure = new Text::BibTeX::Structure
+   $structure = Text::BibTeX::Structure->new
       ('Foo', module => 'Foo');
 
 This method C<die>s if there are any errors loading/compiling the
