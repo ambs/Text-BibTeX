@@ -1,5 +1,8 @@
 Revision history for Perl module Text::BibTeX
 
+0.75_04 2016-07-01
+ * Fixed reference to empty function name;
+
 0.75_03 2016-06-30
  * Rename split_list to isplit_list, and creaed split_list wrapper;
  * Added normalization option;

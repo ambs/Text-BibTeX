@@ -25,7 +25,7 @@ use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $AUTOLOAD);
 require Exporter;
 require DynaLoader;
 
-our $VERSION='0.75_03';
+our $VERSION='0.75_04';
 
 @ISA = qw(Exporter DynaLoader);
 %EXPORT_TAGS = (nodetypes => [qw(BTAST_STRING BTAST_MACRO BTAST_NUMBER)],
@@ -56,6 +56,7 @@ sub _process_result {
   no strict 'refs';
   my ( $self, $result, $encoding, $norm ) = @_;
 
+  $norm ||= "NFC"; # best to force it here.
   my $normsub = \&{"$norm"}; # symbolic ref
     if ( $encoding eq "utf-8" ) {
         if ( utf8::is_utf8($result) ) {
