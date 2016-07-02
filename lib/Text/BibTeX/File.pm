@@ -22,7 +22,7 @@ use Carp;
 use IO::File;
 
 use vars qw'$VERSION';
-$VERSION = 0.75_04;
+$VERSION = 0.75_05;
 
 =head1 NAME
 

@@ -1,5 +1,8 @@
 Revision history for Perl module Text::BibTeX
 
+0.75_05 2016-07-02
+ * Get 5.8.x back aboard;
+
 0.75_04 2016-07-01
  * Fixed reference to empty function name;
 

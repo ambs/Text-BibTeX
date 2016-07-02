@@ -25,7 +25,7 @@ use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $AUTOLOAD);
 require Exporter;
 require DynaLoader;
 
-our $VERSION='0.75_04';
+our $VERSION='0.75_05';
 
 @ISA = qw(Exporter DynaLoader);
 %EXPORT_TAGS = (nodetypes => [qw(BTAST_STRING BTAST_MACRO BTAST_NUMBER)],
@@ -83,8 +83,8 @@ sub _process_argument {
 
 sub split_list {
     my ( $field, $delim, $filename, $line, $desc, $opts ) = @_;
-    $opts //= {};
-    $opts->{binmode} ||= 'bytes';
+    $opts                  ||= {};
+    $opts->{binmode}       ||= 'bytes';
     $opts->{normalization} ||= 'NFC';
     return
         map { Text::BibTeX->_process_result( $_, $opts->{binmode}, $opts->{normalization} ) }
