@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 57;
+use Test::More tests => 66;
 
 use vars ('$DEBUG');
 
@@ -17,7 +17,7 @@ $DEBUG = 1;
 # ----------------------------------------------------------------------
 # test macro parsing and expansion
 
-my ($macrodef, $regular, $entry, @warnings);
+my ($macrodef, $regular, $other, $entry, @warnings);
 
 $macrodef = <<'TEXT';
 @string ( foo = "  The Foo
@@ -36,6 +36,10 @@ $regular = <<'TEXT';
             publisher = "Fu" # bar 
           }
 TEXT
+
+$other = <<'EOT';
+@article { xxx, institution = ugh }
+EOT
 
 # Direct access to macro table, part 1: make sure the macros we're going to
 # defined aren't defined
@@ -114,3 +118,11 @@ err_like( sub { $entry->parse_s ($regular); }, qr/undefined macro "bar"/);
 test_entry ($entry, 'article', 'my_article',
             [qw(author journal publisher)],
             ['Us and Them', 'The Journal of Fooology', 'Fu'], "test 3");
+
+my $ugh = 'University of Good Heavens';
+add_macro_text('ugh', $ugh);
+is macro_length('ugh'), length($ugh), "ugh got defined";
+no_err( sub { $entry->parse_s ($other); }, qr/undefined macro "ugh"/);
+test_entry($entry, 'article', 'xxx', ['institution'], [$ugh]), "Macro replaced";
+
+
