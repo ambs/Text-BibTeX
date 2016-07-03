@@ -16,6 +16,11 @@ use ExtUtils::Mkbootstrap;
 use File::Spec::Functions qw.catdir catfile.;
 use File::Path qw.mkpath.;
 
+my @EXTRA_FLAGS = ();
+
+## debug
+## @EXTRA_FLAGS = ('-g', "-DDEBUG=2");
+
 sub ACTION_install {
     my $self = shift;
 
@@ -98,6 +103,7 @@ sub ACTION_compile_xscode {
     $self->add_to_cleanup($ofile); ## FIXME
     if (!$self->up_to_date($cfile, $ofile)) {
         $cbuilder->compile( source               => $cfile,
+                            extra_compiler_flags => [@EXTRA_FLAGS],
                             include_dirs         => [ catdir("btparse","src") ],
                             object_file          => $ofile);
     }
@@ -168,7 +174,7 @@ sub ACTION_create_objects {
         $object =~ s/\.c/.o/;
         next if $self->up_to_date($file, $object);
         $cbuilder->compile(object_file  => $object,
-                           extra_compiler_flags=>["-D_FORTIFY_SOURCE=1"],
+                           extra_compiler_flags=>["-D_FORTIFY_SOURCE=1",@EXTRA_FLAGS],
                            source       => $file,
                            include_dirs => ["btparse/src"]);
     }
