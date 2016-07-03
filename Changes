@@ -1,5 +1,8 @@
 Revision history for Perl module Text::BibTeX
 
+0.75 2016-07-03
+ * Stable version with bytes/utf-8 support.
+
 0.75_05 2016-07-02
  * Get 5.8.x back aboard;
 
