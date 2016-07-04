@@ -721,7 +721,8 @@ takes no action.
 
 =item delete_all_macros ()
 
-Deletes all macros from the macro table.
+Deletes all macros from the macro table, even the predefined month
+names.
 
 =item macro_length (MACRO)
 
