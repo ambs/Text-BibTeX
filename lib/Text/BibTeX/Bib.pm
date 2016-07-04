@@ -456,27 +456,7 @@ use Text::BibTeX::BibSort;
 use Text::BibTeX::BibFormat;
 
 @ISA = qw(Text::BibTeX::BibSort Text::BibTeX::BibFormat);
-
-# Pre-define the "month name" macros for compatibility with BibTeX.
-# This ignores all sorts of issues, like internationalization and
-# abbreviation.  
-my %month_names = 
-   ('jan' => 'January',
-    'feb' => 'February',
-    'mar' => 'March',
-    'apr' => 'April',
-    'may' => 'May',
-    'jun' => 'June',
-    'jul' => 'July',
-    'aug' => 'August',
-    'sep' => 'September',
-    'oct' => 'October',
-    'nov' => 'November',
-    'dec' => 'December');
-
-my ($macro, $expansion);
-Text::BibTeX::add_macro_text ($macro, $expansion)
-   while (($macro, $expansion) = each %month_names);    
+ 
 
 1;
 

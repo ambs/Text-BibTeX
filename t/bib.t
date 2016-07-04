@@ -32,7 +32,8 @@ my $entries = <<'ENTRIES';
 @book{george98,
   author = "George Simpson",
   title = "How to Found a Big Department Store",
-  year = 1998
+  year = 1998,
+  month = feb
 }
 ENTRIES
 
@@ -136,7 +137,7 @@ ok(! $blocks[2][1][0]);              # no publisher
 ok(! $blocks[2][1][1]);              # no publisher address
 ok(! $blocks[2][1][2]);              # no edition
 
-is($blocks[2][1][3], '1998');        # but we do at least have a date!
+is($blocks[2][1][3], 'February 1998');        # but we do at least have a date!
 
 # fiddle a bit more with name-generation options just to make sure
 # everything's in working order

@@ -52,6 +52,7 @@ our $VERSION='0.76_01';
 use Encode 'encode', 'decode';
 use Unicode::Normalize;
 
+
 sub _process_result {
   no strict 'refs';
   my ( $self, $result, $encoding, $norm ) = @_;
@@ -284,6 +285,12 @@ bootstrap Text::BibTeX;
 
 initialize();                            # these are both XS functions
 END { &cleanup; }
+
+# This can't go in a BEGIN because of the .XS bootstrapping mechanism
+for my $month (qw.january february march april may june
+             july august september october november december.) {
+    add_macro_text(substr($month, 0, 3), ucfirst($month));
+}
 
 
 =head1 EXPORTS

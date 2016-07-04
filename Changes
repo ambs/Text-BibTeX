@@ -1,5 +1,8 @@
 Revision history for Perl module Text::BibTeX
 
+ * Make month abbreviations available always, and not only when
+   using Text::BibTeX::Bib
+
 0.76_01 2016-07-04
  * Solved nasty bug when using lvalues as parameters (substr).
  * Added tests.

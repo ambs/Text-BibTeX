@@ -125,9 +125,9 @@ is macro_length('ugh'), length($ugh), "ugh got defined";
 no_err( sub { $entry->parse_s ($other); }, qr/undefined macro "ugh"/);
 test_entry($entry, 'article', 'xxx', ['institution'], [$ugh], "Macro replaced");
 
-my $string = 'january';
+my $string = 'wednesday';
 add_macro_text(substr($string, 0, 3), $string);
-is macro_length('jan'), 7;
+is macro_length('wed'), 9;
 
 
 
