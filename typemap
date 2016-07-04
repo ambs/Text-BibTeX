@@ -11,7 +11,8 @@ INPUT
 # Text::BibTeX::Entry::parse and have it wind up as NULL
 # in bt_parse_entry()
 T_PV
-	$var = (SvOK ($arg)) ? ($type) SvPV ($arg,PL_na) : NULL
+        SvGETMAGIC($arg);
+        $var = SvOK ($arg) ? ($type) SvPV_nomg($arg, PL_na) : NULL;
 
 T_NAME
         $var = (bt_name *) SvIV ($arg)

@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 66;
+use Test::More tests => 67;
 
 use vars ('$DEBUG');
 
@@ -123,6 +123,12 @@ my $ugh = 'University of Good Heavens';
 add_macro_text('ugh', $ugh);
 is macro_length('ugh'), length($ugh), "ugh got defined";
 no_err( sub { $entry->parse_s ($other); }, qr/undefined macro "ugh"/);
-test_entry($entry, 'article', 'xxx', ['institution'], [$ugh]), "Macro replaced";
+test_entry($entry, 'article', 'xxx', ['institution'], [$ugh], "Macro replaced");
+
+my $string = 'january';
+add_macro_text(substr($string, 0, 3), $string);
+is macro_length('jan'), 7;
+
+
 
 
