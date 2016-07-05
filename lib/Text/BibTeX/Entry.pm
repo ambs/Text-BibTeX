@@ -127,7 +127,7 @@ anything extra.
 
 =over 4
 
-=item new ([SOURCE])
+=item new ([OPTS ,] [SOURCE])
 
 Creates a new C<Text::BibTeX::Entry> object.  If the SOURCE parameter is
 supplied, it must be one of the following: a C<Text::BibTeX::File> (or
@@ -169,6 +169,28 @@ But using a C<Text::BibTeX::File> object is simpler and preferred:
 Returns the new object, unless SOURCE is supplied and reading/parsing
 the entry fails (e.g., due to end of file) -- then it returns false.
 
+You may supply a reference to an option hash as first argument.
+Supported options are:
+
+=over 4 
+
+=item BINMODE
+
+Set the way Text::BibTeX deals with strings. By default it manages
+strings as bytes. You can set BINMODE to 'utf-8' to get NFC normalized
+
+Text::BibTeX::Entry->new(
+      { binmode => 'utf-8', normalization => 'NFD' },
+      $file });
+
+
+=item NORMALIZATION
+
+UTF-8 strings and you can customise the normalization with the NORMALIZATION option.
+
+=back
+
+
 =cut
 
 sub new
@@ -176,6 +198,7 @@ sub new
    my ($class, @source) = @_;
 
    $class = ref ($class) || $class;
+   
    my $self = {'file'     => undef,
                'type'     => undef,
                'key'      => undef,
@@ -183,8 +206,15 @@ sub new
                'metatype' => undef,
                'fields'   => [],
                'values'   => {}};
-
    bless $self, $class;
+
+   my $opts = {};
+   $opts = shift @source if scalar(@source) and ref $source[0] eq "HASH";
+   $opts->{ lc $_ } = $opts->{$_} for ( keys %$opts );
+   $self->{binmode} = 'utf-8'
+          if exists $opts->{binmode} && $opts->{binmode} =~ /utf-?8/i;
+   $self->{normalization} = $opts->{normalization} if exists $opts->{normalization};
+
    if (@source)
    {
       my $status;
@@ -273,8 +303,10 @@ sub read
    my $fn = $source->{'filename'};
    my $fh = $source->{'handle'};
    $self->{'file'} = $source;        # store File object for later use
-   $self->{binmode} = $source->{binmode};
-   $self->{normalization} = $source->{normalization};
+   ## Propagate flags
+   for my $f (qw.binmode normalization.) {
+      $self->{$f} = $source->{$f} unless exists $self->{$f};
+   }
    return $self->parse ($fn, $fh, $preserve);
 }
 

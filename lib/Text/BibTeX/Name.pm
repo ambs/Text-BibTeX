@@ -290,7 +290,9 @@ Set the way Text::BibTeX deals with strings. By default it manages
 strings as bytes. You can set BINMODE to 'utf-8' to get NFC normalized
 UTF-8 strings and you can customise the normalization with the NORMALIZATION option.
 
-   Text::BibTeX::Name->new( { binmode => 'utf-8', normalization => 'NFD' }, "Alberto Simões"});
+   Text::BibTeX::Name->new(
+      { binmode => 'utf-8', normalization => 'NFD' },
+      "Alberto Simões"});
 
 =back
 
