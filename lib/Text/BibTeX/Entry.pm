@@ -234,6 +234,8 @@ sub clone
     $clone->{file} = $self->{file}
   }
   # These might be changed so make copies
+  $clone->{binmode} = $self->{binmode};
+  $clone->{normalization} = $self->{normalization};
   $clone->{type}     = $self->{type};
   $clone->{key}      = $self->{key};
   $clone->{status}   = $self->{status};
