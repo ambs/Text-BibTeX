@@ -2,7 +2,9 @@
 #include <string.h>
 #include "btparse.h"
 
-void main (void)
+void dump_name(bt_name*);
+
+int main (void)
 {
    char * snames[4] = { "Joe Blow", "John Smith", "Fred Rogers", "" };
    bt_name * names[4];
@@ -20,5 +22,7 @@ void main (void)
    {
       dump_name (names[i]);
    }
+
+   return 0;
 }
 

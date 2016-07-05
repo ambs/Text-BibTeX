@@ -40,29 +40,29 @@ constant (char * name, IV * arg)
    switch (name[2])
    {
       case 'E':                         /* entry metatypes */
-         if (strEQ (name, "BTE_UNKNOWN")) { *arg = BTE_UNKNOWN; ok = TRUE; }
-         if (strEQ (name, "BTE_REGULAR")) { *arg = BTE_REGULAR; ok = TRUE; }
-         if (strEQ (name, "BTE_COMMENT")) { *arg = BTE_COMMENT; ok = TRUE; }
+         if (strEQ (name, "BTE_UNKNOWN"))  { *arg = BTE_UNKNOWN;  ok = TRUE; }
+         if (strEQ (name, "BTE_REGULAR"))  { *arg = BTE_REGULAR;  ok = TRUE; }
+         if (strEQ (name, "BTE_COMMENT"))  { *arg = BTE_COMMENT;  ok = TRUE; }
          if (strEQ (name, "BTE_PREAMBLE")) { *arg = BTE_PREAMBLE; ok = TRUE; }
          if (strEQ (name, "BTE_MACRODEF")) { *arg = BTE_MACRODEF; ok = TRUE; }
          break;
       case 'A':                         /* AST nodetypes (not all of them) */
          if (strEQ (name, "BTAST_STRING")) { *arg = BTAST_STRING; ok = TRUE; }
          if (strEQ (name, "BTAST_NUMBER")) { *arg = BTAST_NUMBER; ok = TRUE; }
-         if (strEQ (name, "BTAST_MACRO")) { *arg = BTAST_MACRO; ok = TRUE; }
+         if (strEQ (name, "BTAST_MACRO"))  { *arg = BTAST_MACRO;  ok = TRUE; }
          break;
       case 'N':                         /* name parts */
          if (strEQ (name, "BTN_FIRST")) { *arg = BTN_FIRST; ok = TRUE; }
-         if (strEQ (name, "BTN_VON")) { *arg = BTN_VON; ok = TRUE; }
-         if (strEQ (name, "BTN_LAST")) { *arg = BTN_LAST; ok = TRUE; }
-         if (strEQ (name, "BTN_JR")) { *arg = BTN_JR; ok = TRUE; }
-         if (strEQ (name, "BTN_NONE")) { *arg = BTN_NONE; ok = TRUE; }
+         if (strEQ (name, "BTN_VON"))   { *arg = BTN_VON;   ok = TRUE; }
+         if (strEQ (name, "BTN_LAST"))  { *arg = BTN_LAST;  ok = TRUE; }
+         if (strEQ (name, "BTN_JR"))    { *arg = BTN_JR;    ok = TRUE; }
+         if (strEQ (name, "BTN_NONE"))  { *arg = BTN_NONE;  ok = TRUE; }
          break;
       case 'J':                         /* token join methods */
-         if (strEQ (name, "BTJ_MAYTIE")) { *arg = BTJ_MAYTIE; ok = TRUE; }
-         if (strEQ (name, "BTJ_SPACE")) { *arg = BTJ_SPACE; ok = TRUE; }
+         if (strEQ (name, "BTJ_MAYTIE"))   { *arg = BTJ_MAYTIE;   ok = TRUE; }
+         if (strEQ (name, "BTJ_SPACE"))    { *arg = BTJ_SPACE;    ok = TRUE; }
          if (strEQ (name, "BTJ_FORCETIE")) { *arg = BTJ_FORCETIE; ok = TRUE; }
-         if (strEQ (name, "BTJ_NOTHING")) { *arg = BTJ_NOTHING; ok = TRUE; }
+         if (strEQ (name, "BTJ_NOTHING"))  { *arg = BTJ_NOTHING;  ok = TRUE; }
          break;
       default:
          break;
@@ -280,8 +280,9 @@ convert_value_entry (AST *top, HV *entry, boolean preserve)
 
    /* Walk the list of values to find the last one (for its line number) */
    item = NULL;
-   while (item = bt_next_value (top, item, NULL, NULL))
+   while ((item = bt_next_value (top, item, NULL, NULL)))
       prev_item = item;
+  
    if (prev_item) {
       last_line = prev_item->line;
       hv_store (lines, "STOP", 4, newSViv (last_line), 0);

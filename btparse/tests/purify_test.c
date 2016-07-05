@@ -1,6 +1,5 @@
-/* $Id$ */
-
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include "btparse.h"
 

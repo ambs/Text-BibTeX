@@ -2,9 +2,10 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "btparse.h"
 
-void main (void)
+int main (void)
 {
    char   line[1024];
    int    line_num;
@@ -37,4 +38,5 @@ void main (void)
          }
       }
    }
+   return 0;
 }
