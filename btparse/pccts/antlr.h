@@ -385,7 +385,7 @@ extern void _inf_zzgettok();
 #define zzaCur			(zzaStack[zzasp])
 #define zzaRet			(*zzaRetPtr)
 #define zzaArg(v,n)		zzaStack[v-n]
-#define zzMakeAttr		{ zzNON_GUESS_MODE {zzOvfChk; --zzasp; zzcr_attr(&(zzaStack[zzasp]),LA(1),LATEXT(1));}}
+#define zzMakeAttr		{ zzNON_GUESS_MODE {zzOvfChk; --zzasp; zzcr_attr(&(zzaStack[zzasp]),LA(1), (char*)LATEXT(1));}}
 #ifdef zzdef0
 #define zzMake0			{ zzOvfChk; --zzasp; zzdef0(&(zzaStack[zzasp]));}
 #else

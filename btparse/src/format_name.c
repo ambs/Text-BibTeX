@@ -21,6 +21,7 @@
 #include <string.h>
 #include <assert.h>
 #include "btparse.h"
+#include "prototypes.h"
 #include "error.h"
 #include "my_dmalloc.h"
 #include "bt_debug.h"

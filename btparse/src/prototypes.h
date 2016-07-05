@@ -30,12 +30,15 @@
 #include "btparse.h"                    /* for types */
 
 /* util.c */
+int get_uchar(char *string, int offset);
+int isulower(char *string);
 #if !HAVE_STRLWR
 char *strlwr (char *s);
 #endif
 #if !HAVE_STRUPR
 char *strupr (char *s);
 #endif
+
 
 /* macros.c */
 void  init_macros (void);

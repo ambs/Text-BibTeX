@@ -164,7 +164,12 @@ va_dcl
             int freeSpace = (ZZLEXBUFSIZE+1) - strlen(text);
 #endif
 		if ( i>1 ) strcat(text, " ");
-		strncat(text, LATEXT(i), freeSpace); // strncat(a,b,n) will actually write n+1 bytes because of the terminating NULL, unlike strlcpy (non-standard OpenBSD function) which writes exactly n.  this may end up dropping a character, but this is debug output from a failure case, so it doesn't matter much.
+		// strncat(a,b,n) will actually write n+1 bytes 
+		// because of the terminating NULL, unlike strlcpy 
+		// non-standard OpenBSD function) which writes exactly n. 
+		//  this may end up dropping a character, but this is 
+		// debug output from a failure case, so it doesn't matter much.
+		strncat(text, (char*)LATEXT(i), freeSpace); 
 		if ( !zzset_el((unsigned)LA(i), f[i-1]) ) break;
 	}
 	miss_set = va_arg(ap, SetWordType **);
@@ -179,9 +184,9 @@ va_dcl
 		 * (The old LL sub 1 (k) versus LL(k) parsing technique)
 		 */
 		*miss_set = NULL;
-		*miss_text = zzlextext;
+		*miss_text = (char*)zzlextext; // hide warning! [ambs]
 		*bad_tok = LA(1);
-		*bad_text = LATEXT(1);
+		*bad_text = (char*)LATEXT(1);  // hide warning! [ambs]
 		*err_k = k;
 		return;
 	}
@@ -189,7 +194,7 @@ va_dcl
 	*miss_set = f[i-1];
 	*miss_text = text;
 	*bad_tok = LA(i);
-	*bad_text = LATEXT(i);
+	*bad_text = (char*) LATEXT(i); // hide warning! [ambs]
 	if ( i==1 ) *err_k = 1;
 	else *err_k = k;
 }
@@ -228,7 +233,7 @@ zzantlr_state *buf;
 	buf->labase = zzlabase;
 #else
 	buf->token = zztoken;
-	strcpy(buf->text, zzlextext);
+	strcpy(buf->text, (char*) zzlextext); // hide warning! [ambs]
 #endif
 }
 
@@ -266,7 +271,7 @@ zzantlr_state *buf;
 	zzlabase = buf->labase;
 #else
 	zztoken = buf->token;
-	strcpy(zzlextext, buf->text);
+	strcpy((char*) zzlextext, buf->text); // Hide warning [ambs]
 #endif
 }
 
@@ -482,7 +487,7 @@ SetWordType **zzMissSet;
 #endif
 {
 	if ( LA(1)!=_t ) {				
-		*zzBadText = *zzMissText=LATEXT(1);	
+		*zzBadText = *zzMissText= (char*) LATEXT(1); // hide warning! [ambs]
 		*zzMissTok= _t; *zzBadTok=LA(1); 
 		*zzMissSet=NULL;				
 		return 0;
@@ -656,7 +661,8 @@ SetWordType **zzMissSet;
 #endif
 #endif
 	if ( !zzset_el((unsigned)LA(1), e) ) {
-		*zzBadText = LATEXT(1); *zzMissText=NULL;
+		*zzBadText = (char*)LATEXT(1);  // hide warning [ambs]
+		*zzMissText=NULL; 
 		*zzMissTok= 0; *zzBadTok=LA(1);
 		*zzMissSet=e;
 		return 0;

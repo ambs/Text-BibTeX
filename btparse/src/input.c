@@ -126,7 +126,7 @@ start_parse (FILE *infile, char *instring, int line)
    }
    else
    {
-      zzrdstr (instring);
+      zzrdstr ((unsigned char*)instring);
       zzline = line;
    }
       
