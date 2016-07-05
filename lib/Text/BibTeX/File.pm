@@ -86,7 +86,7 @@ with C<MODE>
 
 =item BINMODE
 
-by default, Text::BibTeX uses bytes directly. Thus, you need to encode
+By default, Text::BibTeX uses bytes directly. Thus, you need to encode
 strings accordingly with the encoding of the files you are reading. You can
 also select UTF-8. In this case, Text::BibTeX will return UTF-8 strings in
 NFC mode. Note that at the moment files with BOM are not supported.
@@ -95,10 +95,20 @@ Valid values are 'raw/bytes' or 'utf-8'.
 
 =item NORMALIZATION
 
-by default, Text::BibTeX outputs UTF-8 in NFC form. You can change this by passing
+By default, Text::BibTeX outputs UTF-8 in NFC form. You can change this by passing
 the name of a different form.
 
-Valid values are those forms supported by the Unicode::Normalize module ('NFD', 'NFDK' etc.)
+Valid values are those forms supported by the Unicode::Normalize module
+('NFD', 'NFDK' etc.)
+
+=item RESET_MACROS
+
+By default, Text::BibTeX accumulates macros. This means that when you open a second
+file, macros defined by the first are still available. This may result on warnings
+of macros being redefined.
+
+This option can be used to force Text::BibTeX to clean up all macros definitions
+(except for the month macros).
 
 =back 
 
@@ -130,7 +140,7 @@ sub open {
     my ($self) = shift;
     $self->{filename} = shift;
 
-    $self->{binmode} = 'bytes';
+    $self->{binmode}       = 'bytes';
     $self->{normalization} = 'NFC';
     my @args = ( $self->{filename} );
 
@@ -142,9 +152,14 @@ sub open {
             if exists $opts->{binmode} && $opts->{binmode} =~ /utf-?8/i;
         $self->{normalization} = $opts->{normalization} if exists $opts->{normalization};
 
-        if ( exists $opts->{MODE} ) {
-            push @args, $opts->{MODE};
-            push @args, $opts->{PERMS} if exists $opts->{PERMS};
+        if (exists $opts->{reset_macros} && $opts->{reset_macros}) {
+          Text::BibTeX::delete_all_macros();
+          Text::BibTeX::_define_months();
+        }
+
+        if ( exists $opts->{mode} ) {
+            push @args, $opts->{mode};
+            push @args, $opts->{perms} if exists $opts->{perms};
         }
     }
     else {

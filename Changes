@@ -1,5 +1,8 @@
 Revision history for Perl module Text::BibTeX
 
+ * Added 'reset_macros' option to Text::BibTeX::File, in order
+   to remove all defined macros (except months)
+
 0.76_02 2016-07-05
  * Fix issue with binmode not being copied in Clone method.
  * Make month abbreviations available always, and not only when

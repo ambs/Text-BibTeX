@@ -287,9 +287,13 @@ initialize();                            # these are both XS functions
 END { &cleanup; }
 
 # This can't go in a BEGIN because of the .XS bootstrapping mechanism
-for my $month (qw.january february march april may june
+_define_months();
+
+sub _define_months {
+  for my $month (qw.january february march april may june
              july august september october november december.) {
     add_macro_text(substr($month, 0, 3), ucfirst($month));
+  }
 }
 
 
