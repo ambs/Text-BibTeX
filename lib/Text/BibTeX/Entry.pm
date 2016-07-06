@@ -23,7 +23,7 @@ use vars qw'$VERSION';
 use Carp;
 use Text::BibTeX qw(:metatypes :nodetypes);
 
-$VERSION = 0.76_02;
+$VERSION = 0.76;
 
 =head1 NAME
 

@@ -1,5 +1,6 @@
 Revision history for Perl module Text::BibTeX
 
+0.76 2016-07-06
  * Added 'reset_macros' option to Text::BibTeX::File, in order
    to remove all defined macros (except months)
 
