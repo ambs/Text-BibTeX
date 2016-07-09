@@ -93,6 +93,8 @@ sub split_list {
 
 }
 
+=encoding UTF-8
+
 =head1 NAME
 
 Text::BibTeX - interface to read and parse BibTeX files

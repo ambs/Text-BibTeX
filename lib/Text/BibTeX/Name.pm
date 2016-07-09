@@ -27,6 +27,8 @@ $VERSION = 0.76;
 
 use Text::BibTeX;
 
+=encoding UTF-8
+
 =head1 NAME
 
 Text::BibTeX::Name - interface to BibTeX-style author names
