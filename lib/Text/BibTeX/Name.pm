@@ -23,7 +23,7 @@ require 5.004;
 use strict;
 use Carp;
 use vars qw'$VERSION';
-$VERSION = 0.76;
+$VERSION = 0.77;
 
 use Text::BibTeX;
 

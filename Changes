@@ -1,5 +1,9 @@
 Revision history for Perl module Text::BibTeX
 
+0.77 2016-09-20
+ * Fixes for testing and installing on Darwin (install_name issues).
+   Thanks to Nuno "smash" Carvalho for the report and debug help.
+
 0.76 2016-07-06
  * Added 'reset_macros' option to Text::BibTeX::File, in order
    to remove all defined macros (except months)

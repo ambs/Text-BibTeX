@@ -15,8 +15,10 @@ use ExtUtils::Mkbootstrap;
 
 use File::Spec::Functions qw.catdir catfile.;
 use File::Path qw.mkpath.;
+use Cwd 'abs_path';
 
 my @EXTRA_FLAGS = ();
+my @BINARIES = qw(biblex bibparse dumpnames);
 
 ## debug
 ## @EXTRA_FLAGS = ('-g', "-DDEBUG=2");
@@ -25,6 +27,22 @@ sub ACTION_install {
     my $self = shift;
 
     my $usrlib = $self->install_path( 'usrlib' );
+
+    if ($^O =~ /darwin/i) {
+    	my $libpath = $self->notes('lib_path');
+    	$libpath = catfile($libpath, "libbtparse$LIBEXT");
+
+    	# do it for binaries as well.
+    	`install_name_tool -id "$libpath" ./blib/usrlib/libbtparse.dylib`;
+        # binries
+        my $libfile = "btparse/src/libbtparse$LIBEXT";
+        my $abs_path = abs_path($libfile);
+        foreach my $bin (@BINARIES) {
+            `install_name_tool -change "$abs_path" "$libpath" ./blib/bin/$bin$EXEEXT`;
+        }
+        my $bundle = $self->notes("bundle");
+        `install_name_tool -change "$abs_path" "$libpath" $bundle`;
+ 	}
 
     if ($^O =~ /cygwin/i) { # cygwin uses windows lib searching (PATH instead of LD_LIBRARY_PATH)
         $self->install_path( 'usrlib' => '/usr/local/bin' );
@@ -122,6 +140,7 @@ sub ACTION_compile_xscode {
     my $objects = $self->rscan_dir("xscode",qr/\.o$/);
     # .o => .(a|bundle)
     my $lib_file = catfile( $archdir, "BibTeX.$Config{dlext}" );
+    $self->notes("bundle", $lib_file); # useful for darwin
     if ( !$self->up_to_date( [ @$objects ], $lib_file ) ) {
         my $btparselibdir = $self->install_path('usrlib');
         $cbuilder->link(
@@ -188,39 +207,28 @@ sub ACTION_create_binaries {
     my $EXEEXT        = $libbuilder->{exeext};
     my $btparselibdir = $self->install_path('usrlib');
 
-    print STDERR "\n** Creating binaries (dumpnames$EXEEXT, biblex$EXEEXT, bibparse$EXEEXT)\n";
+    print STDERR "\n** Creating binaries (",join(", ", map { $_.$EXEEXT } @BINARIES), ")\n";
 
     my $extra_linker_flags = sprintf("-Lbtparse/src %s -lbtparse ",
                                      ($^O !~ /darwin/)?"-Wl,-R${btparselibdir}":"");
 
     my @toinstall;
-    my $exe_file = catfile("btparse","progs","dumpnames$EXEEXT");
-    push @toinstall, $exe_file;
-    my $object   = catfile("btparse","progs","dumpnames.o");
 
-    if (!$self->up_to_date($object, $exe_file)) {
-        $libbuilder->link_executable(exe_file => $exe_file,
-                                     objects  => [ $object ],
-                                     extra_linker_flags => $extra_linker_flags);
-    }
+    for my $bin (@BINARIES) {
+        my $exe_file = catfile("btparse","progs","$bin$EXEEXT");
+        push @toinstall, $exe_file;
+        my $objects   = [ catfile("btparse","progs","$bin.o") ];
 
-    $exe_file = catfile("btparse","progs","biblex$EXEEXT");
-    push @toinstall, $exe_file;
-    $object   = catfile("btparse","progs","biblex.o");
-    if (!$self->up_to_date($object, $exe_file)) {
-        $libbuilder->link_executable(exe_file => $exe_file,
-                                     objects  => [ $object ],
-                                     extra_linker_flags => $extra_linker_flags);
-    }
+        if ($bin eq "bibparse") { # hack for now
+             $objects   = [map {catfile("btparse","progs","$_.o")} (qw.bibparse args getopt getopt1.)];
+        }
 
-    $exe_file = catfile("btparse","progs","bibparse$EXEEXT");
-    push @toinstall, $exe_file;
-    $object   = [map {catfile("btparse","progs","$_.o")} (qw.bibparse args getopt getopt1.)];
-    if (!$self->up_to_date($object, $exe_file)) {
-        $libbuilder->link_executable(exe_file => $exe_file,
-                                     objects => $object,
-                                     extra_linker_flags => $extra_linker_flags);
-    }
+        if (!$self->up_to_date($objects, $exe_file)) {
+            $libbuilder->link_executable(exe_file => $exe_file,
+                                         objects  => $objects ,
+                                         extra_linker_flags => $extra_linker_flags);
+        }
+    }   
 
     for my $file (@toinstall) {
         $self->copy_if_modified( from    => $file,
@@ -320,7 +328,8 @@ sub ACTION_create_library {
 
     my $extra_linker_flags = "";
     if ($^O =~ /darwin/) {
-        $extra_linker_flags = "-install_name $libpath";
+       my $abs_path = abs_path($libfile);
+       $extra_linker_flags = "-install_name $abs_path";
     } elsif ($LIBEXT eq ".so") {
         $extra_linker_flags = "-Wl,-soname,libbtparse$LIBEXT";
     }
