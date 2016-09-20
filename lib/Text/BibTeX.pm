@@ -103,10 +103,10 @@ Text::BibTeX - interface to read and parse BibTeX files
 
    use Text::BibTeX;
 
-   $bibfile = Text::BibTeX::File->new("foo.bib");
-   $newfile = Text::BibTeX::File->new(">newfoo.bib");
+   my $bibfile = Text::BibTeX::File->new("foo.bib");
+   my $newfile = Text::BibTeX::File->new(">newfoo.bib");
 
-   while ($entry = Text::BibTeX::Entry->($bibfile))
+   while ($entry = Text::BibTeX::Entry->new($bibfile))
    {
       next unless $entry->parse_ok;
 
