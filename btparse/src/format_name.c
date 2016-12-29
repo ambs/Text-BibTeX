@@ -96,6 +96,9 @@ bt_create_name_format (char * parts, boolean abbrev_first)
    int    part_pos[BT_MAX_NAMEPARTS];
    int    i;
 
+   for (i = 0; i < BT_MAX_NAMEPARTS; i++)
+      part_pos[i] = -2;
+
    /* 
     * Check that the part list (a string with one letter -- f, v, l, or j
     * -- for each part is valid: no longer than four characters, and no 
@@ -905,6 +908,12 @@ dump_format (bt_name_format * format)
       
    for (i = 0; i < BT_MAX_NAMEPARTS; i++)
    {
+      int j;
+      for (j = 0; j < format->num_parts; j++)
+        if (i == format->parts[j])
+          break; 
+      if (j == format->num_parts) continue;
+
       printf ("  %-5s: pre-part=%p (%s), post-part=%p (%s)\n",
               nameparts[i], 
               format->pre_part[i], format->pre_part[i], 
