@@ -1,5 +1,7 @@
 Revision history for Perl module Text::BibTeX
 
+ * Fixed test with fileno (thanks to Karl Wette).
+
 0.77 2016-09-20
  * Fixes for testing and installing on Darwin (install_name issues).
    Thanks to Nuno "smash" Carvalho for the report and debug help.
