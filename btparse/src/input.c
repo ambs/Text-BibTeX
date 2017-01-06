@@ -271,7 +271,8 @@ AST * bt_parse_entry_s (char *    entry_text,
 
 /* ------------------------------------------------------------------------
 @NAME       : bt_parse_entry()
-@INPUT      : infile  - file to read next entry from
+@INPUT      : infile  - file to read next entry from,
+                        or NULL meaning we're done, please cleanup
               options - standard btparse options bitmap
 @OUTPUT     : *top    - AST for the entry, or NULL if no entries left in file
 @RETURNS    : same as bt_parse_entry_s()
@@ -290,16 +291,28 @@ AST * bt_parse_entry (FILE *    infile,
    static int *  err_counts = NULL;
    static FILE * prev_file = NULL;
 
-   if (prev_file != NULL && infile != prev_file)
-   {
-      usage_error ("bt_parse_entry: you can't interleave calls "
-                   "across different files");
-   }
-
    if (options & BTO_STRINGMASK)        /* any string options set? */
    {
       usage_error ("bt_parse_entry: illegal options "
                    "(string options not allowed)");
+   }
+
+   if (infile == NULL)
+   {
+      if (prev_file != NULL)            /* haven't already done the cleanup */
+      {
+         prev_file = NULL;
+         finish_parse (&err_counts);
+      }
+
+      if (status) *status = TRUE;
+      return NULL;
+   }
+
+   if (prev_file != NULL && infile != prev_file)
+   {
+      usage_error ("bt_parse_entry: you can't interleave calls "
+                   "across different files");
    }
 
    InputFilename = filename;

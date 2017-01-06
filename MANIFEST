@@ -152,4 +152,5 @@ README.OLD
 META.json
 MANIFEST.SKIP
 t/corpora.bib
+t/errors.bib
 t/from_file.t

@@ -1,10 +1,12 @@
 use strict;
 use warnings;
 
-use Test::More tests => 5;
+use Test::More tests => 11;
 use utf8;
 
 use Text::BibTeX;
+
+##### parse t/corpora.bib #####
 
 my $bibtex = Text::BibTeX::File->new("t/corpora.bib", { binmode => 'utf-8'});
 is ref($bibtex), "Text::BibTeX::File";
@@ -33,3 +35,39 @@ is $entries[0]->get("author"), "Gustavo Laboreiro and Eugénio Oliveira";
 my @editors = $entries[0]->names("editor");
 
 is $editors[0]->part("last"), "Simões";
+
+##### parse t/corpora.bib again to check whether bt_parse_entry() state has been reset #####
+
+$bibtex = Text::BibTeX::File->new("t/corpora.bib", { binmode => 'utf-8'});
+is ref($bibtex), "Text::BibTeX::File";
+
+@entries = ();
+while (my $entry = Text::BibTeX::Entry->new($bibtex)) {
+	push @entries, $entry;
+}
+
+is scalar(@entries), 25;
+
+##### parse t/error.bib to check whether bt_parse_entry() state can reset after error #####
+
+$bibtex = Text::BibTeX::File->new("t/errors.bib", { binmode => 'utf-8'});
+is ref($bibtex), "Text::BibTeX::File";
+
+@entries = ();
+while (my $entry = Text::BibTeX::Entry->new($bibtex)) {
+	push @entries, $entry;
+}
+
+is scalar(@entries), 1;
+
+##### parse t/corpora.bib again to check whether bt_parse_entry() state has been reset #####
+
+$bibtex = Text::BibTeX::File->new("t/corpora.bib", { binmode => 'utf-8'});
+is ref($bibtex), "Text::BibTeX::File";
+
+@entries = ();
+while (my $entry = Text::BibTeX::Entry->new($bibtex)) {
+	push @entries, $entry;
+}
+
+is scalar(@entries), 25;

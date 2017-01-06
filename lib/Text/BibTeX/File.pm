@@ -20,6 +20,7 @@ package Text::BibTeX::File;
 use strict;
 use Carp;
 use IO::File;
+use Text::BibTeX::Entry;
 
 use vars qw'$VERSION';
 $VERSION = 0.77;
@@ -174,7 +175,10 @@ sub open {
 sub close
 {
    my $self = shift;
-   $self->{handle}->close if $self->{handle};   
+   if ( $self->{handle} ) {
+      Text::BibTeX::Entry->new ($self->{filename}, undef);   # resets parser
+      $self->{handle}->close;
+   }
 }
 
 sub eof

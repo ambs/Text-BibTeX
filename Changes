@@ -2,6 +2,12 @@ Revision history for Perl module Text::BibTeX
 
  * Fixed some issues with uninitialized arrays and s390
  * Fixed test with fileno (thanks to Karl Wette).
+ * Allow state of btparse parser to be reset, for parsing multiple files (Karl Wette):
+   - bt_parse_entry(): reset parser state if infile == NULL
+   - BibTeX.xs: add _reset_parse(), _reset_parse_s() methods to Text::BibTeX::Entry
+   - Text::BibTeX::Entry: allow new() or parse() with undefined filehandle; calls _reset_parse()
+   - Text::BibTeX::Entry: allow new() or parse_s() with undefined text; calls _reset_parse_s()
+   - Text::BibTeX::File: close() calls Text::BibTeX::Entry->new($filename, undef) to reset parser
 
 0.77 2016-09-20
  * Fixes for testing and installing on Darwin (install_name issues).
