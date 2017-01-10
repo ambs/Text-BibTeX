@@ -1,5 +1,6 @@
 Revision history for Perl module Text::BibTeX
 
+0.78 2017-01-10
  * Fixed some issues with uninitialized arrays and s390
  * Fixed test with fileno (thanks to Karl Wette).
 
