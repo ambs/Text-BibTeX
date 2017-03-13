@@ -1,5 +1,8 @@
 Revision history for Perl module Text::BibTeX
 
+0.79 2017-03-13
+ * Further fixes to allow the parse of multiple files (Karl Wette).
+
 0.78 2017-01-10
  * Fixed some issues with uninitialized arrays and s390
  * Fixed test with fileno (thanks to Karl Wette).
