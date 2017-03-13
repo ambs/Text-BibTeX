@@ -169,6 +169,9 @@ MODULE = Text::BibTeX   	PACKAGE = Text::BibTeX::Entry
 # ast_to_hash() to do the appropriate "convert to Perl form" work:
 #    _parse
 #    _parse_s
+# These XSUBs reset the internal parser states:
+#    _reset_parse
+#    _reset_parse_s
 
 int
 _parse (entry_ref, filename, file, preserve=FALSE)
@@ -198,6 +201,20 @@ _parse (entry_ref, filename, file, preserve=FALSE)
 
 
 int
+_reset_parse ()
+
+    PREINIT:
+        btshort  options = 0;
+        boolean status;
+
+    CODE:
+
+        bt_parse_entry (NULL, NULL, options, &status);
+
+        XSRETURN_NO;              /* cleanup -- return false to perl */
+
+
+int
 _parse_s (entry_ref, text, preserve=FALSE)
     SV *    entry_ref;
     char *  text;
@@ -218,6 +235,20 @@ _parse_s (entry_ref, text, preserve=FALSE)
 
         ast_to_hash (entry_ref, top, status, preserve);
         XSRETURN_YES;              /* OK -- return true to perl */
+
+
+int
+_reset_parse_s ()
+
+    PREINIT:
+        btshort  options = 0;
+        boolean status;
+
+    CODE:
+
+        bt_parse_entry_s (NULL, NULL, 1, options, &status);
+
+        XSRETURN_NO;              /* cleanup -- return false to perl */
 
 
 MODULE = Text::BibTeX           PACKAGE = Text::BibTeX::Name

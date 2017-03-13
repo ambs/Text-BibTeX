@@ -82,6 +82,15 @@ Text::BibTeX::Entry - read and parse BibTeX files
    $entry->print ($filehandle);
    $entry_text = $entry->print_s;
 
+   # Reset internal parser state:
+   $entry = Text::BibTeX::Entry->new();
+   $entry->parse ($filename, undef);
+   $entry->parse_s (undef);
+
+   # or:
+   $entry = Text::BibTeX::Entry->new( $filename, undef );
+   $entry = Text::BibTeX::Entry->new( undef );
+
    # Miscellaneous methods
    $entry->warn ($entry_warning);
    # or:
@@ -229,9 +238,9 @@ sub new
             bless $self, $structure->entry_class;
          }
       }
-      elsif (@source == 2 && defined $source[0] && ! ref $source[0] && fileno ($source[1]) >= 0)
+      elsif (@source == 2 && (defined ($source[0]) && ! ref ($source[0])) && (!defined ($source[1]) || fileno ($source[1]) >= 0))
           { $status = $self->parse ($source[0], $source[1]) }
-      elsif (@source == 1 && defined $source[0] && ! ref $source[0])
+      elsif (@source == 1 && ! ref ($source[0]))
           { $status = $self->parse_s ($source[0]) }
       else
           { croak "new: source argument must be either a Text::BibTeX::File " .
@@ -345,12 +354,18 @@ The FILENAME parameter is only used for generating error messages, but
 anybody using your program will certainly appreciate your setting it
 correctly!
 
+Passing C<undef> to FILEHANDLE will reset the state of the underlying
+C parser, which is required in order to parse multiple files.
+
 =item parse_s (TEXT)
 
 Parses a BibTeX entry (using the above rules) from the string TEXT.  The
 string is not modified; repeatedly calling C<parse_s> with the same string
 will give you the same results each time.  Thus, there's no point in
 putting multiple entries in one string.
+
+Passing C<undef> to TEXT will reset the state of the underlying
+C parser, which may be required in order to parse multiple strings.
 
 =back
 
@@ -373,7 +388,11 @@ sub parse
    my ($self, $filename, $filehandle, $preserve) = @_;
 
    $preserve = $self->_preserve ($preserve);
-   _parse ($self, $filename, $filehandle, $preserve);
+   if (defined $filehandle) {
+      _parse ($self, $filename, $filehandle, $preserve);
+   } else {
+      _reset_parse ();
+   }
 }
 
 
@@ -382,7 +401,11 @@ sub parse_s
    my ($self, $text, $preserve) = @_;
 
    $preserve = $self->_preserve ($preserve);
-   _parse_s ($self, $text, $preserve);
+   if (defined $text) {
+      _parse_s ($self, $text, $preserve);
+   } else {
+      _reset_parse_s ();
+   }
 }
 
 
