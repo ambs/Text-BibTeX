@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use utf8;
 use IO::Handle;
-use Test::More tests => 46;
+use Test::More tests => 50;
 
 use vars qw($DEBUG);
 
@@ -75,16 +75,17 @@ test_entry ($entry, 'foo', 'mykey',
             ['hello there', 'fancy that!1991', '']);
 
 # Make sure parsing an empty string, or string with no entry in it,
-# just returns false... nope, doesn't work right now.  Need to
-# look into how btparse responds to bt_parse_s() on an empty string
-# before I know how Text::BibTeX should do it!
+# just returns false
 
-# $entry = Text::BibTeX::Entry->new();
-# $result = $entry->parse_s ('');
-# ok(! warnings && ! $result);
-
-# $result = $entry->parse_s ('top-level junk that is not caught');
-# ok(! warnings && ! $result);
+$entry = Text::BibTeX::Entry->new();
+$result = $entry->parse_s ('');
+ok(! $result);
+$result = $entry->parse_s (undef);
+ok(! $result);
+$result = $entry->parse_s ('top-level junk that is not caught');
+ok(! $result);
+$result = $entry->parse_s (undef);
+ok(! $result);
 
 
 # Test the "proper noun at both ends" bug (the bt_get_text() call in
