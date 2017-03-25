@@ -9,9 +9,9 @@ use utf8;
 use Encode 'encode';
 use Text::BibTeX;
 
-BEGIN {
-    require "t/common.pl";
-}
+use Cwd;
+my $common = getcwd()."/t/common.pl";
+require $common;
 
 $DEBUG = 0;
 

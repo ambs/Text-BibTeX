@@ -5,10 +5,11 @@ use warnings;
 use Test::More tests => 67;
 
 use vars ('$DEBUG');
-
+use Cwd;
 BEGIN {
     use_ok('Text::BibTeX', qw(:macrosubs));
-    require "t/common.pl";
+    my $common = getcwd()."/t/common.pl";
+    require $common;
 }
 $DEBUG = 1;
 

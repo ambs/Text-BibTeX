@@ -1,5 +1,8 @@
 Revision history for Perl module Text::BibTeX
 
+0.80 2017-03-25
+ * Fix tests in order to work without dot in @INC (thanks Kent Fredric for the bug report)
+
 0.79 2017-03-13
  * Further fixes to allow the parse of multiple files (Karl Wette).
 

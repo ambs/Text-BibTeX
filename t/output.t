@@ -7,9 +7,11 @@ use Test::More tests => 20;
 
 use vars qw($DEBUG);
 
+use Cwd;
 BEGIN {
-    use_ok('Text::BibTeX');
-    require "t/common.pl";
+  use_ok('Text::BibTeX');
+  my $common = getcwd()."/t/common.pl";
+  require $common;
 }
 
 use Fcntl;

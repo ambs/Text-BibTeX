@@ -36,6 +36,7 @@ my $builder = MyBuilder->new(
         'Capture::Tiny'        => '0.06',
         'ExtUtils::CBuilder'   => '0.27',
         'Module::Build'        => '0.3603',
+	'Cwd'                  => '0',
     },
     add_to_cleanup => [
         'Text-BibTeX-*',

@@ -13,7 +13,7 @@ is ref($bibtex), "Text::BibTeX::File";
 
 my @entries;
 while (my $entry = Text::BibTeX::Entry->new($bibtex)) {
-	push @entries, $entry;
+  push @entries, $entry;
 }
 
 is scalar(@entries), 25;

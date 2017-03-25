@@ -7,11 +7,12 @@ use IO::Handle;
 use File::Temp qw(tempfile);
 
 use Test::More tests => 42;
-
+use Cwd;
 BEGIN {
     use_ok('Text::BibTeX');
     use_ok('Text::BibTeX::Bib');
-    require "t/common.pl";
+    my $common = getcwd()."/t/common.pl";
+    require $common;
 }
 
 $DEBUG = 1;

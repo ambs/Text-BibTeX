@@ -7,7 +7,10 @@ use utf8;
 use Encode 'decode';
 use Unicode::Normalize;
 
-require "t/common.pl";
+use Cwd;
+my $common = getcwd()."/t/common.pl";
+require $common;
+
 
 use Text::BibTeX qw(:nameparts :joinmethods);
 

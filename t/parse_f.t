@@ -6,10 +6,13 @@ use IO::Handle;
 use Test::More tests => 73;
 
 use vars qw($DEBUG);
+use Cwd;
 
 BEGIN {
     use_ok('Text::BibTeX');
-    require "t/common.pl";
+    my $common = getcwd()."/t/common.pl";
+    require $common;
+
 }
 
 
