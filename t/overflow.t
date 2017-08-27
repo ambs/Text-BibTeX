@@ -24,5 +24,6 @@ my $multiple_file = 'btparse/tests/data/overflow.bib';
 
 ok($bibfile =  Text::BibTeX::File->new( $multiple_file));
 # this used to trigger a buffer overflow error on some machines
-$entry =  Text::BibTeX::Entry->new( $bibfile);
-ok(1,"not segfaulted"); # not segfaulted here
+err_like sub { $entry =  Text::BibTeX::Entry->new( $bibfile) },
+  qr!syntax error: at end of input, expected one of:!;
+
