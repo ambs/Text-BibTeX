@@ -1,5 +1,9 @@
 Revision history for Perl module Text::BibTeX
 
+0.83 2017-08-28
+ * Remove unecessary depedency to YAML.
+ * Fix further buffer overflow situations.
+
 0.82 2017-08-27
  * Fix buffer overflow (thanks to Hamid Ebadi).
  * Hide error messages on tests, and use them for testing purposes.

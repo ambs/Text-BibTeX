@@ -7,7 +7,6 @@ use IO::Handle;
 use Test::More tests => 3;
 
 use vars qw($DEBUG);
-use YAML; print Dump(\%ENV);
 BEGIN {
     use_ok('Text::BibTeX');
     require "t/common.pl";
