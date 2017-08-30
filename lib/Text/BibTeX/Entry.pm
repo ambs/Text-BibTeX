@@ -534,7 +534,7 @@ L<Text::BibTeX::Value>.
 
 =item value ()
 
-Retuns the single string associated with C<@comment> and C<@preamble>
+Returns the single string associated with C<@comment> and C<@preamble>
 entries.  For instance, the entry
 
    @preamble{" This is   a preamble" # 

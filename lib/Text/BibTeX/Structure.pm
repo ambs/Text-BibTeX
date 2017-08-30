@@ -80,7 +80,7 @@ basis of the B<btOOL> "structure module" system.  This system is how
 database structures are defined and imposed on BibTeX files, and
 provides an elegant synthesis of object-oriented techniques with
 BibTeX-style database structures.  Nothing described here is
-particularly deep or subtle; anyone familar with object-oriented
+particularly deep or subtle; anyone familiar with object-oriented
 programming should be able to follow it.  However, a fair bit of jargon
 in invented and tossed around, so pay attention.
 

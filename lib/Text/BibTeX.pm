@@ -667,7 +667,7 @@ the input string is returned.
 
 OPTIONS is currently unused.
 
-=item change_case (TRANFORM, STRING [, OPTIONS])
+=item change_case (TRANSFORM, STRING [, OPTIONS])
 
 Transforms the case of STRING according to TRANSFORM (a single
 character, one of C<'u'>, C<'l'>, or C<'t'>).  See L<bt_misc> for
