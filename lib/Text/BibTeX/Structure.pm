@@ -24,7 +24,7 @@ use strict;
 use Carp;
 
 use vars qw'$VERSION';
-$VERSION = 0.83;
+$VERSION = 0.84_01;
 
 use Text::BibTeX ('check_class');
 
@@ -870,7 +870,7 @@ sub get_options
 package Text::BibTeX::StructuredEntry;
 use strict;
 use vars qw(@ISA $VERSION);
-$VERSION = 0.83;
+$VERSION = 0.84_01;
 
 use Carp;
 

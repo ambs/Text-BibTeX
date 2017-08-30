@@ -1,5 +1,8 @@
 Revision history for Perl module Text::BibTeX
 
+ * Spellchecking fixes by Julián Moreno Patiño, Lucas Kanashiro, and 
+   Gregor Herrmann (debian community)
+
 0.83 2017-08-28
  * Remove unecessary depedency to YAML.
  * Fix further buffer overflow situations.
