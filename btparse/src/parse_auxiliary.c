@@ -67,7 +67,7 @@ char **token_names;
 #endif
 
 
-
+#ifndef HAVE_STRLCAT
 /********************************* AMBS **********************/
 /*
  * Appends src to string dst of size dsize (unlike strlcat, dsize is the
@@ -104,7 +104,7 @@ strlcat(char *dst, const char *src, size_t dsize)
         return(dlen + (src - osrc));    /* count does not include NUL */
 }
 /********************************* AMBS **********************/
-
+#endif
 
 
 

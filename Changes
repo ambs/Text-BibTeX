@@ -1,5 +1,8 @@
 Revision history for Perl module Text::BibTeX
 
+0.85 2017-08-31
+ * FreeBSD includes a definition of strlcat, so no need to redefine it.
+
 0.84 2017-08-31
  * Further buffer overflow fixes.
  * Spellchecking fixes by Julián Moreno Patiño, Lucas Kanashiro, and 
