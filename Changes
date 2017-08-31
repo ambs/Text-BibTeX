@@ -1,5 +1,7 @@
 Revision history for Perl module Text::BibTeX
 
+0.84 2017-08-31
+ * Further buffer overflow fixes.
  * Spellchecking fixes by Julián Moreno Patiño, Lucas Kanashiro, and 
    Gregor Herrmann (debian community)
 
