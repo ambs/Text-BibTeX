@@ -306,6 +306,14 @@ sub ACTION_create_tests {
                                      objects => $objects);
     }
 
+    $exe_file = catfile("btparse","tests","namebug$EXEEXT");
+    $objects  = [ map{catfile("btparse","tests","$_.o")}(qw.namebug.) ];
+    if (!$self->up_to_date($objects, $exe_file)) {
+        $libbuilder->link_executable(exe_file => $exe_file,
+                                     extra_linker_flags => '-Lbtparse/src -lbtparse ',
+                                     objects => $objects);
+    }
+
     $exe_file = catfile("btparse","tests","purify_test$EXEEXT");
     $objects  = [ map{catfile("btparse","tests","$_.o")}(qw.purify_test.) ];
     if (!$self->up_to_date($objects, $exe_file)) {
