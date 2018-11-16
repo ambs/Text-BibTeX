@@ -33,12 +33,16 @@
 
 #define MAX_COMMAS 2
 
-#define update_depth(s,offs,depth)              \
-switch (s[offs])                                \
-{                                               \
-   case '{': depth++; break;                    \
-   case '}': depth--; break;                    \
-}
+#define update_depth(c,depth,loc)				      \
+	switch (c)						      \
+		{						      \
+	case '{': depth++; break;				      \
+	case '}':						      \
+		if (depth) depth--;				      \
+		else name_warning (loc, "unmatched '}' (ignoring)");  \
+		break;						      \
+		}
+
 
 /*
  * `name_loc' specifies where a name is found -- used for generating 
@@ -110,6 +114,11 @@ bt_split_list (char *   string,
    int *  stop;                         /* stop of each division */
    bt_stringlist *
           list;                         /* structure to return */
+   name_loc loc;
+
+   loc.filename = filename;
+   loc.line = line;
+   loc.name_num = 0;
 
    if (string == NULL)
       return NULL;
@@ -169,12 +178,15 @@ bt_split_list (char *   string,
       /* no match between string and delim, at non-zero depth, or in a word */
       else
       {
-         update_depth (string, i, depth);
+	      update_depth (string[i], depth, &loc);
          inword = (i < string_len) && (string[i] != ' ');
          i++;
          j = 0;
       }
    }
+
+   if (depth)
+	   name_warning (&loc, "unmatched '{' (ignoring)");
 
    stop[numdiv] = string_len;           /* last substring ends just past eos */
    list->num_items = numdiv+1;
@@ -281,25 +293,26 @@ void bt_free_list (bt_stringlist *list)
 static int 
 find_commas (name_loc * loc, char *name, int max_commas)
 {
-   int    i, j;
+   char *i = name, *j = name;
    int    depth;
    int    num_commas;
-   int    len;
-   boolean at_comma;
+   /* int    len; */
+   boolean last_whitespace;
+   /* boolean at_comma; */
    boolean warned;
 
-   i = j = 0;
    depth = 0;
    num_commas = 0;
-   len = strlen (name);
+   /* no need to check length */
+   /*   len = strlen (name); */
    warned = 0;
 
    /* First pass to check for and blank out excess commas */
-
-   for (i = 0; i < len; i++)
+   while(*i)
    {
-      update_depth (name, i, depth);
-      if (depth == 0 && name[i] == ',')
+      char c = *i++; // temporary variable to help optimizatino
+      update_depth (c, depth, loc);
+      if (depth == 0 && c == ',')
       {
          num_commas++;
          if (num_commas > max_commas)
@@ -309,10 +322,19 @@ find_commas (name_loc * loc, char *name, int max_commas)
                name_warning (loc, "too many commas in name (removing extras)");
                warned = TRUE;
             }
-            name[i] = ' ';
+	    c = ' ';
          }
       }
+      /* collapse white space */
+      if (isspace(c)) {
+	      if (last_whitespace) continue;
+	      else last_whitespace = 1;
+      } else {
+	      last_whitespace = 0;
+      }
+      *j++ = c;
    }
+   *j = 0;
 
    /* 
     * If we blanked out a comma, better re-collapse whitespace.  (This is
@@ -320,6 +342,8 @@ find_commas (name_loc * loc, char *name, int max_commas)
     * in the above loop to do the collapsing for me, but my brain
     * hurt when I tried to think it through.  Some other time, perhaps.
     */
+   if (depth)
+	   name_warning (loc, "unmatched '{' (ignoring)");
 
    if (warned)
       bt_postprocess_string (name, 1);
@@ -328,43 +352,19 @@ find_commas (name_loc * loc, char *name, int max_commas)
 
    if (num_commas == 0)
       return 0;
-   
-   num_commas = 0;
-   i = 0;
-   while (i < len)
-   {
-      at_comma = (depth == 0 && name[i] == ',');
-      if (at_comma)
-      {
-         while (j > 0 && name[j-1] == ' ') j--;
-         num_commas++;
-      }
 
-      update_depth (name, i, depth);
-      if (i != j)
-         name[j] = name[i];
 
-      i++; j++;
-      if (at_comma)
-      {
-         while (i < len && name[i] == ' ') i++;
-      }
-   } /* while i */
-
-   if (i != j) name[j] = (char) 0;
-   j--;
-
-   if (name[j] == ',') 
+   if (*--j == ',')
    {
       name_warning (loc, "comma(s) at end of name (removing)");
-      while (name[j] == ',')
+      while (*j == ',')
       {
-         name[j--] = (char) 0;
+         *j-- = (char) 0;
          num_commas--;
       }
    }
 
-   return num_commas;
+   return num_commas > max_commas ? max_commas: num_commas;
 
 } /* find_commas() */
 
@@ -373,6 +373,7 @@ find_commas (name_loc * loc, char *name, int max_commas)
 @NAME       : find_tokens
 @INPUT      : name       - string to tokenize (should be a private copy
                            that we're free to clobber and mangle)
+              loc        - location structure for warnings
 @OUTPUT     : comma_token- number of token immediately preceding each comma
                            (caller must allocate with at least one element
                            per comma in `name')
@@ -392,7 +393,8 @@ find_commas (name_loc * loc, char *name, int max_commas)
 -------------------------------------------------------------------------- */
 static bt_stringlist *
 find_tokens (char *  name,
-             int *   comma_token)
+             int *   comma_token,
+	     name_loc * loc)
 {
    int    i;                            /* index into name */
    int    num_tok;
@@ -456,10 +458,13 @@ find_tokens (char *  name,
          in_boundary = 0;               /* inside a token */
       }
 
-      update_depth (name, i, depth);
+      update_depth (name[i], depth, loc);
       i++;
 
    } /* while i */
+
+   if (depth)
+	   name_warning (loc, "unmatched '{' (ignoring)");
 
    tokens->num_items = num_tok;
    return tokens;
@@ -825,7 +830,7 @@ bt_split_name (char *  name,
 
    DBG_ACTION (1, printf ("found %d commas: ", num_commas))
 
-   tokens = find_tokens (name, comma_token);
+   tokens = find_tokens (name, comma_token, &loc);
 
 #if DEBUG
    printf ("found %d tokens:\n", tokens->num_items);
