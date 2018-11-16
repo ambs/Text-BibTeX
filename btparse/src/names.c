@@ -415,6 +415,7 @@ find_tokens (char *  name,
    /* tokens->string = name ? strdup (name) : NULL; */
    tokens->string = name;
    num_tok = 0;
+   tokens->num_items = 0;
    tokens->items = NULL;
 
    if (len == 0)                        /* empty string? */
@@ -818,6 +819,8 @@ bt_split_name (char *  name,
          split_name->parts[i] = NULL;
          split_name->part_len[i] = 0;
       }
+      split_name->tokens = NULL;
+      if (name) free(name);
       return split_name;
    }
 
@@ -868,6 +871,7 @@ bt_split_name (char *  name,
          split_name->parts[i] = NULL;
          split_name->part_len[i] = 0;
       }
+      split_name->tokens = NULL;
    }
    else
    {
@@ -908,6 +912,7 @@ bt_split_name (char *  name,
 void
 bt_free_name (bt_name * name)
 {
+	if (name && name->tokens && name->parts[BTN_LAST])
    DBG_ACTION (2, printf ("bt_free_name(): freeing name %p "
                           "(%d tokens, string=%p (%s), last[0]=%s)\n",
                           name, 
