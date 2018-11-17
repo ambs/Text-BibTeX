@@ -128,7 +128,11 @@ bt_split_list (char *   string,
    string_len = strlen (string);
    delim_len = strlen (delim);
    maxdiv = (string_len / delim_len) + 1;
-   maxoffs = string_len - delim_len + 1;
+   /* Originally, maxoffs = string_len - delim_len + 1, making the code 
+      a little faster (well, if delim has a considerable length.
+      Given the tests added to validate braces nesting, we need to look
+      up to the end of the string. */
+   maxoffs = string_len;
 
    /* 
     * This is a bit of a band-aid solution to the "split empty string"
@@ -178,7 +182,7 @@ bt_split_list (char *   string,
       /* no match between string and delim, at non-zero depth, or in a word */
       else
       {
-	      update_depth (string[i], depth, &loc);
+         update_depth (string[i], depth, &loc);
          inword = (i < string_len) && (string[i] != ' ');
          i++;
          j = 0;
