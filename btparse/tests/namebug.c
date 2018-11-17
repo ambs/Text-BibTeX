@@ -8,7 +8,7 @@
 #if DEBUG
 void dump_name(bt_name*);
 #else
-define dump_name(x) do {} while(0)
+#define dump_name(x) do {} while(0)
 #endif
 
 char * normalize_name(char * name) {
