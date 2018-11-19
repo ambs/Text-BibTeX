@@ -324,9 +324,14 @@ find_commas (name_loc * loc, char *name, int max_commas)
             }
 	    c = ' ';
          }
-      }
-      /* collapse white space */
-      if (isspace(c)) {
+	 /* preceeding whitespace is already collapsed.
+	    let's replace it with the comma */
+	 if (last_whitespace)
+		 --j;
+	 else /* remove following whitespace */
+		 last_whitespace = 1;
+      } else if (isspace(c)) {
+	      /* collapse white space */
 	      if (last_whitespace) continue;
 	      else last_whitespace = 1;
       } else {
