@@ -133,8 +133,6 @@ ok (@names == 3 &&
     $names[2] eq '{Foo Bar and Co.}');
 @names = $entry->names ('author');
 ok (@names == 3);
-use Data::Dumper;
-print STDERR Dumper(\@names);
 test_name ($names[0], [['Homer'], undef, ['Simpson'], undef]);
 test_name ($names[1], [['Ned', 'Q.'], undef, ['Flanders'], ['Jr.']]);
 test_name ($names[2], [undef, undef, ['{Foo Bar and Co.}']]);
