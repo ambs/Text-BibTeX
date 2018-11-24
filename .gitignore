@@ -17,3 +17,4 @@ crash.bib
 xscode/BibTeX.c
 xscode/BibTeX.o
 xscode/btxs_support.o
+btparse/tests/namebug
