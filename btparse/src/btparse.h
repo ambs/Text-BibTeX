@@ -18,7 +18,6 @@
 #ifndef BTPARSE_H
 #define BTPARSE_H
 
-#include "bt_config.h"
 #include <sys/types.h>
 #include <stdio.h>
 
