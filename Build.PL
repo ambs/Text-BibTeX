@@ -87,6 +87,15 @@ if ( $^O =~ /mswin32/i ) {
         unlink catfile( $libdir, $target );
     }
 }
+elsif ( $^O =~ /haiku/i ) {
+    $libdir =~ s/\bbin\b/lib/;
+    $hdrdir = $libdir;
+    $hdrdir =~ s!\blib\b!develop/headers!;
+    if ( $Config{archname} =~ /BePC/ ) {
+        $libdir .= "/x86";
+        $hdrdir .= "/x86";
+    }
+}
 else {
     if ( $Config{archname} =~ /^x86_64|^ppc64|^s390x|^aarch64|^riscv64/ ) {
         $libdir =~ s/\bbin\b/lib64/;
