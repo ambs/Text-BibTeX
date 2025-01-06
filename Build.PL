@@ -22,7 +22,7 @@ my $builder = MyBuilder->new(
     configure_requires => {
         'Module::Build'        => '0.36',
         'Config::AutoConf'     => '0.16',
-        'ExtUtils::LibBuilder' => '0.02',
+        'ExtUtils::LibBuilder' => '0.09',
     },
     requires => {
         'Scalar::Util'       => '1.42',
