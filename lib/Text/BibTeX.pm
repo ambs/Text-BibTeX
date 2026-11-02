@@ -283,9 +283,13 @@ handles with I/O layers.
 
 =item *
 
-The B<btparse> C library is no longer installed as a separate shared
-library, and the C<biblex>, C<bibparse> and C<dumpnames> programs that
-came with it are gone.
+The C library (derived from B<btparse>) is compiled into the module
+and is no longer installed as a separate shared library.  The C<biblex>,
+C<bibparse> and C<dumpnames> programs and the B<btparse> manual pages
+that came with it are gone: the BibTeX language is described in
+L<Text::BibTeX::Language>, and the rules for splitting and formatting
+names, purifying strings, changing case and processing field values are
+described in the documentation of the modules that use them.
 
 =item *
 
@@ -386,6 +390,9 @@ the C<Name> class) back together in a custom way.
 
 =back
 
+The BibTeX data language itself, as C<Text::BibTeX> parses it, is
+described in L<Text::BibTeX::Language>.
+
 For a first time through the library, you'll probably want to confine
 your reading to L<Text::BibTeX::File> and L<Text::BibTeX::Entry>.  The
 other modules will come in handy eventually, especially if you need to
@@ -468,8 +475,7 @@ imported I<en masse> using the C<macrosubs> export tag:
 
 The C<Text::BibTeX> module makes a number of constant values available.
 These correspond to the values of various enumerated types in the
-underlying C library, B<btparse>, and their meanings are more fully
-explained in the B<btparse> documentation.  
+underlying C library.
 
 Each group of constants is optionally exportable using an export tag
 given in the descriptions below.
@@ -484,14 +490,14 @@ returns one of these values.  The latter three describe, respectively,
 C<comment>, C<preamble>, and C<string> entries; C<BTE_REGULAR> describes
 all other entry types.  C<BTE_UNKNOWN> should never be seen (it's mainly
 useful for C code that might have to detect half-baked data structures).
-See also L<btparse>.  Export tag: C<metatypes>.
+Export tag: C<metatypes>.
 
 =item AST node types
 
 C<BTAST_STRING>, C<BTAST_MACRO>, C<BTAST_NUMBER>.  Used to distinguish
 the three kinds of simple values---strings, macros, and numbers.  The
 C<SimpleValue> class' C<type> method always returns one of these three
-values.  See also L<Text::BibTeX::Value>, L<btparse>.  Export tag:
+values.  See also L<Text::BibTeX::Value>.  Export tag:
 C<nodetypes>.
 
 =item Name parts
@@ -499,13 +505,14 @@ C<nodetypes>.
 C<BTN_FIRST>, C<BTN_VON>, C<BTN_LAST>, C<BTN_JR>, C<BTN_NONE>.  Used to
 specify the various parts of a name after it has been split up.  These
 are mainly useful when using the C<NameFormat> class.  See also
-L<bt_split_names> and L<bt_format_names>.  Export tag: C<nameparts>.
+L<Text::BibTeX::Name> and L<Text::BibTeX::NameFormat>.  Export tag:
+C<nameparts>.
 
 =item Join methods
 
 C<BTJ_MAYTIE>, C<BTJ_SPACE>, C<BTJ_FORCETIE>, C<BTJ_NOTHING>.  Used to
 tell the C<NameFormat> class how to join adjacent tokens together; see
-L<Text::BibTeX::NameFormat> and L<bt_format_names>.  Export tag:
+L<Text::BibTeX::NameFormat/"FORMATTING RULES">.  Export tag:
 C<joinmethods>.
 
 =back
@@ -733,7 +740,7 @@ sub display_list
 
 In addition to loading the C<File> and C<Entry> modules, C<Text::BibTeX>
 loads the XSUB code which bridges the Perl modules to the underlying C
-library, B<btparse>.  This XSUB code provides a number of miscellaneous
+library.  This XSUB code provides a number of miscellaneous
 utility functions, most of which are put into other packages in the
 C<Text::BibTeX> family for use by the corresponding classes.  (For
 instance, the XSUB code loaded by C<Text::BibTeX> provides a function
@@ -772,30 +779,44 @@ tables were built from (that of the perl C<Text::BibTeX> was built with).
 
 Splits a string on a fixed delimiter according to the BibTeX rules for
 splitting up lists of names.  With BibTeX, the delimiter is hard-coded
-as C<"and">; here, you can supply any string.  Instances of DELIM in
-STRING are considered delimiters if they are at brace-depth zero,
-surrounded by whitespace, and not at the beginning or end of STRING; the
-comparison is case-insensitive.  See L<bt_split_names> for full details
-of how splitting is done (it's I<not> the same as Perl's C<split>
-function). OPTS is a hash ref of the same binmode and normalization
-arguments as with, e.g. Text::BibTeX::File->open(); the default is
-C<'utf-8'> mode.
+as C<"and">; here, you can supply any string.  This is I<not> the same
+as Perl's C<split> function: an instance of DELIM in STRING is only a
+delimiter if
 
+=over 4
+
+=item *
+
+it is surrounded by whitespace (so C<"Anderson"> is not split);
+
+=item *
+
+it is not at the beginning or end of STRING (so C<"and"> on its own is
+one item);
+
+=item *
+
+it is at brace-depth zero (so C<"{Barnes and Noble}"> is one item).
+
+=back
+
+The comparison is case-insensitive, so
+
+   Candy and Apples AnD {Green Eggs and Ham}
+
+splits into C<"Candy">, C<"Apples">, and C<"{Green Eggs and Ham}">.
 Empty items (as in C<"Smith and and Jones">) are returned as C<undef>,
-with a warning.
+with a warning.  OPTS is a hash ref of the same binmode and
+normalization arguments as with, e.g. Text::BibTeX::File->open(); the
+default is C<'utf-8'> mode.  FILENAME, LINE and DESCRIPTION (such as
+C<"name">) are used in warnings.
 
 Returns the list of strings resulting from splitting STRING on DELIM.
 
 =item isplit_list (STRING, DELIM [, FILENAME [, LINE [, DESCRIPTION]]])
 
-Splits a string on a fixed delimiter according to the BibTeX rules for
-splitting up lists of names.  With BibTeX, the delimiter is hard-coded
-as C<"and">; here, you can supply any string.  Instances of DELIM in
-STRING are considered delimiters if they are at brace-depth zero,
-surrounded by whitespace, and not at the beginning or end of STRING; the
-comparison is case-insensitive.  See L<bt_split_names> for full details
-of how splitting is done (it's I<not> the same as Perl's C<split>
-function).  The strings returned are of the same kind as STRING: character
+Splits a string on a fixed delimiter in the same way as L</split_list>.
+The strings returned are of the same kind as STRING: character
 strings if it was a character string, byte strings otherwise.  Use
 C<split_list> to specify binmode and normalization arguments.
 
@@ -804,22 +825,100 @@ Returns the list of strings resulting from splitting STRING on DELIM.
 =item purify_string (STRING [, OPTIONS])
 
 "Purifies" STRING in the BibTeX way (usually for generation of sort
-keys): letters and digits (in any script, with any combining marks) and
-spaces are kept, hyphens and ties become spaces, and everything else is
-removed, with special treatment for TeX special characters.  See
-L<bt_misc> for details.  A purified copy of the input string is returned:
-a character string if STRING was one, a byte string otherwise.
+keys).  A purified copy of the input string is returned: a character
+string if STRING was one, a byte string otherwise.  OPTIONS is currently
+unused.
 
-OPTIONS is currently unused.
+Purification keeps letters and digits (in any script, with any
+combining marks attached to them) and spaces, converts hyphens and ties
+(C<"~">) to spaces, and removes (almost) everything else.
+
+"Almost", because TeX "special characters" (used for accented and
+non-English letters) are handled specially.  A special character is a
+brace group that starts at brace-depth zero and whose first character is
+a backslash.  For instance, the string
+
+   {\foo bar}Herr M\"uller went from {P{\r r}erov} to {\AA}rhus
+
+contains two special characters: C<"{\foo bar}"> and C<"{\AA}">.
+Neither the C<\"u> nor the C<\r r> are special characters, because they
+are not at the right brace depth.
+
+In a special character, a control sequence that is one of LaTeX's
+"foreign letters" (C<\oe>, C<\ae>, C<\aa>, C<\o>, C<\l>, C<\ss>, plus
+uppercase versions) is converted to an English approximation by
+stripping the backslash and lowercasing the second character (if any),
+so C<{\AA}> becomes C<Aa>.  All other control sequences in a special
+character are removed, as are all non-alphanumeric characters.
+Outside special characters, control sequences lose only their
+backslash.  So the string above becomes
+
+   barHerr Muller went from Pr rerov to Aarhus
+
+Something has gone wrong with C<P{\r r}erov>: the accented `r' should be
+a special character, starting at brace-depth zero.  Written as
+
+   {\foo bar}Herr M\"uller went from P{\r r}erov to {\AA}rhus
+
+the result is more sensible:
+
+   barHerr Muller went from Prerov to Aarhus
+
+The "nonsense" special character C<{\foo bar}> is a common trick to put
+text in a string solely for generating sort keys: TeX ignores it, as
+long as C<\foo> is defined as a macro that does nothing.
+
+C<purify_string> is adequate for sorting by English-language
+conventions.  To follow the conventions of other languages, use a
+collation library (such as L<Unicode::Collate>) on the purified string.
 
 =item change_case (TRANSFORM, STRING [, OPTIONS])
 
-Transforms the case of STRING according to TRANSFORM (a single
-character, one of C<'u'>, C<'l'>, or C<'t'>), using full Unicode case
-mappings, and leaving text in braces alone (except in TeX special
-characters).  See L<bt_misc> for details.  The transformed copy is
+Transforms the case of STRING according to TRANSFORM, which is one of
+C<'u'> (uppercase), C<'l'> (lowercase), or C<'t'> ("title
+capitalization", as for non-book titles).  The transformed copy is
 returned: a character string if STRING was one, a byte string otherwise.
-An invalid TRANSFORM throws an exception.
+An invalid TRANSFORM throws an exception.  OPTIONS is currently unused.
+
+Case conversion uses the full Unicode case mappings, so the result may
+be longer than the input (C<"ß"> uppercases to C<"SS">).  Title
+capitalization means that everything is converted to lowercase, except
+the first letter of the first word and of words immediately following a
+colon or sentence-ending punctuation, which are converted to I<titlecase>
+(this only differs from uppercase for a few digraphs, such as C<"ǆ">).
+For instance,
+
+   Flying Squirrels: Their Peculiar Habits. Part One
+
+becomes
+
+   Flying squirrels: Their peculiar habits. Part one
+
+Text in braces is treated differently.  In a special character (see
+L</purify_string>), control sequences that are LaTeX's non-English
+letters are converted (C<\AE> becomes C<\ae> when lowercasing); other
+control sequences, including accents, are preserved; and all other text,
+at any depth, is converted to lowercase or uppercase (to lowercase for
+title capitalization).  Brace groups that are not special characters are
+left completely untouched.
+
+For example, with title capitalization,
+
+   A Guide to \LaTeXe: Document Preparation ...
+
+becomes
+
+   A guide to \latexe: Document preparation ...
+
+which is probably not what you want.  Writing C<{\LaTeXe}> keeps the
+control sequence intact, but C<{\LaTeXe}> is then a special character
+that is not a non-English letter, so C<purify_string> removes it, and a
+sort key generated from the title would be C<"A Guide to  Document
+Preparation">.  The solution (for any title with a TeX command that
+produces actual text) is to bury the control sequence at brace-depth
+two:
+
+   A Guide to {{\LaTeXe}}: Document Preparation ...
 
 =back
 
@@ -858,9 +957,6 @@ standard three-letter month macros (C<jan> to C<dec>).  If you wish
 to pre-define certain macros, use C<add_macro_text>.  (But note that the
 C<Bib> structure, as part of its mission to emulate BibTeX 0.99, defines
 the standard "month name" macros for you.)
-
-See also L<bt_macros> in the B<btparse> documentation for a description
-of the C interface to these functions.
 
 =over 4
 
@@ -939,12 +1035,17 @@ from a filehandle yourself while a C<Text::BibTeX::File> (or
 C<Text::BibTeX::Entry::parse>) is reading from it.
 
 Name splitting follows BibTeX's rules, which are designed for Western
-names.  See L<btparse/BUGS AND LIMITATIONS> for the C library.
+names.
+
+Any crash, memory error or leak in the C library should be considered a
+bug.  It is tested with AddressSanitizer and UndefinedBehaviorSanitizer
+on randomly generated and mutated input (see F<fuzz/bt_fuzz.c> in the
+distribution).
 
 =head1 SEE ALSO
 
 L<btool_faq>, L<Text::BibTeX::File>, L<Text::BibTeX::Entry>,
-L<Text::BibTeX::Value>, L<Text::BibTeX::Error>, L<btparse>
+L<Text::BibTeX::Value>, L<Text::BibTeX::Error>, L<Text::BibTeX::Language>
 
 =head1 AUTHOR
 

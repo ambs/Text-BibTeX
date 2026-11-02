@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------
 @NAME       : bt_fuzz.c
-@DESCRIPTION: Stand-alone driver for testing the btparse C library under
+@DESCRIPTION: Stand-alone driver for testing the C library (src/) under
               sanitizers and fuzzers (it needs no Perl).  Each input is
               parsed twice -- once from memory and once through a reader
               callback that returns small, irregular chunks, to exercise

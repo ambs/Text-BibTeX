@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
-# Generate btparse/unidata.h: the Unicode character classes and case
-# mappings used by btparse/unicode.c.
+# Generate src/unidata.h: the Unicode character classes and case
+# mappings used by src/unicode.c.
 #
 # The tables come from the Unicode database of the perl that runs this
 # script (via Unicode::UCD), so the C library always agrees with the perl
@@ -12,7 +12,7 @@ use warnings;
 use feature 'fc';
 use Unicode::UCD qw(prop_invlist);
 
-my $out = shift // 'btparse/unidata.h';
+my $out = shift // 'src/unidata.h';
 
 sub invlist {
    my ($name, @props) = @_;

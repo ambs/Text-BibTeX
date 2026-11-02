@@ -563,8 +563,8 @@ implicitly set to C<undef>).
 Normally, the field value is what the input looks like after "maximal
 processing"--quote characters are removed, whitespace is collapsed (the
 same way that BibTeX itself does it), macros are expanded, and multiple
-tokens are pasted together.  (See L<bt_postprocess> for details on the
-post-processing performed by B<btparse>.)
+tokens are pasted together.  (See L<Text::BibTeX::Value/POST-PROCESSING>
+for details.)
 
 For example, if your input file has the following:
 

@@ -1,6 +1,6 @@
 =head1 NAME
 
-btool_faq - Frequently-Asked Questions about btparse and Text::BibTeX
+btool_faq - Frequently-Asked Questions about Text::BibTeX
 
 =head1 DESCRIPTION
 
@@ -98,17 +98,20 @@ C<Text::BibTeX> distribution for a complete example.
 
 =head1 C LIBRARY
 
-This section covers frequently-asked questions about B<btparse>, the C
-component of B<btOOL>.
+This section covers frequently-asked questions about the C library at
+the core of C<Text::BibTeX>.
 
-=head2 Is there a Python binding for B<btparse> yet?
+=head2 Can I use the C library from my own C programs?
 
-Not that I know of.  I haven't written one.  If you do so, please let me
-know about it.
+Not any more.  Up to version 0.x the C library, B<btparse>, was also
+installed as a separate shared library with its own manual pages.
+Since version 1.00 it is an internal part of C<Text::BibTeX> (in the
+F<src/> directory of the distribution), compiled straight into the Perl
+module, and its interface may change between releases.
 
 =head1 SEE ALSO
 
-L<btparse>, L<Text::BibTeX>
+L<Text::BibTeX>, L<Text::BibTeX::Language>
 
 =head1 AUTHOR
 

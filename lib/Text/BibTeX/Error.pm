@@ -61,7 +61,7 @@ sub is_serious {
 
 sub is_fatal { $_[0]{errclass} >= BTERR_USAGEERR }
 
-# The same format btparse has always used:
+# The same format the C library has always used:
 #    filename, line N, name M, warning: message
 sub as_string {
    my $self = shift;

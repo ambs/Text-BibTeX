@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------
 @NAME       : BibTeX.xs
-@DESCRIPTION: Glue between the btparse C library and the Perl module
+@DESCRIPTION: Glue between the C library (src/) and the Perl module
               Text::BibTeX.
 
               The C library never prints, exits or croaks: every call

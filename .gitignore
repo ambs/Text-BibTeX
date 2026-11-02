@@ -10,7 +10,7 @@ _build/
 blib/
 *.o
 lib/Text/BibTeX.c
-btparse/unidata.h
+src/unidata.h
 fuzz/bt_fuzz
 fuzz/bt_libfuzzer
 *.dSYM/

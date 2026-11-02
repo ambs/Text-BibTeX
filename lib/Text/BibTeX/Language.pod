@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-bt_language - the BibTeX data language, as recognized by B<btparse>
+Text::BibTeX::Language - the BibTeX data language, as recognized by Text::BibTeX
 
 =head1 SYNOPSIS
 
@@ -159,10 +159,10 @@ BibTeX can generate bogus TeX code: try putting a backslash (C<\>) or
 tilde (C<~>) in a citation key.  (This last exception is rather specific
 to the "generating (La)TeX code from a BibTeX database" application, but
 since that's the major application for BibTeX databases, then it will
-presumably be the major application for B<btparse>, at least initially.
+presumably be the major application for C<Text::BibTeX>, at least initially.
 Thus, it makes sense to pay attention to this problem.)
 
-In B<btparse>, then, a name is defined as any sequence of letters,
+In C<Text::BibTeX>, then, a name is defined as any sequence of letters,
 digits, any non-ASCII characters (so names may be written in any
 script, in UTF-8), and the following characters:
 
@@ -172,10 +172,10 @@ This list was derived by removing BibTeX's "magic 10" from the set of
 printable 7-bit ASCII characters (32-126), and then further removing
 C<\> and C<'>.  (Control characters, C<\> and C<'> are not allowed
 anywhere in an entry outside of strings; they are skipped with a
-warning.)  This means that B<btparse> disallows some of the
+warning.)  This means that C<Text::BibTeX> disallows some of the
 weirder entry keys that BibTeX would accept, such as C<\foo>, but
 still allows a string with initial digits.  In fact, from the above
-definition it appears that B<btparse> would accept a string of all
+definition it appears that C<Text::BibTeX> would accept a string of all
 digits as a "name;" this is not the case, though, as the lexical scanner
 recognizes such a digit string as a number first.  There are two
 problems here: BibTeX entry keys may in fact be entirely numeric, and
@@ -199,8 +199,8 @@ string lexer accepts anything up to the end-of-string delimiter.
 
 =head1 SYNTACTIC GRAMMAR
 
-(The language used to describe the grammar here is the extended
-Backus-Naur Form (EBNF) used by PCCTS.  Terminals are represented by
+(The language used to describe the grammar here is a form of extended
+Backus-Naur Form (EBNF).  Terminals are represented by
 uppercase strings, non-terminals by lowercase strings; terminal names
 are the same as those given in the lexical grammar above.  C<( foo )*>
 means zero or more repetitions of the C<foo> production, and C<{ foo }>
@@ -225,14 +225,11 @@ C<)>, depending what is seen in the input for a particular entry.)
 
 There are three possible productions for the "contents" non-terminal.
 Only one applies to any given entry, depending on the entry metatype
-(which in turn depends on the entry type).  Currently, B<btparse>
+(which in turn depends on the entry type).  C<Text::BibTeX>
 supports four entry metatypes: comment, preamble, macro definition, and
 regular.  The first two correspond to C<@comment> and C<@preamble>
 entries; "macro definition" is for C<@string> entries; and "regular" is
-for all other entry types.  (The library will be extended to handle
-C<@modify> and C<@alias> entry types, and corresponding "modify" and
-"alias" metatypes, when BibTeX 1.0 is released and the exact syntax is
-known.)  The "metatype" concept is necessary so that all entry types
+for all other entry types.  The "metatype" concept is necessary so that all entry types
 that aren't specifically recognized fall into the "regular" metatype.
 It's also convenient not to have to C<strcmp> the entry type all the
 time.
@@ -243,7 +240,7 @@ time.
 
 Note that the entry key is not just a C<NAME>, but C<( NAME | NUMBER)>.
 This is necessary because BibTeX allows all-numeric entry keys, but
-B<btparse>'s lexical scanner recognizes such digit strings as C<NUMBER>
+the lexical scanner recognizes such digit strings as C<NUMBER>
 tokens.
 
 C<fields> is a comma-separated list of fields, with an optional single
@@ -275,7 +272,7 @@ A simple value is a string, number, or name (for macro invocations):
 
 =head1 SEE ALSO
 
-L<btparse>
+L<Text::BibTeX>, L<Text::BibTeX::Entry>, L<Text::BibTeX::Value>
 
 =head1 AUTHOR
 

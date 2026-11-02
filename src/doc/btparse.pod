@@ -75,12 +75,22 @@ for their original purpose of bibliographic data for scholarly
 publications; you could use the file format for any conceivable purpose
 that fits it.)
 
-B<btparse> is compiled into the Perl module C<Text::BibTeX>, which is
-its main user; it is no longer built or installed as a separate shared
-library.  The sources (in the F<btparse> directory of the
+B<btparse> is compiled into the Perl module C<Text::BibTeX>; it is no
+longer built or installed as a separate shared library, and these pages
+(in F<src/doc>) are documentation for maintainers of C<Text::BibTeX>,
+not installed manual pages.  The sources (in the F<src> directory of the
 C<Text::BibTeX> distribution) are plain C99 and do not depend on Perl, so
 the library can still be used on its own, eg. for testing with
 sanitizers and fuzzers (see the F<fuzz> directory).
+
+The rules the library implements are also described, for Perl users, in
+the documentation of the Perl modules: the BibTeX language in
+L<Text::BibTeX::Language>, post-processing in
+L<Text::BibTeX::Value/POST-PROCESSING>, name splitting in
+L<Text::BibTeX::Name> and L<Text::BibTeX/split_list>, name formatting in
+L<Text::BibTeX::NameFormat/"FORMATTING RULES">, and string purification
+and case changing in L<Text::BibTeX/purify_string> and
+L<Text::BibTeX/change_case>.
 
 Since version 1.00 of C<Text::BibTeX> the library:
 
@@ -531,7 +541,7 @@ To put author names back together again, see L<bt_format_names>.
 Miscellaneous functions for processing strings "the BibTeX way":
 L<bt_misc>.
 
-A semi-formal language definition is in L<bt_language>.
+A semi-formal language definition is in L<Text::BibTeX::Language>.
 
 =head1 AUTHOR
 

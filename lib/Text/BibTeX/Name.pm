@@ -87,17 +87,35 @@ part.  Again, if there are no tokens following a leading sequence of
 lowercase tokens, a warning is printed and the token immediately
 preceding the comma is taken to be the `last' part.
 
+A token "starts with a lower-case letter" if its first character is a
+lowercase letter in the Unicode sense (general category C<Ll>), so
+C<"van">, C<"de"> and C<"ван"> are all lowercase tokens.  A token that
+starts with a brace is never lowercase: this is how to keep a
+lowercase token out of the `von' part (C<"{de} Gaulle">), or to make a
+group of words a single token (C<"{Barnes and Noble}">).  TeX special
+characters at the start of a token (C<"{\'e}tienne">) are treated like
+any other brace group.
+
 If a name has more than two commas, a warning is printed and the name is
-treated as though only the first two commas were present.
+treated as though only the first two commas were present.  Consecutive
+commas (C<"Smith,, John">) count as one comma.
 
 Finally, if a name has two commas, it is assumed to be in "von last, jr,
 first" form.  (This is the only way to represent a name with a `jr'
 part.)  The parsing of the name is the same as for a one-comma name,
 except that tokens between the two commas are taken to be the `jr' part.
 
+Note that BibTeX has no idea that C<"Jr."> is special: C<"Henry Ford
+Jr."> splits into first name C<"Henry Ford"> and last name C<"Jr.">.
+Write it as C<"Ford, Jr., Henry"> instead, or, if you don't want the
+`jr' part to be separate, as C<"Henry {Ford Jr.}">.
+
+A name with no last name at all (as in C<", John">) keeps its other
+parts, and a warning is printed.
+
 =head1 CAVEAT
 
-The C code that does the actual work of splitting up names takes a shortcut
+The code that does the actual work of splitting up names takes a shortcut
 and makes few assumptions about whitespace.  In particular, there must be
 no leading whitespace, no trailing whitespace, no consecutive whitespace
 characters in the string, and no whitespace characters other than space.
@@ -409,7 +427,8 @@ sub format
 
 =head1 SEE ALSO
 
-L<Text::BibTeX::Entry>, L<Text::BibTeX::NameFormat>, L<bt_split_names>.
+L<Text::BibTeX::Entry>, L<Text::BibTeX::NameFormat>,
+L<Text::BibTeX/split_list>.
 
 =head1 AUTHOR
 

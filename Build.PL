@@ -6,8 +6,8 @@ use Module::Build;
 
 # The C library's Unicode tables are generated from this perl's Unicode
 # database, so they always agree with the perl we are building for.
-system($^X, 'scripts/gen_unidata.pl', 'btparse/unidata.h') == 0
-    or die "Could not generate btparse/unidata.h\n";
+system($^X, 'scripts/gen_unidata.pl', 'src/unidata.h') == 0
+    or die "Could not generate src/unidata.h\n";
 
 my $builder = Module::Build->new(
     module_name => 'Text::BibTeX',
@@ -19,10 +19,10 @@ my $builder = Module::Build->new(
         resources => { repository => 'http://github.com/ambs/Text-BibTeX', },
     },
 
-    # The btparse sources are compiled straight into the XS module: there
-    # is no separate libbtparse to build or install any more.
-    c_source     => 'btparse',
-    include_dirs => ['btparse'],
+    # The C library (in src/, derived from Greg Ward's btparse) is compiled
+    # straight into the XS module: nothing separate is built or installed.
+    c_source     => 'src',
+    include_dirs => ['src'],
 
     configure_requires => {
         'Module::Build' => '0.4004',
@@ -39,8 +39,8 @@ my $builder = Module::Build->new(
     },
     add_to_cleanup => [
         'Text-BibTeX-*',
-        'btparse/*.o',
-        'btparse/unidata.h',
+        'src/*.o',
+        'src/unidata.h',
     ],
 );
 
