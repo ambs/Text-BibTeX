@@ -40,6 +40,11 @@ Revision history for Perl module Text::BibTeX
    no longer built or installed (no more library path problems), and the
    biblex, bibparse and dumpnames programs are gone.  The build no longer
    needs Config::AutoConf or ExtUtils::LibBuilder.
+ * Inputs which BibTeX accepts are no longer syntax errors: an entry
+   with a key but no fields (@misc{key}), and @comment not followed by
+   a braced or parenthesised comment, whose text is then skipped like
+   other text between entries (an unterminated @comment{ is still an
+   error).
  * New: Text::BibTeX::unicode_version(); a stand-alone fuzzing harness
    for the C library (fuzz/).
  * Text::BibTeX::Error objects record the entry key (key) and the calling
