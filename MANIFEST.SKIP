@@ -18,7 +18,7 @@
 
 # Avoid Makemaker generated and utility files.
 \bMANIFEST\.bak
-\bMakefile$
+^Makefile$
 \bblib/
 \bMakeMaker-\d
 \bpm_to_blib\.ts$
@@ -74,26 +74,10 @@
 
 .*\.o$
 
-
-btparse/BUGS
-btparse/ChangeLog
-btparse/COPYING
-btparse/progs/biblex
-btparse/progs/bibparse
-btparse/progs/dumpnames
-btparse/README
-btparse/src/bt_config.h
-btparse/src/libbtparse.dylib
-btparse/tests/macro_test
-btparse/tests/name_test
-btparse/tests/postprocess_test
-btparse/tests/purify_test
-btparse/tests/read_test
-btparse/tests/simple_test
-btparse/tests/tex_test
-btparse/thoughts
-btparse/TODO
-config.log
-crash.bib
-Other/pccts133mr.zip
-xscode/BibTeX.c
+# Generated files
+^lib/Text/BibTeX\.c$
+^src/unidata\.h$
+^fuzz/bt_fuzz$
+^fuzz/bt_libfuzzer$
+\.dSYM/
+^\.vscode/

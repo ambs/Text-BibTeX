@@ -69,9 +69,7 @@ followed by the year and the title.  All fields are drastically simplified
 to produce the sort key: non-English letters are mercilessly anglicized,
 non-alphabetic characters are stripped, and everything is forced to
 lowercase.  (The first two steps are done by the C<purify_string> routine;
-see L<Text::BibTeX/"Generic string-processing functions"> for a brief
-description, and the description of the C function C<bt_purify_string()> in
-L<bt_misc> for all the gory details.)
+see L<Text::BibTeX/purify_string> for all the gory details.)
 
 =cut
 

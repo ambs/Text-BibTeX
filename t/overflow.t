@@ -19,7 +19,7 @@ $DEBUG = 0;
 # entry creation and parsing from a Text::BibTeX::File object
 
 my ($bibfile, $entry);
-my $multiple_file = 'btparse/tests/data/overflow.bib';
+my $multiple_file = 't/data/overflow.bib';
 
 ok($bibfile =  Text::BibTeX::File->new( $multiple_file));
 # this used to trigger a buffer overflow error on some machines

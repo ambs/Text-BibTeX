@@ -1,3 +1,4 @@
+.vscode
 Build
 MANIFEST.SKIP.bak
 META.json
@@ -7,14 +8,9 @@ MYMETA.yml
 Text-BibTeX-*.tar.gz
 _build/
 blib/
-btparse/progs/biblex
-btparse/progs/bibparse
-btparse/progs/dumpnames
-btparse/src/bt_config.h
-btparse/src/libbtparse.dylib
-config.log
-crash.bib
-xscode/BibTeX.c
-xscode/BibTeX.o
-xscode/btxs_support.o
-btparse/tests/namebug
+*.o
+lib/Text/BibTeX.c
+src/unidata.h
+fuzz/bt_fuzz
+fuzz/bt_libfuzzer
+*.dSYM/
