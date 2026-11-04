@@ -19,7 +19,9 @@
                 entry        : '@' NAME body
                 body         : STRING                      (@comment only)
                              | ENTRY_OPEN contents ENTRY_CLOSE
-                contents     : (NAME | NUMBER) ',' fields  (regular entry)
+                             | (empty)  (@comment not followed by a STRING:
+                                         ignored, like BibTeX does)
+                contents     : (NAME | NUMBER) [ ',' fields ]  (regular entry)
                              | fields                      (@string)
                              | value                       (@preamble)
                 fields       : field { ',' fields } | (empty)
@@ -1120,6 +1122,8 @@ contents (bt_parser *p, AST *entry)
          {
             append_child (entry, token_node (p, BTAST_KEY));
             consume (p);
+            if (p->tok == T_ENTRY_CLOSE)  /* no fields, eg. @misc{key}, */
+               return;                    /* which BibTeX accepts */
             if (p->tok != T_COMMA)
             {
                EXPECT1 (p, T_COMMA, NULL);
@@ -1189,7 +1193,33 @@ body (bt_parser *p, AST *entry)
       resync (p, TOKSET (T_AT));
 }
 
-typedef enum { PARSE_EOF, PARSE_ENTRY, PARSE_FAILED } parse_result;
+typedef enum { PARSE_EOF, PARSE_ENTRY, PARSE_FAILED, PARSE_SKIPPED } parse_result;
+
+/* BibTeX ignores the word "@comment" itself, so when it is not followed
+ * by a braced or parenthesised comment, what follows it is ordinary text
+ * between entries: back up to the current token and skip to the next '@'
+ * at top level (without the junk warning; BibTeX doesn't warn either). */
+static void
+skip_bare_comment (bt_parser *p)
+{
+   int c;
+
+   p->pos = p->tok_pos;
+   p->line = p->tok_start_line;
+   while ((c = CUR (p)) >= 0 && c != '@')
+   {
+      if (c == '\n')
+      {
+         p->pos++;
+         p->line++;
+      }
+      else
+         take_char (p, NULL);
+   }
+   initialize_lexer_state (p);
+   bt_sbuf_clear (&p->text);
+   p->have_tok = FALSE;
+}
 
 static parse_result
 parse_one (bt_parser *p, AST **result)
@@ -1223,6 +1253,18 @@ parse_one (bt_parser *p, AST **result)
    entry = token_node (p, BTAST_ENTRY);
    entry->metatype = p->metatype;
    consume (p);
+   /* A bare @comment is one whose next token doesn't start a braced,
+    * parenthesised or quoted comment ("..." is reported by the lexer).
+    * An unterminated comment comes back as end of input, but starts with
+    * its delimiter, and is left to body() to report. */
+   if (entry->metatype == BTE_COMMENT && p->tok != T_STRING
+       && p->tok != T_QUOTE
+       && !(p->tok_pos < p->end && ISIN ("{(\"", p->buf[p->tok_pos])))
+   {
+      bt_free_ast (entry);
+      skip_bare_comment (p);
+      return PARSE_SKIPPED;
+   }
    body (p, entry);
    *result = entry;
    return PARSE_ENTRY;
@@ -1294,6 +1336,9 @@ bt_parse_entry (bt_parser *p, bt_errors *errs, btshort options,
             bt_errors_clear (&local);
          return NULL;
       }
+
+      if (r == PARSE_SKIPPED)           /* a bare @comment: not an error */
+         continue;
 
       /* PARSE_FAILED: no entry was started; try the next one */
       if (status) *status = FALSE;

@@ -5,7 +5,7 @@ use warnings;
 use Test::More;
 use Capture::Tiny 'capture';
 
-use Text::BibTeX;
+use Text::BibTeX qw(:metatypes);
 use Text::BibTeX::Error qw(:errclasses);
 
 my $bad = '@article{k, title = foo, author {x}}';
@@ -175,6 +175,48 @@ like($@, qr/invalid name format/, 'bad name format croaks');
    is("$seen[0]", 'line 2, name 1, warning: name has no last name', 'warned about');
    is(scalar @seen, 1, 'other names are fine');
    is($n[1]->part('last'), 'Smith', 'next name unaffected');
+}
+
+# Inputs which BibTeX accepts: an entry with no fields, and "@comment"
+# not followed by a braced comment (BibTeX ignores the word and treats
+# what follows as text between entries)
+{
+   my $read = sub {
+      my $text = shift;
+      my @seen;
+      local $Text::BibTeX::Error::Handler = sub { push @seen, shift };
+      open my $fh, '<', \$text or die;
+      my $bib = Text::BibTeX::File->new($fh);
+      my @entries;
+      while (my $e = Text::BibTeX::Entry->new($bib)) { push @entries, $e }
+      return (\@entries, \@seen);
+   };
+
+   my ($e, $seen) = $read->("\@misc{nofields}\n\@misc{after, title={After}}\n");
+   is(scalar @$seen, 0, 'entry with no fields: no error');
+   is(join(',', map { $_->key } @$e), 'nofields,after', '...both entries read');
+   ok($e->[0]->parse_ok, '...and parsed ok');
+   is(scalar(my @f = $e->[0]->fieldlist), 0, '...with no fields');
+
+   ($e, $seen) = $read->("\@comment some text here\n\@misc{after, title={After}}\n");
+   is(scalar @$seen, 0, 'bare @comment: no error or junk warning');
+   is(join(',', map { $_->key // '' } @$e), 'after', '...is skipped, the next entry is read');
+
+   ($e, $seen) = $read->("\@misc{a, title={A}}\n\@comment at the end\n");
+   is(scalar @$seen, 0, 'bare @comment at the end of the input');
+   is(scalar @$e, 1, '...gives no entry');
+
+   ($e, $seen) = $read->("\@comment{braced}\n\@comment(parens)\n\@misc{after, title={After}}\n");
+   is(join(',', map { $_->metatype } @$e), join(',', BTE_COMMENT, BTE_COMMENT, BTE_REGULAR),
+      'braced and parenthesised comments are still comment entries');
+
+   ($e, $seen) = $read->("\@comment two\nlines\n\n\@misc{bad, title foo}\n");
+   is($seen->[0] && $seen->[0]->line, 4, 'line numbers after a bare @comment are right');
+
+   # ...but an unterminated braced comment is still an error, not a bare
+   # comment (it would swallow the rest of the file silently)
+   ($e, $seen) = $read->("\@comment{never closed\n\@misc{after, title={After}}\n");
+   like($seen->[0] // '', qr/syntax error: at end of input/, 'unterminated @comment{ is still an error');
 }
 
 # Reusing an entry object starts a fresh error list
