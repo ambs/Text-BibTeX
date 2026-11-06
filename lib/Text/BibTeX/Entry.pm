@@ -24,7 +24,7 @@ use Scalar::Util qw(blessed refaddr);
 use Symbol ();
 use Text::BibTeX qw(:metatypes :nodetypes);
 
-our $VERSION = '1.0';
+our $VERSION = '1.00';
 
 =head1 NAME
 

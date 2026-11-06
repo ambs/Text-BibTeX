@@ -7,7 +7,7 @@ use warnings;
 use Exporter 'import';
 use Scalar::Util ();
 
-our $VERSION = '1.0';
+our $VERSION = '1.00';
 
 our @EXPORT_OK = qw(BTERR_NOTIFY BTERR_CONTENT BTERR_LEXWARN BTERR_USAGEWARN
                     BTERR_LEXERR BTERR_SYNTAX BTERR_USAGEERR BTERR_INTERNAL);

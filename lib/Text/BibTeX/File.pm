@@ -26,7 +26,7 @@ use Scalar::Util qw(blessed reftype);
 use Text::BibTeX;
 use Text::BibTeX::Entry;
 
-our $VERSION = '1.0';
+our $VERSION = '1.00';
 
 =head1 NAME
 
