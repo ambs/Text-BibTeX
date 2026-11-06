@@ -23,7 +23,7 @@ require 5.004;                              # for 'isa' and 'can'
 use strict;
 use Carp;
 
-our $VERSION = '0.88';
+our $VERSION = '1.00';
 
 use Text::BibTeX ('check_class');
 
@@ -868,7 +868,7 @@ sub get_options
 
 package Text::BibTeX::StructuredEntry;
 use strict;
-our $VERSION = '0.88';
+our $VERSION = '1.00';
 
 use Carp;
 

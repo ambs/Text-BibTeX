@@ -22,7 +22,7 @@ use strict;
 use Text::BibTeX::Structure;
 
 our @ISA = qw(Text::BibTeX::StructuredEntry);
-our $VERSION = '0.88';
+our $VERSION = '1.00';
 
 use Text::BibTeX qw(purify_string change_case);
 
