@@ -24,7 +24,7 @@ use Encode ();
 use Unicode::Normalize ();
 use Exporter 'import';
 
-our $VERSION = '1.00';
+our $VERSION = '1.0';
 
 our %EXPORT_TAGS = (nodetypes => [qw(BTAST_STRING BTAST_MACRO BTAST_NUMBER)],
                     metatypes => [qw(BTE_UNKNOWN BTE_REGULAR BTE_COMMENT
